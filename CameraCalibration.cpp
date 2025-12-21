@@ -14,12 +14,12 @@ int main( int argc ,char **argv) {
     (void)argv;
 
     std::vector<cv::String> fileNames; // reads img path in filenames and storing in array vector
-    cv::glob("ChessboardCapturedImages/*.jpeg", fileNames, false); // false means do not search subdirectories
+    cv::glob("imgs/*.jpeg", fileNames, false); // false means do not search subdirectories
 
     // Debug Output for accessing files/images correctly
     std::cout << "Found " << fileNames.size() << " images:" << std::endl;
     for(auto& f : fileNames) {
-    std::cout << "  " << f << std::endl;
+    // std::cout << "  " << f << std::endl;
     }
     if(fileNames.empty()) {
     std::cout << "NO IMAGES FOUND! Check folder name and .jpeg files." << std::endl;
@@ -27,7 +27,7 @@ int main( int argc ,char **argv) {
     }
 
     // cv::Size is a simple OpenCV struct that stores a 2D size: width and height
-    cv::Size patternSize(25-1,18-1); // (col,row) --> represent 24,18 inner corner points 
+    cv::Size patternSize(9,9); // (col,row) --> represent 24,18 inner corner points 
 
     /* Basics 
     std::vector<cv::Point2f> = all detected 2D corners in one image.
@@ -41,16 +41,20 @@ int main( int argc ,char **argv) {
     //1. Generate checker board (world) coordinates Q. The board has 25x 18
     // fields with a size of 15x15 mm
 
-    int checkerBoard[2] = {25,18};
-    int fieldSize = 15;
+    int checkerBoard[2] = {9,9};
+    int fieldSize = 16;
 
     //Defining the world coordinates for 3D points
     std::vector<cv::Point3f> objp;  // template
-    for(int i = 0; i< checkerBoard[1];i++){ // i = 0
-        for(int j = 0 ; j<checkerBoard[0];j++){
-            objp.push_back(cv::Point3f(j*fieldSize,i*fieldSize,0));
-        }
+    for(int i = 0; i < checkerBoard[1]; i++) {
+    for(int j = 0; j < checkerBoard[0]; j++) {
+        objp.push_back(cv::Point3f(
+            j * fieldSize,
+            i * fieldSize,
+            0
+        ));
     }
+}
 
     //Detect feature points
     std::vector<cv::Point2f> imgPoint;
@@ -66,7 +70,11 @@ int main( int argc ,char **argv) {
     cv::Mat img = cv::imread(f); // ? cv::imread(f) /// fileNames[i]
     cv::Mat gray;
     cv::cvtColor(img,gray,cv::COLOR_BGR2GRAY);
-    bool patternFound = cv::findChessboardCorners(gray,patternSize,q[i],cv::CALIB_CB_ADAPTIVE_THRESH + cv::CALIB_CB_NORMALIZE_IMAGE + cv::CALIB_CB_FAST_CHECK); // detects the internal corner points of a chessboard calibration pattern in an image and returns their 2D pixel coordinates.​
+    bool patternFound = cv::findChessboardCorners(gray,patternSize,q[i],cv::CALIB_CB_ADAPTIVE_THRESH  | cv::CALIB_CB_NORMALIZE_IMAGE ); // detects the internal corner points of a chessboard calibration pattern in an image and returns their 2D pixel coordinates.​
+
+    std::cout << "patternFound = " << patternFound
+          << " | detected points = " << q[i].size() << std::endl;
+
 
     /* cv::findChessboardCorner() '''
    -Finds the Chessboard's Internal Corners as defined 
@@ -86,6 +94,7 @@ int main( int argc ,char **argv) {
 
     //3. Use cv::cornerSubPix() to refine the found corners
     if(patternFound){
+        std::cout<<"Chessboard detected!"<<std::endl;
         cv::cornerSubPix(gray,q[i],cv::Size(11,11),cv::Size(-1,-1),cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::MAX_ITER,30,0.1)); // 30,0.1 ?
         Q.push_back(objp); // ? why to copy objp in Q
         }
@@ -151,6 +160,10 @@ int main( int argc ,char **argv) {
     std::cout<<"Calibrating..."<<std::endl;
 
     //4. Call "float error = cv::calibrateCamera()" with the input coordinates
+    if (Q.empty()) {
+    std::cerr << "ERROR: No valid chessboard detections found!" << std::endl;
+    return -1;
+    }
 
     float error = cv::calibrateCamera(Q,q,frameSize,K,k,rvecs,tvecs,flags);
 
