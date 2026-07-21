@@ -1,0 +1,1 @@
+/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg/ament_cmake_core/perception_pkgConfig.cmake

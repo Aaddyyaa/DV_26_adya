@@ -1,0 +1,29 @@
+running develop
+running egg_info
+creating src/eufs_launcher.egg-info
+writing src/eufs_launcher.egg-info/PKG-INFO
+writing dependency_links to src/eufs_launcher.egg-info/dependency_links.txt
+writing requirements to src/eufs_launcher.egg-info/requires.txt
+writing top-level names to src/eufs_launcher.egg-info/top_level.txt
+writing manifest file 'src/eufs_launcher.egg-info/SOURCES.txt'
+reading manifest file 'src/eufs_launcher.egg-info/SOURCES.txt'
+writing manifest file 'src/eufs_launcher.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher/lib/python3.10/site-packages/eufs-launcher.egg-link (link to src)
+Installing eufs_launcher script to /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher/lib/eufs_launcher
+
+Installed /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_launcher/src
+running symlink_data
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_launcher/launch/simulation.launch.py -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher/share/eufs_launcher
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_launcher/launch/eufs_launcher.launch.py -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher/share/eufs_launcher
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher/share/eufs_launcher/config
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_launcher/config/eufs_launcher.yaml -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher/share/eufs_launcher/config
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_launcher/config/default.rviz -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher/share/eufs_launcher/config
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher/share/eufs_launcher/resource
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_launcher/resource/launcher.ui -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher/share/eufs_launcher/resource
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_launcher/plugin.xml -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher/share/eufs_launcher
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_launcher/package.xml -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher/share/eufs_launcher
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher/share/ament_index
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher/share/ament_index/resource_index
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher/share/ament_index/resource_index/packages
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_launcher/resource/eufs_launcher -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher/share/ament_index/resource_index/packages

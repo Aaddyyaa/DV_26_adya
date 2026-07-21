@@ -1,0 +1,580 @@
+[0.000000] (-) TimerEvent: {}
+[0.000513] (-) JobUnselected: {'identifier': 'cone_msgs'}
+[0.000679] (-) JobUnselected: {'identifier': 'cv_bridge'}
+[0.000692] (-) JobUnselected: {'identifier': 'eufs_launcher'}
+[0.000700] (-) JobUnselected: {'identifier': 'eufs_models'}
+[0.000708] (-) JobUnselected: {'identifier': 'eufs_msgs'}
+[0.000715] (-) JobUnselected: {'identifier': 'eufs_plugins'}
+[0.000722] (-) JobUnselected: {'identifier': 'eufs_racecar'}
+[0.000728] (-) JobUnselected: {'identifier': 'eufs_rqt'}
+[0.000735] (-) JobUnselected: {'identifier': 'eufs_sensors'}
+[0.000742] (-) JobUnselected: {'identifier': 'eufs_tracks'}
+[0.000749] (-) JobUnselected: {'identifier': 'fsd_planner'}
+[0.000756] (-) JobUnselected: {'identifier': 'image_geometry'}
+[0.000763] (-) JobUnselected: {'identifier': 'my_controller_pkg'}
+[0.000769] (-) JobUnselected: {'identifier': 'my_state_estimator'}
+[0.000776] (-) JobUnselected: {'identifier': 'opencv_tests'}
+[0.000783] (-) JobUnselected: {'identifier': 'perception_pkg'}
+[0.000793] (-) JobUnselected: {'identifier': 'vision_opencv'}
+[0.000851] (my_slam_pkg) JobQueued: {'identifier': 'my_slam_pkg', 'dependencies': OrderedDict([('eufs_msgs', '/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs')])}
+[0.000862] (my_slam_pkg) JobStarted: {'identifier': 'my_slam_pkg'}
+[0.008570] (my_slam_pkg) JobProgress: {'identifier': 'my_slam_pkg', 'progress': 'cmake'}
+[0.008988] (my_slam_pkg) JobProgress: {'identifier': 'my_slam_pkg', 'progress': 'build'}
+[0.009533] (my_slam_pkg) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/alr/Desktop/new_perception/new_eufs_ws/build/my_slam_pkg', '--', '-j20', '-l20'], 'cwd': '/home/alr/Desktop/new_perception/new_eufs_ws/build/my_slam_pkg', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('LANGUAGE', 'en_IN:en'), ('USER', 'alr'), ('XDG_SESSION_TYPE', 'x11'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_plugins/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_models/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda-12.9/lib64'), ('HOME', '/home/alr'), ('OLDPWD', '/home/alr/Desktop/new_perception/new_eufs_ws'), ('DESKTOP_SESSION', 'ubuntu'), ('EUFS_CLI_HOME', '/home/alr/eufs/eufs_cli'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('SYSTEMD_EXEC_PID', '3662'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('COLCON_PREFIX_PATH', '/home/alr/Desktop/new_perception/new_eufs_ws/install'), ('ROS_DISTRO', 'humble'), ('GTK_IM_MODULE', 'ibus'), ('LOGNAME', 'alr'), ('EUFS_MASTER', '/home/alr/eufs/eufs-master'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'alr'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('PATH', '/opt/ros/humble/bin:/usr/local/cuda-12.9/bin:/home/alr/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/alr/.local/bin'), ('SESSION_MANAGER', 'local/alr-ROG-Strix-G614JU-G614JUC4:@/tmp/.ICE-unix/2047,unix/alr-ROG-Strix-G614JU-G614JUC4:/tmp/.ICE-unix/2047'), ('XDG_MENU_PREFIX', 'gnome-'), ('GNOME_TERMINAL_SCREEN', '/org/gnome/Terminal/screen/a268b2d9_7c3e_40bb_aa1e_c0dea819a0a8'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':1'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('GNOME_TERMINAL_SERVICE', ':1.98'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/home/alr/Desktop/new_perception/new_eufs_ws/install/vision_opencv:/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/opencv_tests:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_controller_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_plugins:/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry:/home/alr/Desktop/new_perception/new_eufs_ws/install/fsd_planner:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_sensors:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_models:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs:/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge:/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/alr/Desktop/new_perception/new_eufs_ws/build/my_slam_pkg'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/alr/Desktop/new_perception/new_eufs_ws/build/opencv_tests:/home/alr/Desktop/new_perception/new_eufs_ws/install/opencv_tests/lib/python3.10/site-packages:/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/local/lib/python3.10/dist-packages:/home/alr/Desktop/new_perception/new_eufs_ws/build/fsd_planner:/home/alr/Desktop/new_perception/new_eufs_ws/install/fsd_planner/lib/python3.10/site-packages:/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_launcher/src:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher/lib/python3.10/site-packages:/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/lib/python3.10/site-packages:/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_rqt/src:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt/lib/python3.10/site-packages:/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/lib/python3.10/site-packages:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs/local/lib/python3.10/dist-packages:/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge/local/lib/python3.10/dist-packages:/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('VTE_VERSION', '6800'), ('CMAKE_PREFIX_PATH', '/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs:/home/alr/Desktop/new_perception/new_eufs_ws/install/vision_opencv:/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_controller_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_plugins:/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_sensors:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_models:/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge:/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs:/home/alr/Desktop/new_perception/new_eufs_ws/install/opencv_tests:/home/alr/Desktop/new_perception/new_eufs_ws/install/fsd_planner:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar:/opt/ros/humble')]), 'shell': False}
+[0.050099] (my_slam_pkg) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target eufs_slam_node\x1b[0m\n'}
+[0.065064] (my_slam_pkg) StdoutLine: {'line': b'[ 50%] \x1b[32mBuilding CXX object CMakeFiles/eufs_slam_node.dir/src/Slam.cpp.o\x1b[0m\n'}
+[0.099936] (-) TimerEvent: {}
+[0.200228] (-) TimerEvent: {}
+[0.300527] (-) TimerEvent: {}
+[0.400829] (-) TimerEvent: {}
+[0.501210] (-) TimerEvent: {}
+[0.601546] (-) TimerEvent: {}
+[0.701855] (-) TimerEvent: {}
+[0.802172] (-) TimerEvent: {}
+[0.902492] (-) TimerEvent: {}
+[1.002828] (-) TimerEvent: {}
+[1.103154] (-) TimerEvent: {}
+[1.203486] (-) TimerEvent: {}
+[1.303844] (-) TimerEvent: {}
+[1.404134] (-) TimerEvent: {}
+[1.504437] (-) TimerEvent: {}
+[1.604753] (-) TimerEvent: {}
+[1.704996] (-) TimerEvent: {}
+[1.771947] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:129:70:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kexpected \xe2\x80\x98\x1b[01m\x1b[K;\x1b[m\x1b[K\xe2\x80\x99 at end of member declaration\n'}
+[1.772127] (my_slam_pkg) StderrLine: {'line': b'  129 |     void conesCallback(const eufs_msgs::msg::ConeArray::SharedPtr msg\x1b[01;31m\x1b[K)\x1b[m\x1b[K\n'}
+[1.772166] (my_slam_pkg) StderrLine: {'line': b'      |                                                                      \x1b[01;31m\x1b[K^\x1b[m\x1b[K\n'}
+[1.772204] (my_slam_pkg) StderrLine: {'line': b'      |                                                                       \x1b[32m\x1b[K;\x1b[m\x1b[K\n'}
+[1.792752] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:\x1b[m\x1b[K In constructor \xe2\x80\x98\x1b[01m\x1b[KFastSLAM2::FastSLAM2()\x1b[m\x1b[K\xe2\x80\x99:\n'}
+[1.792905] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:85:89:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[KrunSLAM\x1b[m\x1b[K\xe2\x80\x99 is not a member of \xe2\x80\x98\x1b[01m\x1b[KFastSLAM2\x1b[m\x1b[K\xe2\x80\x99\n'}
+[1.792944] (my_slam_pkg) StderrLine: {'line': b'   85 |  timer_ = create_wall_timer(std::chrono::milliseconds(50), std::bind(&FastSLAM2::\x1b[01;31m\x1b[KrunSLAM\x1b[m\x1b[K, this));\n'}
+[1.792983] (my_slam_pkg) StderrLine: {'line': b'      |                                                                                  \x1b[01;31m\x1b[K^~~~~~~\x1b[m\x1b[K\n'}
+[1.793016] (my_slam_pkg) StderrLine: {'line': b'\n'}
+[1.795026] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:\x1b[m\x1b[K At global scope:\n'}
+[1.795097] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:131:37:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid declarator before \xe2\x80\x98\x1b[01m\x1b[Klock\x1b[m\x1b[K\xe2\x80\x99\n'}
+[1.795127] (my_slam_pkg) StderrLine: {'line': b'  131 |         std::lock_guard<std::mutex> \x1b[01;31m\x1b[Klock\x1b[m\x1b[K(slam_mutex_);\n'}
+[1.795155] (my_slam_pkg) StderrLine: {'line': b'      |                                     \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.796210] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:132:9:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kz_buffer_\x1b[m\x1b[K\xe2\x80\x99 does not name a type\n'}
+[1.796278] (my_slam_pkg) StderrLine: {'line': b'  132 |         \x1b[01;31m\x1b[Kz_buffer_\x1b[m\x1b[K.clear();\n'}
+[1.796308] (my_slam_pkg) StderrLine: {'line': b'      |         \x1b[01;31m\x1b[K^~~~~~~~~\x1b[m\x1b[K\n'}
+[1.796333] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:133:9:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kexpected unqualified-id before \xe2\x80\x98\x1b[01m\x1b[Kfor\x1b[m\x1b[K\xe2\x80\x99\n'}
+[1.796365] (my_slam_pkg) StderrLine: {'line': b'  133 |         \x1b[01;31m\x1b[Kfor\x1b[m\x1b[K (const auto &c : msg->blue_cones) addConeToBuffer(c, 0);\n'}
+[1.796393] (my_slam_pkg) StderrLine: {'line': b'      |         \x1b[01;31m\x1b[K^~~\x1b[m\x1b[K\n'}
+[1.796420] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:134:9:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kexpected unqualified-id before \xe2\x80\x98\x1b[01m\x1b[Kfor\x1b[m\x1b[K\xe2\x80\x99\n'}
+[1.796443] (my_slam_pkg) StderrLine: {'line': b'  134 |         \x1b[01;31m\x1b[Kfor\x1b[m\x1b[K (const auto &c : msg->yellow_cones) addConeToBuffer(c, 1);\n'}
+[1.796466] (my_slam_pkg) StderrLine: {'line': b'      |         \x1b[01;31m\x1b[K^~~\x1b[m\x1b[K\n'}
+[1.796489] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:135:9:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kexpected unqualified-id before \xe2\x80\x98\x1b[01m\x1b[Kfor\x1b[m\x1b[K\xe2\x80\x99\n'}
+[1.796511] (my_slam_pkg) StderrLine: {'line': b'  135 |         \x1b[01;31m\x1b[Kfor\x1b[m\x1b[K (const auto &c : msg->orange_cones) addConeToBuffer(c, 2);\n'}
+[1.796532] (my_slam_pkg) StderrLine: {'line': b'      |         \x1b[01;31m\x1b[K^~~\x1b[m\x1b[K\n'}
+[1.796553] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:136:9:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kexpected unqualified-id before \xe2\x80\x98\x1b[01m\x1b[Kfor\x1b[m\x1b[K\xe2\x80\x99\n'}
+[1.796574] (my_slam_pkg) StderrLine: {'line': b'  136 |         \x1b[01;31m\x1b[Kfor\x1b[m\x1b[K (const auto &c : msg->big_orange_cones) addConeToBuffer(c, 2) ;\n'}
+[1.796596] (my_slam_pkg) StderrLine: {'line': b'      |         \x1b[01;31m\x1b[K^~~\x1b[m\x1b[K\n'}
+[1.796617] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:137:9:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kexpected unqualified-id before \xe2\x80\x98\x1b[01m\x1b[Kfor\x1b[m\x1b[K\xe2\x80\x99\n'}
+[1.796639] (my_slam_pkg) StderrLine: {'line': b'  137 |         \x1b[01;31m\x1b[Kfor\x1b[m\x1b[K (const auto &c : msg->unknown_color_cones) addConeToBuffer(c, 3);\n'}
+[1.796667] (my_slam_pkg) StderrLine: {'line': b'      |         \x1b[01;31m\x1b[K^~~\x1b[m\x1b[K\n'}
+[1.796689] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:139:5:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kexpected declaration before \xe2\x80\x98\x1b[01m\x1b[K}\x1b[m\x1b[K\xe2\x80\x99 token\n'}
+[1.796712] (my_slam_pkg) StderrLine: {'line': b'  139 |     \x1b[01;31m\x1b[K}\x1b[m\x1b[K\n'}
+[1.796734] (my_slam_pkg) StderrLine: {'line': b'      |     \x1b[01;31m\x1b[K^\x1b[m\x1b[K\n'}
+[1.799378] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:\x1b[m\x1b[K In function \xe2\x80\x98\x1b[01m\x1b[Kvoid addConeToBuffer(const Point&, int)\x1b[m\x1b[K\xe2\x80\x99:\n'}
+[1.799448] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:146:44:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kz_buffer_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.799479] (my_slam_pkg) StderrLine: {'line': b'  146 |         if (z.range > 0.1 && z.range < 15) \x1b[01;31m\x1b[Kz_buffer_\x1b[m\x1b[K.push_back(z);\n'}
+[1.799510] (my_slam_pkg) StderrLine: {'line': b'      |                                            \x1b[01;31m\x1b[K^~~~~~~~~\x1b[m\x1b[K\n'}
+[1.802230] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:\x1b[m\x1b[K In function \xe2\x80\x98\x1b[01m\x1b[Kvoid predictParticles(double, double, double)\x1b[m\x1b[K\xe2\x80\x99:\n'}
+[1.802304] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:150:50:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[KQ_control_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.802335] (my_slam_pkg) StderrLine: {'line': b'  150 |         double dyn_vx_noise = std::max(std::sqrt(\x1b[01;31m\x1b[KQ_control_\x1b[m\x1b[K(0,0)), std::abs(vx) * 0.1);\n'}
+[1.802361] (my_slam_pkg) StderrLine: {'line': b'      |                                                  \x1b[01;31m\x1b[K^~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.804815] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:158:24:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kparticles_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope; did you mean \xe2\x80\x98\x1b[01m\x1b[KParticle\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[1.804892] (my_slam_pkg) StderrLine: {'line': b'  158 |         for (auto &p : \x1b[01;31m\x1b[Kparticles_\x1b[m\x1b[K) {\n'}
+[1.804921] (my_slam_pkg) StderrLine: {'line': b'      |                        \x1b[01;31m\x1b[K^~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.804947] (my_slam_pkg) StderrLine: {'line': b'      |                        \x1b[32m\x1b[KParticle\x1b[m\x1b[K\n'}
+[1.805042] (-) TimerEvent: {}
+[1.806577] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:159:45:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kgen_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.806645] (my_slam_pkg) StderrLine: {'line': b'  159 |             double noisy_vx = vx + noise_vx(\x1b[01;31m\x1b[Kgen_\x1b[m\x1b[K);\n'}
+[1.806675] (my_slam_pkg) StderrLine: {'line': b'      |                                             \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.814311] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:\x1b[m\x1b[K In function \xe2\x80\x98\x1b[01m\x1b[Kvoid updateParticles(const std::vector<ConeDetection>&)\x1b[m\x1b[K\xe2\x80\x99:\n'}
+[1.814405] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:178:24:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kparticles_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope; did you mean \xe2\x80\x98\x1b[01m\x1b[KParticle\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[1.814448] (my_slam_pkg) StderrLine: {'line': b'  178 |         for (auto &p : \x1b[01;31m\x1b[Kparticles_\x1b[m\x1b[K) {\n'}
+[1.814476] (my_slam_pkg) StderrLine: {'line': b'      |                        \x1b[01;31m\x1b[K^~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.814501] (my_slam_pkg) StderrLine: {'line': b'      |                        \x1b[32m\x1b[KParticle\x1b[m\x1b[K\n'}
+[1.821728] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:204:80:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[KR_obs_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.821807] (my_slam_pkg) StderrLine: {'line': b'  204 |                     Eigen::Matrix2d S = Hf * p.map[i].sigma * Hf.transpose() + \x1b[01;31m\x1b[KR_obs_\x1b[m\x1b[K;\n'}
+[1.821840] (my_slam_pkg) StderrLine: {'line': b'      |                                                                                \x1b[01;31m\x1b[K^~~~~~\x1b[m\x1b[K\n'}
+[1.821865] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[1.822021] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[1.822081] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[1.822109] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[1.822134] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[1.822158] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[1.822187] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[1.822210] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[1.822233] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[1.822256] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[1.822278] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[1.822301] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:207:25:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.822325] (my_slam_pkg) StderrLine: {'line': b'  207 |                         \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[1.822347] (my_slam_pkg) StderrLine: {'line': b'      |                         \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.822370] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:207:25:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.822394] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:206:21:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Ktemplate argument 1 is invalid\n'}
+[1.822416] (my_slam_pkg) StderrLine: {'line': b'  206 |                     \x1b[01;31m\x1b[KRCLCPP_INFO\x1b[m\x1b[K(\n'}
+[1.822447] (my_slam_pkg) StderrLine: {'line': b'      |                     \x1b[01;31m\x1b[K^~~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.822470] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24\x1b[m\x1b[K,\n'}
+[1.822494] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[1.822517] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[1.822539] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[1.822561] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[1.822582] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[1.822610] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[1.822632] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[1.822653] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[1.822676] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[1.822696] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[1.822719] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[1.822741] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:207:25:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.822765] (my_slam_pkg) StderrLine: {'line': b'  207 |                         \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[1.822787] (my_slam_pkg) StderrLine: {'line': b'      |                         \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.822816] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:207:25:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.822838] (my_slam_pkg) StderrLine: {'line': b'  207 |                         \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[1.822860] (my_slam_pkg) StderrLine: {'line': b'      |                         \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.822883] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[1.822906] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[1.822929] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[1.822951] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[1.822972] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[1.822993] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[1.823016] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[1.823037] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[1.823060] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[1.823229] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[1.823272] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[1.823299] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:214:25:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.823324] (my_slam_pkg) StderrLine: {'line': b'  214 |                         \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[1.823348] (my_slam_pkg) StderrLine: {'line': b'      |                         \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.823371] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:214:25:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.823394] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:213:21:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Ktemplate argument 1 is invalid\n'}
+[1.823418] (my_slam_pkg) StderrLine: {'line': b'  213 |                     \x1b[01;31m\x1b[KRCLCPP_INFO\x1b[m\x1b[K(\n'}
+[1.823441] (my_slam_pkg) StderrLine: {'line': b'      |                     \x1b[01;31m\x1b[K^~~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.823463] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24\x1b[m\x1b[K,\n'}
+[1.823487] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[1.823508] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[1.823530] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[1.823552] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[1.823578] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[1.823604] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[1.823625] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[1.823646] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[1.823667] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[1.823688] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[1.823709] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[1.823733] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:214:25:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.823756] (my_slam_pkg) StderrLine: {'line': b'  214 |                         \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[1.823778] (my_slam_pkg) StderrLine: {'line': b'      |                         \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.823807] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:214:25:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.823830] (my_slam_pkg) StderrLine: {'line': b'  214 |                         \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[1.823852] (my_slam_pkg) StderrLine: {'line': b'      |                         \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.823877] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[1.823900] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[1.823926] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[1.823949] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[1.823972] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[1.823994] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[1.824015] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[1.824038] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[1.824059] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[1.824079] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[1.824102] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[1.824124] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:225:25:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.824147] (my_slam_pkg) StderrLine: {'line': b'  225 |                         \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[1.824169] (my_slam_pkg) StderrLine: {'line': b'      |                         \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.824189] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:225:25:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.824211] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:224:21:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Ktemplate argument 1 is invalid\n'}
+[1.824232] (my_slam_pkg) StderrLine: {'line': b'  224 |                     \x1b[01;31m\x1b[KRCLCPP_INFO\x1b[m\x1b[K(\n'}
+[1.824255] (my_slam_pkg) StderrLine: {'line': b'      |                     \x1b[01;31m\x1b[K^~~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.824276] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24\x1b[m\x1b[K,\n'}
+[1.824297] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[1.824319] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[1.824341] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[1.824362] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[1.824383] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[1.824405] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[1.824425] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[1.824448] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[1.824470] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[1.824491] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[1.824514] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[1.824536] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:225:25:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.824558] (my_slam_pkg) StderrLine: {'line': b'  225 |                         \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[1.824580] (my_slam_pkg) StderrLine: {'line': b'      |                         \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.824604] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:225:25:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.824626] (my_slam_pkg) StderrLine: {'line': b'  225 |                         \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[1.824646] (my_slam_pkg) StderrLine: {'line': b'      |                         \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.860580] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[1.860765] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[1.860800] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[1.860827] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[1.860855] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[1.860880] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[1.860913] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[1.860939] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[1.860965] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[1.860987] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[1.861009] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[1.861032] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:238:24:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.861057] (my_slam_pkg) StderrLine: {'line': b'  238 |                        \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[1.861079] (my_slam_pkg) StderrLine: {'line': b'      |                        \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.861101] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:238:24:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.861124] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:237:21:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Ktemplate argument 1 is invalid\n'}
+[1.861151] (my_slam_pkg) StderrLine: {'line': b'  237 |                     \x1b[01;31m\x1b[KRCLCPP_INFO\x1b[m\x1b[K(\n'}
+[1.861173] (my_slam_pkg) StderrLine: {'line': b'      |                     \x1b[01;31m\x1b[K^~~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.861195] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24\x1b[m\x1b[K,\n'}
+[1.861218] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[1.861239] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[1.861261] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[1.861284] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[1.861306] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[1.861328] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[1.861350] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[1.861372] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[1.861394] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[1.861417] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[1.861438] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[1.861463] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:238:24:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.861495] (my_slam_pkg) StderrLine: {'line': b'  238 |                        \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[1.861517] (my_slam_pkg) StderrLine: {'line': b'      |                        \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.861538] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:238:24:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.861563] (my_slam_pkg) StderrLine: {'line': b'  238 |                        \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[1.861585] (my_slam_pkg) StderrLine: {'line': b'      |                        \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.861607] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[1.861629] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[1.861650] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[1.861672] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[1.861693] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[1.861714] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[1.861735] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[1.861757] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[1.861779] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[1.861806] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[1.861830] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[1.861851] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:252:24:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.861873] (my_slam_pkg) StderrLine: {'line': b'  252 |                        \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[1.861895] (my_slam_pkg) StderrLine: {'line': b'      |                        \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.861917] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:252:24:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.861939] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:251:21:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Ktemplate argument 1 is invalid\n'}
+[1.861961] (my_slam_pkg) StderrLine: {'line': b'  251 |                     \x1b[01;31m\x1b[KRCLCPP_INFO\x1b[m\x1b[K(\n'}
+[1.861984] (my_slam_pkg) StderrLine: {'line': b'      |                     \x1b[01;31m\x1b[K^~~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.862008] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24\x1b[m\x1b[K,\n'}
+[1.862030] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[1.862052] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[1.862074] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[1.862097] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[1.862118] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[1.862139] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[1.862161] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[1.862183] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[1.862204] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[1.862225] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[1.862248] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[1.862269] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:252:24:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.862291] (my_slam_pkg) StderrLine: {'line': b'  252 |                        \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[1.862313] (my_slam_pkg) StderrLine: {'line': b'      |                        \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.862334] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:252:24:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.862356] (my_slam_pkg) StderrLine: {'line': b'  252 |                        \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[1.862378] (my_slam_pkg) StderrLine: {'line': b'      |                        \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.878561] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:278:74:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[KR_obs_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.878725] (my_slam_pkg) StderrLine: {'line': b'  278 |                     Eigen::Matrix2d S = Hf * lm.sigma * Hf.transpose() + \x1b[01;31m\x1b[KR_obs_\x1b[m\x1b[K;\n'}
+[1.878764] (my_slam_pkg) StderrLine: {'line': b'      |                                                                          \x1b[01;31m\x1b[K^~~~~~\x1b[m\x1b[K\n'}
+[1.881578] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:283:26:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Klap_closed_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.881643] (my_slam_pkg) StderrLine: {'line': b'  283 |                     if (!\x1b[01;31m\x1b[Klap_closed_\x1b[m\x1b[K) {\n'}
+[1.881681] (my_slam_pkg) StderrLine: {'line': b'      |                          \x1b[01;31m\x1b[K^~~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.905223] (-) TimerEvent: {}
+[1.951371] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:308:11:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Klap_closed_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.951521] (my_slam_pkg) StderrLine: {'line': b'  308 | else if (!\x1b[01;31m\x1b[Klap_closed_\x1b[m\x1b[K)\n'}
+[1.951553] (my_slam_pkg) StderrLine: {'line': b'      |           \x1b[01;31m\x1b[K^~~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.954073] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:312:10:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Ktotal_dist_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.954142] (my_slam_pkg) StderrLine: {'line': b'  312 |         (\x1b[01;31m\x1b[Ktotal_dist_\x1b[m\x1b[K > 30.0 && dist_to_origin < 15.0);\n'}
+[1.954171] (my_slam_pkg) StderrLine: {'line': b'      |          \x1b[01;31m\x1b[K^~~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.956473] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:345:33:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[KR_obs_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.956548] (my_slam_pkg) StderrLine: {'line': b'  345 |             new_lm.sigma = Gz * \x1b[01;31m\x1b[KR_obs_\x1b[m\x1b[K * Gz.transpose();\n'}
+[1.956580] (my_slam_pkg) StderrLine: {'line': b'      |                                 \x1b[01;31m\x1b[K^~~~~~\x1b[m\x1b[K\n'}
+[1.959351] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:\x1b[m\x1b[K In function \xe2\x80\x98\x1b[01m\x1b[Kvoid resampleParticles()\x1b[m\x1b[K\xe2\x80\x99:\n'}
+[1.959425] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:360:30:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kparticles_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope; did you mean \xe2\x80\x98\x1b[01m\x1b[KParticle\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[1.959459] (my_slam_pkg) StderrLine: {'line': b'  360 |         for (const auto &p : \x1b[01;31m\x1b[Kparticles_\x1b[m\x1b[K) sum_w += p.weight;\n'}
+[1.959486] (my_slam_pkg) StderrLine: {'line': b'      |                              \x1b[01;31m\x1b[K^~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.959511] (my_slam_pkg) StderrLine: {'line': b'      |                              \x1b[32m\x1b[KParticle\x1b[m\x1b[K\n'}
+[1.961813] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:363:28:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kparticles_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope; did you mean \xe2\x80\x98\x1b[01m\x1b[KParticle\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[1.961878] (my_slam_pkg) StderrLine: {'line': b'  363 |             for (auto &p : \x1b[01;31m\x1b[Kparticles_\x1b[m\x1b[K) p.weight = 1.0 / num_particles_;\n'}
+[1.961909] (my_slam_pkg) StderrLine: {'line': b'      |                            \x1b[01;31m\x1b[K^~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.961934] (my_slam_pkg) StderrLine: {'line': b'      |                            \x1b[32m\x1b[KParticle\x1b[m\x1b[K\n'}
+[1.964750] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:363:57:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Knum_particles_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.964869] (my_slam_pkg) StderrLine: {'line': b'  363 |             for (auto &p : particles_) p.weight = 1.0 / \x1b[01;31m\x1b[Knum_particles_\x1b[m\x1b[K;\n'}
+[1.964900] (my_slam_pkg) StderrLine: {'line': b'      |                                                         \x1b[01;31m\x1b[K^~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.967132] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:368:24:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kparticles_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope; did you mean \xe2\x80\x98\x1b[01m\x1b[KParticle\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[1.967208] (my_slam_pkg) StderrLine: {'line': b'  368 |         for (auto &p : \x1b[01;31m\x1b[Kparticles_\x1b[m\x1b[K) {\n'}
+[1.967239] (my_slam_pkg) StderrLine: {'line': b'      |                        \x1b[01;31m\x1b[K^~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.967265] (my_slam_pkg) StderrLine: {'line': b'      |                        \x1b[32m\x1b[KParticle\x1b[m\x1b[K\n'}
+[1.970063] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:374:22:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Knum_particles_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.970146] (my_slam_pkg) StderrLine: {'line': b'  374 |         if (n_eff >= \x1b[01;31m\x1b[Knum_particles_\x1b[m\x1b[K / 2.0) return;\n'}
+[1.970176] (my_slam_pkg) StderrLine: {'line': b'      |                      \x1b[01;31m\x1b[K^~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.972603] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:377:64:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Knum_particles_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope; did you mean \xe2\x80\x98\x1b[01m\x1b[Knew_particles\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[1.972679] (my_slam_pkg) StderrLine: {'line': b'  377 |         std::uniform_real_distribution<double> dist(0.0, 1.0 / \x1b[01;31m\x1b[Knum_particles_\x1b[m\x1b[K);\n'}
+[1.972709] (my_slam_pkg) StderrLine: {'line': b'      |                                                                \x1b[01;31m\x1b[K^~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.972736] (my_slam_pkg) StderrLine: {'line': b'      |                                                                \x1b[32m\x1b[Knew_particles\x1b[m\x1b[K\n'}
+[1.974261] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:378:25:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kgen_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.974335] (my_slam_pkg) StderrLine: {'line': b'  378 |         double r = dist(\x1b[01;31m\x1b[Kgen_\x1b[m\x1b[K);\n'}
+[1.974365] (my_slam_pkg) StderrLine: {'line': b'      |                         \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.976594] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:379:20:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kparticles_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope; did you mean \xe2\x80\x98\x1b[01m\x1b[KParticle\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[1.976672] (my_slam_pkg) StderrLine: {'line': b'  379 |         double c = \x1b[01;31m\x1b[Kparticles_\x1b[m\x1b[K[0].weight;\n'}
+[1.976703] (my_slam_pkg) StderrLine: {'line': b'      |                    \x1b[01;31m\x1b[K^~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.976729] (my_slam_pkg) StderrLine: {'line': b'      |                    \x1b[32m\x1b[KParticle\x1b[m\x1b[K\n'}
+[1.979199] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:\x1b[m\x1b[K In function \xe2\x80\x98\x1b[01m\x1b[KParticle getBestParticle()\x1b[m\x1b[K\xe2\x80\x99:\n'}
+[1.979272] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:406:25:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kparticles_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope; did you mean \xe2\x80\x98\x1b[01m\x1b[KParticle\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[1.979310] (my_slam_pkg) StderrLine: {'line': b'  406 |         Particle best = \x1b[01;31m\x1b[Kparticles_\x1b[m\x1b[K[0];\n'}
+[1.979335] (my_slam_pkg) StderrLine: {'line': b'      |                         \x1b[01;31m\x1b[K^~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.979360] (my_slam_pkg) StderrLine: {'line': b'      |                         \x1b[32m\x1b[KParticle\x1b[m\x1b[K\n'}
+[1.982364] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:\x1b[m\x1b[K In function \xe2\x80\x98\x1b[01m\x1b[Kvoid runSLAM()\x1b[m\x1b[K\xe2\x80\x99:\n'}
+[1.982431] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:418:46:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kslam_mutex_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.982461] (my_slam_pkg) StderrLine: {'line': b'  418 |             std::lock_guard<std::mutex> lock(\x1b[01;31m\x1b[Kslam_mutex_\x1b[m\x1b[K);\n'}
+[1.982485] (my_slam_pkg) StderrLine: {'line': b'      |                                              \x1b[01;31m\x1b[K^~~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.983945] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:420:17:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kdt_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.984012] (my_slam_pkg) StderrLine: {'line': b'  420 |             if (\x1b[01;31m\x1b[Kdt_\x1b[m\x1b[K <= 0.0 || dt_ > 0.2) {\n'}
+[1.984042] (my_slam_pkg) StderrLine: {'line': b'      |                 \x1b[01;31m\x1b[K^~~\x1b[m\x1b[K\n'}
+[1.984068] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:423:34:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[1.984094] (my_slam_pkg) StderrLine: {'line': b'  423 |                 t.header.stamp = \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->now(); t.header.frame_id = "map";\n'}
+[1.984118] (my_slam_pkg) StderrLine: {'line': b'      |                                  \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[1.987244] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:427:17:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Ktf_broadcaster_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.987311] (my_slam_pkg) StderrLine: {'line': b'  427 |                 \x1b[01;31m\x1b[Ktf_broadcaster_\x1b[m\x1b[K->sendTransform(t);\n'}
+[1.987341] (my_slam_pkg) StderrLine: {'line': b'      |                 \x1b[01;31m\x1b[K^~~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.989439] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:430:23:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kz_buffer_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.989506] (my_slam_pkg) StderrLine: {'line': b'  430 |             local_z = \x1b[01;31m\x1b[Kz_buffer_\x1b[m\x1b[K; z_buffer_.clear();\n'}
+[1.989540] (my_slam_pkg) StderrLine: {'line': b'      |                       \x1b[01;31m\x1b[K^~~~~~~~~\x1b[m\x1b[K\n'}
+[1.990940] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:431:24:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kdt_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.991010] (my_slam_pkg) StderrLine: {'line': b'  431 |             local_dt = \x1b[01;31m\x1b[Kdt_\x1b[m\x1b[K; dt_ = 0.0;\n'}
+[1.991040] (my_slam_pkg) StderrLine: {'line': b'      |                        \x1b[01;31m\x1b[K^~~\x1b[m\x1b[K\n'}
+[1.992494] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:432:24:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kvx_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.992568] (my_slam_pkg) StderrLine: {'line': b'  432 |             local_vx = \x1b[01;31m\x1b[Kvx_\x1b[m\x1b[K; local_yaw_rate = yaw_rate_;\n'}
+[1.992598] (my_slam_pkg) StderrLine: {'line': b'      |                        \x1b[01;31m\x1b[K^~~\x1b[m\x1b[K\n'}
+[1.994834] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:432:46:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kyaw_rate_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.994900] (my_slam_pkg) StderrLine: {'line': b'  432 |             local_vx = vx_; local_yaw_rate = \x1b[01;31m\x1b[Kyaw_rate_\x1b[m\x1b[K;\n'}
+[1.994931] (my_slam_pkg) StderrLine: {'line': b'      |                                              \x1b[01;31m\x1b[K^~~~~~~~~\x1b[m\x1b[K\n'}
+[1.997228] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:437:9:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Ktotal_dist_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[1.997304] (my_slam_pkg) StderrLine: {'line': b'  437 |         \x1b[01;31m\x1b[Ktotal_dist_\x1b[m\x1b[K += std::abs(local_vx) * local_dt;\n'}
+[1.997333] (my_slam_pkg) StderrLine: {'line': b'      |         \x1b[01;31m\x1b[K^~~~~~~~~~~\x1b[m\x1b[K\n'}
+[2.000762] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:450:28:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Klast_lap_dist_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[2.000834] (my_slam_pkg) StderrLine: {'line': b'  450 |         if ((total_dist_ - \x1b[01;31m\x1b[Klast_lap_dist_\x1b[m\x1b[K) >30.0 && orange_cones_seen >= 2 && dist_to_origin <1.0 && facing_forward) {\n'}
+[2.000864] (my_slam_pkg) StderrLine: {'line': b'      |                            \x1b[01;31m\x1b[K^~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[2.003301] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:451:13:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Klap_count_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[2.003369] (my_slam_pkg) StderrLine: {'line': b'  451 |             \x1b[01;31m\x1b[Klap_count_\x1b[m\x1b[K++;\n'}
+[2.003399] (my_slam_pkg) StderrLine: {'line': b'      |             \x1b[01;31m\x1b[K^~~~~~~~~~\x1b[m\x1b[K\n'}
+[2.005314] (-) TimerEvent: {}
+[2.005948] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:453:18:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Klap_closed_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[2.006018] (my_slam_pkg) StderrLine: {'line': b'  453 |             if (!\x1b[01;31m\x1b[Klap_closed_\x1b[m\x1b[K) {\n'}
+[2.006049] (my_slam_pkg) StderrLine: {'line': b'      |                  \x1b[01;31m\x1b[K^~~~~~~~~~~\x1b[m\x1b[K\n'}
+[2.006075] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[2.006100] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[2.006124] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[2.006148] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[2.006170] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[2.006192] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[2.006220] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[2.006243] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[2.006264] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[2.006286] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[2.006308] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[2.006334] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:455:29:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.006358] (my_slam_pkg) StderrLine: {'line': b'  455 |                 RCLCPP_WARN(\x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(), "\xf0\x9f\x8f\x81 LAP 1 COMPLETE! Map Locked.");\n'}
+[2.006380] (my_slam_pkg) StderrLine: {'line': b'      |                             \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[2.006403] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:455:29:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.006426] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:455:17:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Ktemplate argument 1 is invalid\n'}
+[2.006448] (my_slam_pkg) StderrLine: {'line': b'  455 |                 \x1b[01;31m\x1b[KRCLCPP_WARN\x1b[m\x1b[K(this->get_logger(), "\xf0\x9f\x8f\x81 LAP 1 COMPLETE! Map Locked.");\n'}
+[2.006474] (my_slam_pkg) StderrLine: {'line': b'      |                 \x1b[01;31m\x1b[K^~~~~~~~~~~\x1b[m\x1b[K\n'}
+[2.006496] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24\x1b[m\x1b[K,\n'}
+[2.006518] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[2.006540] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[2.006561] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[2.006583] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[2.006605] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[2.006625] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[2.006647] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[2.006669] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[2.006691] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[2.006715] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[2.006737] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[2.006763] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:455:29:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.006786] (my_slam_pkg) StderrLine: {'line': b'  455 |                 RCLCPP_WARN(\x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(), "\xf0\x9f\x8f\x81 LAP 1 COMPLETE! Map Locked.");\n'}
+[2.006815] (my_slam_pkg) StderrLine: {'line': b'      |                             \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[2.006836] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:455:29:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.006858] (my_slam_pkg) StderrLine: {'line': b'  455 |                 RCLCPP_WARN(\x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(), "\xf0\x9f\x8f\x81 LAP 1 COMPLETE! Map Locked.");\n'}
+[2.006879] (my_slam_pkg) StderrLine: {'line': b'      |                             \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[2.008511] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:456:32:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kparticles_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope; did you mean \xe2\x80\x98\x1b[01m\x1b[KParticle\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[2.008628] (my_slam_pkg) StderrLine: {'line': b'  456 |                 for (auto &p : \x1b[01;31m\x1b[Kparticles_\x1b[m\x1b[K) p.map = best_p.map; // Lock all particles to current best map\n'}
+[2.008690] (my_slam_pkg) StderrLine: {'line': b'      |                                \x1b[01;31m\x1b[K^~~~~~~~~~\x1b[m\x1b[K\n'}
+[2.008907] (my_slam_pkg) StderrLine: {'line': b'      |                                \x1b[32m\x1b[KParticle\x1b[m\x1b[K\n'}
+[2.009004] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[2.009041] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[2.009068] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[2.009092] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[2.009117] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[2.009142] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[2.009227] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[2.009253] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[2.009277] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[2.009301] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[2.009325] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[2.009397] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:468:14:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.009465] (my_slam_pkg) StderrLine: {'line': b'  468 |              \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[2.009509] (my_slam_pkg) StderrLine: {'line': b'      |              \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[2.009533] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:468:14:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.009557] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:467:10:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Ktemplate argument 1 is invalid\n'}
+[2.009580] (my_slam_pkg) StderrLine: {'line': b'  467 |          \x1b[01;31m\x1b[KRCLCPP_WARN\x1b[m\x1b[K(\n'}
+[2.009603] (my_slam_pkg) StderrLine: {'line': b'      |          \x1b[01;31m\x1b[K^~~~~~~~~~~\x1b[m\x1b[K\n'}
+[2.009626] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24\x1b[m\x1b[K,\n'}
+[2.009650] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[2.009673] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[2.009695] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[2.009719] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[2.009742] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[2.009765] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[2.009790] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[2.009815] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[2.009873] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[2.009896] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[2.009938] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[2.009959] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:468:14:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.009981] (my_slam_pkg) StderrLine: {'line': b'  468 |              \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[2.010002] (my_slam_pkg) StderrLine: {'line': b'      |              \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[2.010023] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:468:14:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.010045] (my_slam_pkg) StderrLine: {'line': b'  468 |              \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[2.010065] (my_slam_pkg) StderrLine: {'line': b'      |              \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[2.010086] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:475:32:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.010111] (my_slam_pkg) StderrLine: {'line': b'  475 |         out_msg.header.stamp = \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->now();\n'}
+[2.010133] (my_slam_pkg) StderrLine: {'line': b'      |                                \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[2.010155] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[2.010178] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[2.010199] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[2.010220] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[2.010241] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[2.010262] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[2.010283] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[2.010304] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[2.010325] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[2.010347] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[2.010368] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[2.010388] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:481:13:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.010411] (my_slam_pkg) StderrLine: {'line': b'  481 |             \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[2.010432] (my_slam_pkg) StderrLine: {'line': b'      |             \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[2.010453] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:481:13:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.010474] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:480:9:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Ktemplate argument 1 is invalid\n'}
+[2.010496] (my_slam_pkg) StderrLine: {'line': b'  480 |         \x1b[01;31m\x1b[KRCLCPP_WARN\x1b[m\x1b[K(\n'}
+[2.010517] (my_slam_pkg) StderrLine: {'line': b'      |         \x1b[01;31m\x1b[K^~~~~~~~~~~\x1b[m\x1b[K\n'}
+[2.010538] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24\x1b[m\x1b[K,\n'}
+[2.010560] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[2.010581] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[2.010602] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[2.010627] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[2.010649] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[2.010670] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[2.010693] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[2.010713] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[2.010733] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[2.010755] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[2.010777] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[2.010802] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:481:13:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.010827] (my_slam_pkg) StderrLine: {'line': b'  481 |             \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[2.010847] (my_slam_pkg) StderrLine: {'line': b'      |             \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[2.010869] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:481:13:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.010891] (my_slam_pkg) StderrLine: {'line': b'  481 |             \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[2.010912] (my_slam_pkg) StderrLine: {'line': b'      |             \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[2.010933] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[2.010955] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[2.010976] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[2.010997] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[2.011017] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[2.011038] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[2.011060] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[2.011081] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[2.011104] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[2.011124] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[2.011144] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[2.011166] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:498:12:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.011187] (my_slam_pkg) StderrLine: {'line': b'  498 |            \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[2.011208] (my_slam_pkg) StderrLine: {'line': b'      |            \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[2.011229] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:498:12:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.011251] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:497:9:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Ktemplate argument 1 is invalid\n'}
+[2.011273] (my_slam_pkg) StderrLine: {'line': b'  497 |         \x1b[01;31m\x1b[KRCLCPP_WARN\x1b[m\x1b[K(\n'}
+[2.011294] (my_slam_pkg) StderrLine: {'line': b'      |         \x1b[01;31m\x1b[K^~~~~~~~~~~\x1b[m\x1b[K\n'}
+[2.011315] (my_slam_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24\x1b[m\x1b[K,\n'}
+[2.011336] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40\x1b[m\x1b[K,\n'}
+[2.011356] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24\x1b[m\x1b[K,\n'}
+[2.011376] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20\x1b[m\x1b[K,\n'}
+[2.011397] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25\x1b[m\x1b[K,\n'}
+[2.011417] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18\x1b[m\x1b[K,\n'}
+[2.011437] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20\x1b[m\x1b[K,\n'}
+[2.011458] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37\x1b[m\x1b[K,\n'}
+[2.011479] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25\x1b[m\x1b[K,\n'}
+[2.011499] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21\x1b[m\x1b[K,\n'}
+[2.011520] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155\x1b[m\x1b[K,\n'}
+[2.011541] (my_slam_pkg) StderrLine: {'line': b'                 from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8\x1b[m\x1b[K:\n'}
+[2.011562] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:498:12:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.011583] (my_slam_pkg) StderrLine: {'line': b'  498 |            \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[2.011603] (my_slam_pkg) StderrLine: {'line': b'      |            \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[2.011623] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:498:12:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.011645] (my_slam_pkg) StderrLine: {'line': b'  498 |            \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->get_logger(),\n'}
+[2.011669] (my_slam_pkg) StderrLine: {'line': b'      |            \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[2.012291] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:505:9:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kcones_pub_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[2.012325] (my_slam_pkg) StderrLine: {'line': b'  505 |         \x1b[01;31m\x1b[Kcones_pub_\x1b[m\x1b[K->publish(out_msg);\n'}
+[2.012349] (my_slam_pkg) StderrLine: {'line': b'      |         \x1b[01;31m\x1b[K^~~~~~~~~~\x1b[m\x1b[K\n'}
+[2.012371] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:509:34:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.012394] (my_slam_pkg) StderrLine: {'line': b'  509 |         slam_odom.header.stamp = \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->now();\n'}
+[2.012417] (my_slam_pkg) StderrLine: {'line': b'      |                                  \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[2.015067] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:517:9:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kslam_odom_pub_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope; did you mean \xe2\x80\x98\x1b[01m\x1b[Kslam_odom\x1b[m\x1b[K\xe2\x80\x99?\n'}
+[2.015109] (my_slam_pkg) StderrLine: {'line': b'  517 |         \x1b[01;31m\x1b[Kslam_odom_pub_\x1b[m\x1b[K->publish(slam_odom);\n'}
+[2.015133] (my_slam_pkg) StderrLine: {'line': b'      |         \x1b[01;31m\x1b[K^~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[2.015156] (my_slam_pkg) StderrLine: {'line': b'      |         \x1b[32m\x1b[Kslam_odom\x1b[m\x1b[K\n'}
+[2.015202] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:521:26:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.015227] (my_slam_pkg) StderrLine: {'line': b'  521 |         t.header.stamp = \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->now(); t.header.frame_id = "map"; t.child_frame_id = "base_footprint";\n'}
+[2.015249] (my_slam_pkg) StderrLine: {'line': b'      |                          \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[2.018340] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:524:9:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Ktf_broadcaster_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[2.018389] (my_slam_pkg) StderrLine: {'line': b'  524 |         \x1b[01;31m\x1b[Ktf_broadcaster_\x1b[m\x1b[K->sendTransform(t);\n'}
+[2.018411] (my_slam_pkg) StderrLine: {'line': b'      |         \x1b[01;31m\x1b[K^~~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[2.018435] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:535:30:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kinvalid use of \xe2\x80\x98\x1b[01m\x1b[Kthis\x1b[m\x1b[K\xe2\x80\x99 in non-member function\n'}
+[2.018460] (my_slam_pkg) StderrLine: {'line': b'  535 |             m.header.stamp = \x1b[01;31m\x1b[Kthis\x1b[m\x1b[K->now(); m.header.frame_id = "map"; m.ns = "track_cones"; m.id = i;\n'}
+[2.018484] (my_slam_pkg) StderrLine: {'line': b'      |                              \x1b[01;31m\x1b[K^~~~\x1b[m\x1b[K\n'}
+[2.022692] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:544:9:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Knative_marker_pub_\x1b[m\x1b[K\xe2\x80\x99 was not declared in this scope\n'}
+[2.022726] (my_slam_pkg) StderrLine: {'line': b'  544 |         \x1b[01;31m\x1b[Knative_marker_pub_\x1b[m\x1b[K->publish(marker_array);\n'}
+[2.022750] (my_slam_pkg) StderrLine: {'line': b'      |         \x1b[01;31m\x1b[K^~~~~~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[2.022964] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:\x1b[m\x1b[K At global scope:\n'}
+[2.022989] (my_slam_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:546:1:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kexpected declaration before \xe2\x80\x98\x1b[01m\x1b[K}\x1b[m\x1b[K\xe2\x80\x99 token\n'}
+[2.023013] (my_slam_pkg) StderrLine: {'line': b'  546 | \x1b[01;31m\x1b[K}\x1b[m\x1b[K;\n'}
+[2.023036] (my_slam_pkg) StderrLine: {'line': b'      | \x1b[01;31m\x1b[K^\x1b[m\x1b[K\n'}
+[2.105489] (-) TimerEvent: {}
+[2.205801] (-) TimerEvent: {}
+[2.306144] (-) TimerEvent: {}
+[2.406453] (-) TimerEvent: {}
+[2.506773] (-) TimerEvent: {}
+[2.607189] (-) TimerEvent: {}
+[2.707505] (-) TimerEvent: {}
+[2.807807] (-) TimerEvent: {}
+[2.908139] (-) TimerEvent: {}
+[3.008540] (-) TimerEvent: {}
+[3.108847] (-) TimerEvent: {}
+[3.209085] (-) TimerEvent: {}
+[3.309325] (-) TimerEvent: {}
+[3.409653] (-) TimerEvent: {}
+[3.509921] (-) TimerEvent: {}
+[3.610161] (-) TimerEvent: {}
+[3.710458] (-) TimerEvent: {}
+[3.810797] (-) TimerEvent: {}
+[3.911130] (-) TimerEvent: {}
+[4.011461] (-) TimerEvent: {}
+[4.111802] (-) TimerEvent: {}
+[4.212148] (-) TimerEvent: {}
+[4.312494] (-) TimerEvent: {}
+[4.412824] (-) TimerEvent: {}
+[4.513092] (-) TimerEvent: {}
+[4.613325] (-) TimerEvent: {}
+[4.713624] (-) TimerEvent: {}
+[4.813947] (-) TimerEvent: {}
+[4.889943] (my_slam_pkg) StderrLine: {'line': b'gmake[2]: *** [CMakeFiles/eufs_slam_node.dir/build.make:76: CMakeFiles/eufs_slam_node.dir/src/Slam.cpp.o] Error 1\n'}
+[4.890083] (my_slam_pkg) StderrLine: {'line': b'gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/eufs_slam_node.dir/all] Error 2\n'}
+[4.890133] (my_slam_pkg) StderrLine: {'line': b'gmake: *** [Makefile:146: all] Error 2\n'}
+[4.892067] (my_slam_pkg) CommandEnded: {'returncode': 2}
+[4.897842] (my_slam_pkg) JobEnded: {'identifier': 'my_slam_pkg', 'rc': 2}
+[4.908163] (-) EventReactorShutdown: {}

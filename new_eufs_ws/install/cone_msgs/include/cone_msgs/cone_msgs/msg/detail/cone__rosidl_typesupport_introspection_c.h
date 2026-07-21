@@ -1,0 +1,1 @@
+/home/alr/Desktop/new_perception/new_eufs_ws/build/cone_msgs/rosidl_typesupport_introspection_c/cone_msgs/msg/detail/cone__rosidl_typesupport_introspection_c.h

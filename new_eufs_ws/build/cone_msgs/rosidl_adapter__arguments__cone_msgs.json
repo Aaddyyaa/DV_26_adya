@@ -1,0 +1,7 @@
+{
+  "package_name": "cone_msgs",
+  "non_idl_tuples": [
+    "/home/alr/Desktop/new_perception/new_eufs_ws/src/cone_msgs:msg/Cone.msg",
+    "/home/alr/Desktop/new_perception/new_eufs_ws/src/cone_msgs:msg/ConeArray.msg"
+  ]
+}

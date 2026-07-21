@@ -1,0 +1,28 @@
+[35m[1mConsolidate compiler generated dependencies of target perception_node[0m
+[ 25%] [32mBuilding CXX object CMakeFiles/perception_node.dir/src/Calibration/calibration.cpp.o[0m
+[ 25%] [32mBuilding CXX object CMakeFiles/perception_node.dir/src/Calibration/rectification.cpp.o[0m
+[ 37%] [32mBuilding CXX object CMakeFiles/perception_node.dir/src/Depth/depth.cpp.o[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/perception_node.dir/src/Main/main.cpp.o[0m
+[ 62%] [32mBuilding CXX object CMakeFiles/perception_node.dir/src/Main/perception_node.cpp.o[0m
+[ 75%] [32mBuilding CXX object CMakeFiles/perception_node.dir/src/Cone/cone.cpp.o[0m
+[ 87%] [32mBuilding CXX object CMakeFiles/perception_node.dir/src/Keypoints/keypoints.cpp.o[0m
+[100%] [32m[1mLinking CXX executable perception_node[0m
+[100%] Built target perception_node
+-- Install configuration: ""
+-- Execute custom install script
+-- Up-to-date symlink: /home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/lib/perception_pkg/perception_node
+-- Up-to-date symlink: /home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/ament_index/resource_index/package_run_dependencies/perception_pkg
+-- Up-to-date symlink: /home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/ament_index/resource_index/parent_prefix_path/perception_pkg
+-- Up-to-date symlink: /home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/environment/ament_prefix_path.sh
+-- Up-to-date symlink: /home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/environment/ament_prefix_path.dsv
+-- Up-to-date symlink: /home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/environment/path.sh
+-- Up-to-date symlink: /home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/environment/path.dsv
+-- Up-to-date symlink: /home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/local_setup.bash
+-- Up-to-date symlink: /home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/local_setup.sh
+-- Up-to-date symlink: /home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/local_setup.zsh
+-- Up-to-date symlink: /home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/local_setup.dsv
+-- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/package.dsv
+-- Up-to-date symlink: /home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/ament_index/resource_index/packages/perception_pkg
+-- Up-to-date symlink: /home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/cmake/perception_pkgConfig.cmake
+-- Up-to-date symlink: /home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/cmake/perception_pkgConfig-version.cmake
+-- Up-to-date symlink: /home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/package.xml

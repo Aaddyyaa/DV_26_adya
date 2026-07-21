@@ -1,0 +1,88 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-62061f7c17c8ca61e35e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "my_controller_pkg",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "mission_manager::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-mission_manager-495f7e4e327e2ae7bd69.json",
+					"name" : "mission_manager",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "my_controller_pkg_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-my_controller_pkg_uninstall-f838bb1eba96457d7853.json",
+					"name" : "my_controller_pkg_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "pure_pursuit_node::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-pure_pursuit_node-4dd1ee067465dc9ed782.json",
+					"name" : "pure_pursuit_node",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-1d2f94ae5dc57ee58144.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/alr/Desktop/new_perception/new_eufs_ws/build/my_controller_pkg",
+		"source" : "/home/alr/Desktop/new_perception/new_eufs_ws/src/my_controller_pkg"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

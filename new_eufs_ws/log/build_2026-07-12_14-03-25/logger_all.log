@@ -1,0 +1,412 @@
+[0.058s] colcon DEBUG Command line arguments: ['/usr/bin/colcon', 'build', '--symlink-install', '--packages-select', 'perception_pkg', '--event-handlers', 'console_direct+']
+[0.058s] colcon DEBUG Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=True, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=20, event_handlers=['console_direct+'], ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=['perception_pkg'], packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0x727ca162f0a0>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x727ca162eb90>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x727ca162eb90>>)
+[0.144s] colcon.colcon_core.package_discovery Level 1 discover_packages(colcon_meta) check parameters
+[0.144s] colcon.colcon_core.package_discovery Level 1 discover_packages(recursive) check parameters
+[0.144s] colcon.colcon_core.package_discovery Level 1 discover_packages(ignore) check parameters
+[0.144s] colcon.colcon_core.package_discovery Level 1 discover_packages(path) check parameters
+[0.144s] colcon.colcon_core.package_discovery Level 1 discover_packages(colcon_meta) discover
+[0.145s] colcon.colcon_core.package_discovery Level 1 discover_packages(recursive) discover
+[0.145s] colcon.colcon_core.package_discovery INFO Crawling recursively for packages in '/home/alr/Desktop/new_perception/new_eufs_ws'
+[0.145s] colcon.colcon_core.package_identification Level 1 _identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.145s] colcon.colcon_core.package_identification Level 1 _identify(.) by extension 'ignore'
+[0.145s] colcon.colcon_core.package_identification Level 1 _identify(.) by extension 'ignore_ament_install'
+[0.145s] colcon.colcon_core.package_identification Level 1 _identify(.) by extensions ['colcon_pkg']
+[0.145s] colcon.colcon_core.package_identification Level 1 _identify(.) by extension 'colcon_pkg'
+[0.145s] colcon.colcon_core.package_identification Level 1 _identify(.) by extensions ['colcon_meta']
+[0.145s] colcon.colcon_core.package_identification Level 1 _identify(.) by extension 'colcon_meta'
+[0.145s] colcon.colcon_core.package_identification Level 1 _identify(.) by extensions ['ros']
+[0.145s] colcon.colcon_core.package_identification Level 1 _identify(.) by extension 'ros'
+[0.164s] colcon.colcon_core.package_identification Level 1 _identify(.) by extensions ['cmake', 'python']
+[0.164s] colcon.colcon_core.package_identification Level 1 _identify(.) by extension 'cmake'
+[0.164s] colcon.colcon_core.package_identification Level 1 _identify(.) by extension 'python'
+[0.164s] colcon.colcon_core.package_identification Level 1 _identify(.) by extensions ['python_setup_py']
+[0.164s] colcon.colcon_core.package_identification Level 1 _identify(.) by extension 'python_setup_py'
+[0.164s] colcon.colcon_core.package_identification Level 1 _identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.164s] colcon.colcon_core.package_identification Level 1 _identify(build) by extension 'ignore'
+[0.164s] colcon.colcon_core.package_identification Level 1 _identify(build) ignored
+[0.164s] colcon.colcon_core.package_identification Level 1 _identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.164s] colcon.colcon_core.package_identification Level 1 _identify(install) by extension 'ignore'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(install) ignored
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(log) by extension 'ignore'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(log) ignored
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs) by extensions ['ignore', 'ignore_ament_install']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs) by extension 'ignore'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs) by extension 'ignore_ament_install'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs) by extensions ['colcon_pkg']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs) by extension 'colcon_pkg'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs) by extensions ['colcon_meta']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs) by extension 'colcon_meta'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs) by extensions ['ros']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs) by extension 'ros'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs) by extensions ['cmake', 'python']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs) by extension 'cmake'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs) by extension 'python'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs) by extensions ['python_setup_py']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs) by extension 'python_setup_py'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect) by extensions ['ignore', 'ignore_ament_install']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect) by extension 'ignore'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect) by extension 'ignore_ament_install'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect) by extensions ['colcon_pkg']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect) by extension 'colcon_pkg'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect) by extensions ['colcon_meta']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect) by extension 'colcon_meta'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect) by extensions ['ros']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect) by extension 'ros'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect) by extensions ['cmake', 'python']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect) by extension 'cmake'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect) by extension 'python'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect) by extensions ['python_setup_py']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect) by extension 'python_setup_py'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict) by extensions ['ignore', 'ignore_ament_install']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict) by extension 'ignore'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict) by extension 'ignore_ament_install'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict) by extensions ['colcon_pkg']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict) by extension 'colcon_pkg'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict) by extensions ['colcon_meta']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict) by extension 'colcon_meta'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict) by extensions ['ros']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict) by extension 'ros'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict) by extensions ['cmake', 'python']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict) by extension 'cmake'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict) by extension 'python'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict) by extensions ['python_setup_py']
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict) by extension 'python_setup_py'
+[0.165s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict-2) by extensions ['ignore', 'ignore_ament_install']
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict-2) by extension 'ignore'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict-2) by extension 'ignore_ament_install'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict-2) by extensions ['colcon_pkg']
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict-2) by extension 'colcon_pkg'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict-2) by extensions ['colcon_meta']
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict-2) by extension 'colcon_meta'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict-2) by extensions ['ros']
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict-2) by extension 'ros'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict-2) by extensions ['cmake', 'python']
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict-2) by extension 'cmake'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict-2) by extension 'python'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict-2) by extensions ['python_setup_py']
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(runs/detect/predict-2) by extension 'python_setup_py'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src) by extensions ['ignore', 'ignore_ament_install']
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src) by extension 'ignore'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src) by extension 'ignore_ament_install'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src) by extensions ['colcon_pkg']
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src) by extension 'colcon_pkg'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src) by extensions ['colcon_meta']
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src) by extension 'colcon_meta'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src) by extensions ['ros']
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src) by extension 'ros'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src) by extensions ['cmake', 'python']
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src) by extension 'cmake'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src) by extension 'python'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src) by extensions ['python_setup_py']
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src) by extension 'python_setup_py'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src/cone_msgs) by extensions ['ignore', 'ignore_ament_install']
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src/cone_msgs) by extension 'ignore'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src/cone_msgs) by extension 'ignore_ament_install'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src/cone_msgs) by extensions ['colcon_pkg']
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src/cone_msgs) by extension 'colcon_pkg'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src/cone_msgs) by extensions ['colcon_meta']
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src/cone_msgs) by extension 'colcon_meta'
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src/cone_msgs) by extensions ['ros']
+[0.166s] colcon.colcon_core.package_identification Level 1 _identify(src/cone_msgs) by extension 'ros'
+[0.167s] colcon.colcon_core.package_identification DEBUG Package 'src/cone_msgs' with type 'ros.ament_cmake' and name 'cone_msgs'
+[0.167s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_msgs) by extensions ['ignore', 'ignore_ament_install']
+[0.167s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_msgs) by extension 'ignore'
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_msgs) by extension 'ignore_ament_install'
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_msgs) by extensions ['colcon_pkg']
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_msgs) by extension 'colcon_pkg'
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_msgs) by extensions ['colcon_meta']
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_msgs) by extension 'colcon_meta'
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_msgs) by extensions ['ros']
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_msgs) by extension 'ros'
+[0.168s] colcon.colcon_core.package_identification DEBUG Package 'src/eufs_msgs' with type 'ros.ament_cmake' and name 'eufs_msgs'
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim) by extensions ['ignore', 'ignore_ament_install']
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim) by extension 'ignore'
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim) by extension 'ignore_ament_install'
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim) by extensions ['colcon_pkg']
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim) by extension 'colcon_pkg'
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim) by extensions ['colcon_meta']
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim) by extension 'colcon_meta'
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim) by extensions ['ros']
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim) by extension 'ros'
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim) by extensions ['cmake', 'python']
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim) by extension 'cmake'
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim) by extension 'python'
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim) by extensions ['python_setup_py']
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim) by extension 'python_setup_py'
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_launcher) by extensions ['ignore', 'ignore_ament_install']
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_launcher) by extension 'ignore'
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_launcher) by extension 'ignore_ament_install'
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_launcher) by extensions ['colcon_pkg']
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_launcher) by extension 'colcon_pkg'
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_launcher) by extensions ['colcon_meta']
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_launcher) by extension 'colcon_meta'
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_launcher) by extensions ['ros']
+[0.168s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_launcher) by extension 'ros'
+[0.169s] colcon.colcon_core.package_identification DEBUG Package 'src/eufs_sim/eufs_launcher' with type 'ros.ament_python' and name 'eufs_launcher'
+[0.169s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_models) by extensions ['ignore', 'ignore_ament_install']
+[0.169s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_models) by extension 'ignore'
+[0.169s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_models) by extension 'ignore_ament_install'
+[0.169s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_models) by extensions ['colcon_pkg']
+[0.169s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_models) by extension 'colcon_pkg'
+[0.169s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_models) by extensions ['colcon_meta']
+[0.169s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_models) by extension 'colcon_meta'
+[0.169s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_models) by extensions ['ros']
+[0.169s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_models) by extension 'ros'
+[0.170s] colcon.colcon_core.package_identification DEBUG Package 'src/eufs_sim/eufs_models' with type 'ros.ament_cmake' and name 'eufs_models'
+[0.170s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_plugins) by extensions ['ignore', 'ignore_ament_install']
+[0.170s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_plugins) by extension 'ignore'
+[0.170s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_plugins) by extension 'ignore_ament_install'
+[0.170s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_plugins) by extensions ['colcon_pkg']
+[0.170s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_plugins) by extension 'colcon_pkg'
+[0.170s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_plugins) by extensions ['colcon_meta']
+[0.170s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_plugins) by extension 'colcon_meta'
+[0.170s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_plugins) by extensions ['ros']
+[0.170s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_plugins) by extension 'ros'
+[0.171s] colcon.colcon_core.package_identification DEBUG Package 'src/eufs_sim/eufs_plugins' with type 'ros.ament_cmake' and name 'eufs_plugins'
+[0.171s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_racecar) by extensions ['ignore', 'ignore_ament_install']
+[0.171s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_racecar) by extension 'ignore'
+[0.171s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_racecar) by extension 'ignore_ament_install'
+[0.171s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_racecar) by extensions ['colcon_pkg']
+[0.171s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_racecar) by extension 'colcon_pkg'
+[0.171s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_racecar) by extensions ['colcon_meta']
+[0.171s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_racecar) by extension 'colcon_meta'
+[0.171s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_racecar) by extensions ['ros']
+[0.171s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_racecar) by extension 'ros'
+[0.171s] colcon.colcon_core.package_identification DEBUG Package 'src/eufs_sim/eufs_racecar' with type 'ros.ament_python' and name 'eufs_racecar'
+[0.171s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_rqt) by extensions ['ignore', 'ignore_ament_install']
+[0.171s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_rqt) by extension 'ignore'
+[0.172s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_rqt) by extension 'ignore_ament_install'
+[0.172s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_rqt) by extensions ['colcon_pkg']
+[0.172s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_rqt) by extension 'colcon_pkg'
+[0.172s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_rqt) by extensions ['colcon_meta']
+[0.172s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_rqt) by extension 'colcon_meta'
+[0.172s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_rqt) by extensions ['ros']
+[0.172s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_rqt) by extension 'ros'
+[0.172s] colcon.colcon_core.package_identification DEBUG Package 'src/eufs_sim/eufs_rqt' with type 'ros.ament_python' and name 'eufs_rqt'
+[0.172s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_sensors) by extensions ['ignore', 'ignore_ament_install']
+[0.172s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_sensors) by extension 'ignore'
+[0.172s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_sensors) by extension 'ignore_ament_install'
+[0.172s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_sensors) by extensions ['colcon_pkg']
+[0.172s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_sensors) by extension 'colcon_pkg'
+[0.172s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_sensors) by extensions ['colcon_meta']
+[0.172s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_sensors) by extension 'colcon_meta'
+[0.172s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_sensors) by extensions ['ros']
+[0.172s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_sensors) by extension 'ros'
+[0.173s] colcon.colcon_core.package_identification DEBUG Package 'src/eufs_sim/eufs_sensors' with type 'ros.ament_cmake' and name 'eufs_sensors'
+[0.173s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_tracks) by extensions ['ignore', 'ignore_ament_install']
+[0.173s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_tracks) by extension 'ignore'
+[0.173s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_tracks) by extension 'ignore_ament_install'
+[0.173s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_tracks) by extensions ['colcon_pkg']
+[0.173s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_tracks) by extension 'colcon_pkg'
+[0.173s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_tracks) by extensions ['colcon_meta']
+[0.173s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_tracks) by extension 'colcon_meta'
+[0.173s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_tracks) by extensions ['ros']
+[0.173s] colcon.colcon_core.package_identification Level 1 _identify(src/eufs_sim/eufs_tracks) by extension 'ros'
+[0.173s] colcon.colcon_core.package_identification DEBUG Package 'src/eufs_sim/eufs_tracks' with type 'ros.ament_python' and name 'eufs_tracks'
+[0.173s] colcon.colcon_core.package_identification Level 1 _identify(src/fsd_planner) by extensions ['ignore', 'ignore_ament_install']
+[0.173s] colcon.colcon_core.package_identification Level 1 _identify(src/fsd_planner) by extension 'ignore'
+[0.174s] colcon.colcon_core.package_identification Level 1 _identify(src/fsd_planner) by extension 'ignore_ament_install'
+[0.174s] colcon.colcon_core.package_identification Level 1 _identify(src/fsd_planner) by extensions ['colcon_pkg']
+[0.174s] colcon.colcon_core.package_identification Level 1 _identify(src/fsd_planner) by extension 'colcon_pkg'
+[0.174s] colcon.colcon_core.package_identification Level 1 _identify(src/fsd_planner) by extensions ['colcon_meta']
+[0.174s] colcon.colcon_core.package_identification Level 1 _identify(src/fsd_planner) by extension 'colcon_meta'
+[0.174s] colcon.colcon_core.package_identification Level 1 _identify(src/fsd_planner) by extensions ['ros']
+[0.174s] colcon.colcon_core.package_identification Level 1 _identify(src/fsd_planner) by extension 'ros'
+[0.174s] colcon.colcon_core.package_identification DEBUG Package 'src/fsd_planner' with type 'ros.ament_python' and name 'fsd_planner'
+[0.174s] colcon.colcon_core.package_identification Level 1 _identify(src/my_controller_pkg) by extensions ['ignore', 'ignore_ament_install']
+[0.174s] colcon.colcon_core.package_identification Level 1 _identify(src/my_controller_pkg) by extension 'ignore'
+[0.174s] colcon.colcon_core.package_identification Level 1 _identify(src/my_controller_pkg) by extension 'ignore_ament_install'
+[0.174s] colcon.colcon_core.package_identification Level 1 _identify(src/my_controller_pkg) by extensions ['colcon_pkg']
+[0.174s] colcon.colcon_core.package_identification Level 1 _identify(src/my_controller_pkg) by extension 'colcon_pkg'
+[0.174s] colcon.colcon_core.package_identification Level 1 _identify(src/my_controller_pkg) by extensions ['colcon_meta']
+[0.174s] colcon.colcon_core.package_identification Level 1 _identify(src/my_controller_pkg) by extension 'colcon_meta'
+[0.174s] colcon.colcon_core.package_identification Level 1 _identify(src/my_controller_pkg) by extensions ['ros']
+[0.174s] colcon.colcon_core.package_identification Level 1 _identify(src/my_controller_pkg) by extension 'ros'
+[0.175s] colcon.colcon_core.package_identification DEBUG Package 'src/my_controller_pkg' with type 'ros.ament_cmake' and name 'my_controller_pkg'
+[0.175s] colcon.colcon_core.package_identification Level 1 _identify(src/my_slam_pkg) by extensions ['ignore', 'ignore_ament_install']
+[0.175s] colcon.colcon_core.package_identification Level 1 _identify(src/my_slam_pkg) by extension 'ignore'
+[0.175s] colcon.colcon_core.package_identification Level 1 _identify(src/my_slam_pkg) by extension 'ignore_ament_install'
+[0.175s] colcon.colcon_core.package_identification Level 1 _identify(src/my_slam_pkg) by extensions ['colcon_pkg']
+[0.175s] colcon.colcon_core.package_identification Level 1 _identify(src/my_slam_pkg) by extension 'colcon_pkg'
+[0.175s] colcon.colcon_core.package_identification Level 1 _identify(src/my_slam_pkg) by extensions ['colcon_meta']
+[0.175s] colcon.colcon_core.package_identification Level 1 _identify(src/my_slam_pkg) by extension 'colcon_meta'
+[0.175s] colcon.colcon_core.package_identification Level 1 _identify(src/my_slam_pkg) by extensions ['ros']
+[0.175s] colcon.colcon_core.package_identification Level 1 _identify(src/my_slam_pkg) by extension 'ros'
+[0.176s] colcon.colcon_core.package_identification DEBUG Package 'src/my_slam_pkg' with type 'ros.ament_cmake' and name 'my_slam_pkg'
+[0.176s] colcon.colcon_core.package_identification Level 1 _identify(src/my_state_estimator) by extensions ['ignore', 'ignore_ament_install']
+[0.176s] colcon.colcon_core.package_identification Level 1 _identify(src/my_state_estimator) by extension 'ignore'
+[0.176s] colcon.colcon_core.package_identification Level 1 _identify(src/my_state_estimator) by extension 'ignore_ament_install'
+[0.176s] colcon.colcon_core.package_identification Level 1 _identify(src/my_state_estimator) by extensions ['colcon_pkg']
+[0.176s] colcon.colcon_core.package_identification Level 1 _identify(src/my_state_estimator) by extension 'colcon_pkg'
+[0.176s] colcon.colcon_core.package_identification Level 1 _identify(src/my_state_estimator) by extensions ['colcon_meta']
+[0.176s] colcon.colcon_core.package_identification Level 1 _identify(src/my_state_estimator) by extension 'colcon_meta'
+[0.176s] colcon.colcon_core.package_identification Level 1 _identify(src/my_state_estimator) by extensions ['ros']
+[0.176s] colcon.colcon_core.package_identification Level 1 _identify(src/my_state_estimator) by extension 'ros'
+[0.176s] colcon.colcon_core.package_identification DEBUG Package 'src/my_state_estimator' with type 'ros.ament_cmake' and name 'my_state_estimator'
+[0.176s] colcon.colcon_core.package_identification Level 1 _identify(src/perception_pkg) by extensions ['ignore', 'ignore_ament_install']
+[0.176s] colcon.colcon_core.package_identification Level 1 _identify(src/perception_pkg) by extension 'ignore'
+[0.176s] colcon.colcon_core.package_identification Level 1 _identify(src/perception_pkg) by extension 'ignore_ament_install'
+[0.176s] colcon.colcon_core.package_identification Level 1 _identify(src/perception_pkg) by extensions ['colcon_pkg']
+[0.176s] colcon.colcon_core.package_identification Level 1 _identify(src/perception_pkg) by extension 'colcon_pkg'
+[0.176s] colcon.colcon_core.package_identification Level 1 _identify(src/perception_pkg) by extensions ['colcon_meta']
+[0.176s] colcon.colcon_core.package_identification Level 1 _identify(src/perception_pkg) by extension 'colcon_meta'
+[0.176s] colcon.colcon_core.package_identification Level 1 _identify(src/perception_pkg) by extensions ['ros']
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/perception_pkg) by extension 'ros'
+[0.177s] colcon.colcon_core.package_identification DEBUG Package 'src/perception_pkg' with type 'ros.ament_cmake' and name 'perception_pkg'
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv) by extensions ['ignore', 'ignore_ament_install']
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv) by extension 'ignore'
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv) by extension 'ignore_ament_install'
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv) by extensions ['colcon_pkg']
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv) by extension 'colcon_pkg'
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv) by extensions ['colcon_meta']
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv) by extension 'colcon_meta'
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv) by extensions ['ros']
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv) by extension 'ros'
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv) by extensions ['cmake', 'python']
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv) by extension 'cmake'
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv) by extension 'python'
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv) by extensions ['python_setup_py']
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv) by extension 'python_setup_py'
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/cv_bridge) by extensions ['ignore', 'ignore_ament_install']
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/cv_bridge) by extension 'ignore'
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/cv_bridge) by extension 'ignore_ament_install'
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/cv_bridge) by extensions ['colcon_pkg']
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/cv_bridge) by extension 'colcon_pkg'
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/cv_bridge) by extensions ['colcon_meta']
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/cv_bridge) by extension 'colcon_meta'
+[0.177s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/cv_bridge) by extensions ['ros']
+[0.178s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/cv_bridge) by extension 'ros'
+[0.178s] colcon.colcon_core.package_identification DEBUG Package 'src/vision_opencv/cv_bridge' with type 'ros.ament_cmake' and name 'cv_bridge'
+[0.178s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/image_geometry) by extensions ['ignore', 'ignore_ament_install']
+[0.178s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/image_geometry) by extension 'ignore'
+[0.178s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/image_geometry) by extension 'ignore_ament_install'
+[0.178s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/image_geometry) by extensions ['colcon_pkg']
+[0.178s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/image_geometry) by extension 'colcon_pkg'
+[0.178s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/image_geometry) by extensions ['colcon_meta']
+[0.178s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/image_geometry) by extension 'colcon_meta'
+[0.178s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/image_geometry) by extensions ['ros']
+[0.178s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/image_geometry) by extension 'ros'
+[0.179s] colcon.colcon_core.package_identification DEBUG Package 'src/vision_opencv/image_geometry' with type 'ros.ament_cmake' and name 'image_geometry'
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/opencv_tests) by extensions ['ignore', 'ignore_ament_install']
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/opencv_tests) by extension 'ignore'
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/opencv_tests) by extension 'ignore_ament_install'
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/opencv_tests) by extensions ['colcon_pkg']
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/opencv_tests) by extension 'colcon_pkg'
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/opencv_tests) by extensions ['colcon_meta']
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/opencv_tests) by extension 'colcon_meta'
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/opencv_tests) by extensions ['ros']
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/opencv_tests) by extension 'ros'
+[0.179s] colcon.colcon_core.package_identification DEBUG Package 'src/vision_opencv/opencv_tests' with type 'ros.ament_python' and name 'opencv_tests'
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/vision_opencv) by extensions ['ignore', 'ignore_ament_install']
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/vision_opencv) by extension 'ignore'
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/vision_opencv) by extension 'ignore_ament_install'
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/vision_opencv) by extensions ['colcon_pkg']
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/vision_opencv) by extension 'colcon_pkg'
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/vision_opencv) by extensions ['colcon_meta']
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/vision_opencv) by extension 'colcon_meta'
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/vision_opencv) by extensions ['ros']
+[0.179s] colcon.colcon_core.package_identification Level 1 _identify(src/vision_opencv/vision_opencv) by extension 'ros'
+[0.180s] colcon.colcon_core.package_identification DEBUG Package 'src/vision_opencv/vision_opencv' with type 'ros.ament_cmake' and name 'vision_opencv'
+[0.180s] colcon.colcon_core.package_discovery Level 1 discover_packages(recursive) using defaults
+[0.180s] colcon.colcon_core.package_discovery Level 1 discover_packages(ignore) discover
+[0.180s] colcon.colcon_core.package_discovery Level 1 discover_packages(ignore) using defaults
+[0.180s] colcon.colcon_core.package_discovery Level 1 discover_packages(path) discover
+[0.180s] colcon.colcon_core.package_discovery Level 1 discover_packages(path) using defaults
+[0.190s] colcon.colcon_core.package_selection INFO Skipping not selected package 'cone_msgs' in 'src/cone_msgs'
+[0.190s] colcon.colcon_core.package_selection INFO Skipping not selected package 'cv_bridge' in 'src/vision_opencv/cv_bridge'
+[0.190s] colcon.colcon_core.package_selection INFO Skipping not selected package 'eufs_msgs' in 'src/eufs_msgs'
+[0.190s] colcon.colcon_core.package_selection INFO Skipping not selected package 'eufs_racecar' in 'src/eufs_sim/eufs_racecar'
+[0.190s] colcon.colcon_core.package_selection INFO Skipping not selected package 'eufs_sensors' in 'src/eufs_sim/eufs_sensors'
+[0.190s] colcon.colcon_core.package_selection INFO Skipping not selected package 'eufs_tracks' in 'src/eufs_sim/eufs_tracks'
+[0.190s] colcon.colcon_core.package_selection INFO Skipping not selected package 'image_geometry' in 'src/vision_opencv/image_geometry'
+[0.190s] colcon.colcon_core.package_selection INFO Skipping not selected package 'eufs_launcher' in 'src/eufs_sim/eufs_launcher'
+[0.190s] colcon.colcon_core.package_selection INFO Skipping not selected package 'eufs_models' in 'src/eufs_sim/eufs_models'
+[0.190s] colcon.colcon_core.package_selection INFO Skipping not selected package 'eufs_rqt' in 'src/eufs_sim/eufs_rqt'
+[0.190s] colcon.colcon_core.package_selection INFO Skipping not selected package 'fsd_planner' in 'src/fsd_planner'
+[0.190s] colcon.colcon_core.package_selection INFO Skipping not selected package 'my_controller_pkg' in 'src/my_controller_pkg'
+[0.190s] colcon.colcon_core.package_selection INFO Skipping not selected package 'my_slam_pkg' in 'src/my_slam_pkg'
+[0.190s] colcon.colcon_core.package_selection INFO Skipping not selected package 'my_state_estimator' in 'src/my_state_estimator'
+[0.190s] colcon.colcon_core.package_selection INFO Skipping not selected package 'opencv_tests' in 'src/vision_opencv/opencv_tests'
+[0.190s] colcon.colcon_core.package_selection INFO Skipping not selected package 'vision_opencv' in 'src/vision_opencv/vision_opencv'
+[0.190s] colcon.colcon_core.package_selection INFO Skipping not selected package 'eufs_plugins' in 'src/eufs_sim/eufs_plugins'
+[0.191s] colcon.colcon_core.package_discovery Level 1 discover_packages(prefix_path) check parameters
+[0.191s] colcon.colcon_core.package_discovery Level 1 discover_packages(prefix_path) discover
+[0.192s] colcon.colcon_installed_package_information.package_discovery DEBUG Found 18 installed packages in /home/alr/Desktop/new_perception/new_eufs_ws/install
+[0.192s] colcon.colcon_installed_package_information.package_discovery DEBUG Found 285 installed packages in /opt/ros/humble
+[0.193s] colcon.colcon_core.package_discovery Level 1 discover_packages(prefix_path) using defaults
+[0.211s] colcon.colcon_core.verb Level 5 set package 'perception_pkg' build argument 'cmake_args' from command line to 'None'
+[0.211s] colcon.colcon_core.verb Level 5 set package 'perception_pkg' build argument 'cmake_target' from command line to 'None'
+[0.211s] colcon.colcon_core.verb Level 5 set package 'perception_pkg' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.211s] colcon.colcon_core.verb Level 5 set package 'perception_pkg' build argument 'cmake_clean_cache' from command line to 'False'
+[0.211s] colcon.colcon_core.verb Level 5 set package 'perception_pkg' build argument 'cmake_clean_first' from command line to 'False'
+[0.211s] colcon.colcon_core.verb Level 5 set package 'perception_pkg' build argument 'cmake_force_configure' from command line to 'False'
+[0.211s] colcon.colcon_core.verb Level 5 set package 'perception_pkg' build argument 'ament_cmake_args' from command line to 'None'
+[0.211s] colcon.colcon_core.verb Level 5 set package 'perception_pkg' build argument 'catkin_cmake_args' from command line to 'None'
+[0.211s] colcon.colcon_core.verb Level 5 set package 'perception_pkg' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.211s] colcon.colcon_core.verb DEBUG Building package 'perception_pkg' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg', 'merge_install': False, 'path': '/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg', 'symlink_install': True, 'test_result_base': None}
+[0.211s] colcon.colcon_core.executor INFO Executing jobs using 'parallel' executor
+[0.212s] colcon.colcon_parallel_executor.executor.parallel DEBUG run_until_complete
+[0.212s] colcon.colcon_ros.task.ament_cmake.build INFO Building ROS package in '/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg' with build type 'ament_cmake'
+[0.212s] colcon.colcon_cmake.task.cmake.build INFO Building CMake package in '/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg'
+[0.213s] colcon.colcon_core.plugin_system INFO Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.213s] colcon.colcon_core.shell INFO Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.213s] colcon.colcon_core.shell DEBUG Skip shell extension 'dsv' for command environment
+[0.224s] colcon.colcon_core.event_handler.log_command DEBUG Invoking command in '/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg': CMAKE_PREFIX_PATH=/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs:/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge:/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs:/home/alr/Desktop/new_perception/new_eufs_ws/install/vision_opencv:/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_controller_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_plugins:/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_sensors:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_models:/home/alr/Desktop/new_perception/new_eufs_ws/install/opencv_tests:/home/alr/Desktop/new_perception/new_eufs_ws/install/fsd_planner:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar:/opt/ros/humble LD_LIBRARY_PATH=/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_plugins/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_models/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda-12.9/lib64 /usr/bin/cmake --build /home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg -- -j20 -l20
+[1.715s] colcon.colcon_core.event_handler.log_command DEBUG Invoked command in '/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg' returned '0': CMAKE_PREFIX_PATH=/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs:/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge:/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs:/home/alr/Desktop/new_perception/new_eufs_ws/install/vision_opencv:/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_controller_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_plugins:/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_sensors:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_models:/home/alr/Desktop/new_perception/new_eufs_ws/install/opencv_tests:/home/alr/Desktop/new_perception/new_eufs_ws/install/fsd_planner:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar:/opt/ros/humble LD_LIBRARY_PATH=/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_plugins/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_models/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda-12.9/lib64 /usr/bin/cmake --build /home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg -- -j20 -l20
+[1.720s] colcon.colcon_core.event_handler.log_command DEBUG Invoking command in '/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg': CMAKE_PREFIX_PATH=/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs:/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge:/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs:/home/alr/Desktop/new_perception/new_eufs_ws/install/vision_opencv:/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_controller_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_plugins:/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_sensors:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_models:/home/alr/Desktop/new_perception/new_eufs_ws/install/opencv_tests:/home/alr/Desktop/new_perception/new_eufs_ws/install/fsd_planner:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar:/opt/ros/humble LD_LIBRARY_PATH=/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_plugins/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_models/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda-12.9/lib64 /usr/bin/cmake --install /home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg
+[1.732s] colcon.colcon_core.environment Level 1 create_environment_scripts_only(perception_pkg)
+[1.732s] colcon.colcon_core.event_handler.log_command DEBUG Invoked command in '/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg' returned '0': CMAKE_PREFIX_PATH=/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs:/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge:/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs:/home/alr/Desktop/new_perception/new_eufs_ws/install/vision_opencv:/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/my_controller_pkg:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_plugins:/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_sensors:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_models:/home/alr/Desktop/new_perception/new_eufs_ws/install/opencv_tests:/home/alr/Desktop/new_perception/new_eufs_ws/install/fsd_planner:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar:/opt/ros/humble LD_LIBRARY_PATH=/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_plugins/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_models/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda-12.9/lib64 /usr/bin/cmake --install /home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg
+[1.734s] colcon.colcon_core.environment Level 1 checking '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg' for CMake module files
+[1.734s] colcon.colcon_core.environment Level 1 checking '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg' for CMake config files
+[1.734s] colcon.colcon_core.shell Level 1 create_environment_hook('perception_pkg', 'cmake_prefix_path')
+[1.735s] colcon.colcon_core.shell INFO Creating environment hook '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/hook/cmake_prefix_path.ps1'
+[1.735s] colcon.colcon_core.shell INFO Creating environment descriptor '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/hook/cmake_prefix_path.dsv'
+[1.735s] colcon.colcon_core.shell INFO Creating environment hook '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/hook/cmake_prefix_path.sh'
+[1.736s] colcon.colcon_core.environment Level 1 checking '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/lib'
+[1.736s] colcon.colcon_core.environment Level 1 checking '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/bin'
+[1.736s] colcon.colcon_core.environment Level 1 checking '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/lib/pkgconfig/perception_pkg.pc'
+[1.736s] colcon.colcon_core.environment Level 1 checking '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/lib/python3.10/site-packages'
+[1.736s] colcon.colcon_core.environment Level 1 checking '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/bin'
+[1.736s] colcon.colcon_core.shell INFO Creating package script '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/package.ps1'
+[1.737s] colcon.colcon_core.shell INFO Creating package descriptor '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/package.dsv'
+[1.737s] colcon.colcon_core.shell INFO Creating package script '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/package.sh'
+[1.737s] colcon.colcon_core.shell INFO Creating package script '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/package.bash'
+[1.738s] colcon.colcon_core.shell INFO Creating package script '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/package.zsh'
+[1.738s] colcon.colcon_core.environment Level 1 create_file_with_runtime_dependencies(/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/colcon-core/packages/perception_pkg)
+[1.738s] colcon.colcon_core.environment Level 1 create_environment_scripts_only(perception_pkg)
+[1.738s] colcon.colcon_core.environment Level 1 checking '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg' for CMake module files
+[1.739s] colcon.colcon_core.environment Level 1 checking '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg' for CMake config files
+[1.739s] colcon.colcon_core.shell Level 1 create_environment_hook('perception_pkg', 'cmake_prefix_path')
+[1.739s] colcon.colcon_core.shell INFO Creating environment hook '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/hook/cmake_prefix_path.ps1'
+[1.739s] colcon.colcon_core.shell INFO Creating environment descriptor '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/hook/cmake_prefix_path.dsv'
+[1.739s] colcon.colcon_core.shell INFO Creating environment hook '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/hook/cmake_prefix_path.sh'
+[1.740s] colcon.colcon_core.environment Level 1 checking '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/lib'
+[1.740s] colcon.colcon_core.environment Level 1 checking '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/bin'
+[1.740s] colcon.colcon_core.environment Level 1 checking '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/lib/pkgconfig/perception_pkg.pc'
+[1.740s] colcon.colcon_core.environment Level 1 checking '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/lib/python3.10/site-packages'
+[1.740s] colcon.colcon_core.environment Level 1 checking '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/bin'
+[1.740s] colcon.colcon_core.shell INFO Creating package script '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/package.ps1'
+[1.740s] colcon.colcon_core.shell INFO Creating package descriptor '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/package.dsv'
+[1.741s] colcon.colcon_core.shell INFO Creating package script '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/package.sh'
+[1.741s] colcon.colcon_core.shell INFO Creating package script '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/package.bash'
+[1.741s] colcon.colcon_core.shell INFO Creating package script '/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/perception_pkg/package.zsh'
+[1.741s] colcon.colcon_core.environment Level 1 create_file_with_runtime_dependencies(/home/alr/Desktop/new_perception/new_eufs_ws/install/perception_pkg/share/colcon-core/packages/perception_pkg)
+[1.741s] colcon.colcon_parallel_executor.executor.parallel DEBUG closing loop
+[1.742s] colcon.colcon_parallel_executor.executor.parallel DEBUG loop closed
+[1.742s] colcon.colcon_parallel_executor.executor.parallel DEBUG run_until_complete finished with '0'
+[1.742s] colcon.colcon_core.event_reactor DEBUG joining thread
+[1.745s] colcon.colcon_core.plugin_system INFO Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[1.745s] colcon.colcon_core.plugin_system INFO Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[1.745s] colcon.colcon_notification.desktop_notification INFO Sending desktop notification using 'notify2'
+[1.756s] colcon.colcon_core.event_reactor DEBUG joined thread
+[1.756s] colcon.colcon_core.shell INFO Creating prefix script '/home/alr/Desktop/new_perception/new_eufs_ws/install/local_setup.ps1'
+[1.757s] colcon.colcon_core.shell INFO Creating prefix util module '/home/alr/Desktop/new_perception/new_eufs_ws/install/_local_setup_util_ps1.py'
+[1.757s] colcon.colcon_core.shell INFO Creating prefix chain script '/home/alr/Desktop/new_perception/new_eufs_ws/install/setup.ps1'
+[1.758s] colcon.colcon_core.shell INFO Creating prefix script '/home/alr/Desktop/new_perception/new_eufs_ws/install/local_setup.sh'
+[1.759s] colcon.colcon_core.shell INFO Creating prefix util module '/home/alr/Desktop/new_perception/new_eufs_ws/install/_local_setup_util_sh.py'
+[1.759s] colcon.colcon_core.shell INFO Creating prefix chain script '/home/alr/Desktop/new_perception/new_eufs_ws/install/setup.sh'
+[1.760s] colcon.colcon_core.shell INFO Creating prefix script '/home/alr/Desktop/new_perception/new_eufs_ws/install/local_setup.bash'
+[1.760s] colcon.colcon_core.shell INFO Creating prefix chain script '/home/alr/Desktop/new_perception/new_eufs_ws/install/setup.bash'
+[1.760s] colcon.colcon_core.shell INFO Creating prefix script '/home/alr/Desktop/new_perception/new_eufs_ws/install/local_setup.zsh'
+[1.761s] colcon.colcon_core.shell INFO Creating prefix chain script '/home/alr/Desktop/new_perception/new_eufs_ws/install/setup.zsh'

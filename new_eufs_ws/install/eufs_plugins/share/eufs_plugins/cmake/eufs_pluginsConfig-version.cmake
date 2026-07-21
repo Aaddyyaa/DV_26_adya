@@ -1,0 +1,1 @@
+/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_plugins/ament_cmake_core/eufs_pluginsConfig-version.cmake

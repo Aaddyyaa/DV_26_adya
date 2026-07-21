@@ -1,0 +1,1 @@
+/home/alr/Desktop/new_perception/new_eufs_ws/src/eufs_sim/eufs_models/include/eufs_models/vehicle_param.hpp

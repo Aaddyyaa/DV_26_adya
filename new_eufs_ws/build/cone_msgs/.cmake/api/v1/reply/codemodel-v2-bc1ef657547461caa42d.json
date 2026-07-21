@@ -1,0 +1,258 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-4f5220b05b0f1586e332.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						17,
+						18
+					]
+				},
+				{
+					"build" : "cone_msgs__py",
+					"jsonFile" : "directory-cone_msgs__py-b88d890e2f7657c7453f.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "/home/alr/Desktop/new_perception/new_eufs_ws/build/cone_msgs/cone_msgs__py",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "cone_msgs__rs",
+					"jsonFile" : "directory-cone_msgs__rs-6723030cd21e6332a2b7.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "/home/alr/Desktop/new_perception/new_eufs_ws/build/cone_msgs/cone_msgs__rs",
+					"targetIndexes" : 
+					[
+						16
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2
+					],
+					"name" : "cone_msgs",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17,
+						18
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ament_cmake_python_build_cone_msgs_egg::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ament_cmake_python_build_cone_msgs_egg-5b19ddf649ae3a7702fb.json",
+					"name" : "ament_cmake_python_build_cone_msgs_egg",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ament_cmake_python_symlink_cone_msgs::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ament_cmake_python_symlink_cone_msgs-a94b14fe5aef0f27d28c.json",
+					"name" : "ament_cmake_python_symlink_cone_msgs",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "cone_msgs::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-cone_msgs-a70cdbf3f5e14b0aafc5.json",
+					"name" : "cone_msgs",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "cone_msgs__cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-cone_msgs__cpp-c3b457d51382673b52ec.json",
+					"name" : "cone_msgs__cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "cone_msgs__py::@76a6f7ae6998a90db1ab",
+					"jsonFile" : "target-cone_msgs__py-cfaa04869f8e84fa2799.json",
+					"name" : "cone_msgs__py",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "cone_msgs__rosidl_generator_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-cone_msgs__rosidl_generator_c-87b4007d9867bfb6623f.json",
+					"name" : "cone_msgs__rosidl_generator_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "cone_msgs__rosidl_generator_py::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-cone_msgs__rosidl_generator_py-4be322eefb9459c52f59.json",
+					"name" : "cone_msgs__rosidl_generator_py",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "cone_msgs__rosidl_typesupport_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-cone_msgs__rosidl_typesupport_c-34c69a94e7eab3357dce.json",
+					"name" : "cone_msgs__rosidl_typesupport_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "cone_msgs__rosidl_typesupport_c__pyext::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-cone_msgs__rosidl_typesupport_c__pyext-948cdc4ccc72bf6083a5.json",
+					"name" : "cone_msgs__rosidl_typesupport_c__pyext",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "cone_msgs__rosidl_typesupport_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-cone_msgs__rosidl_typesupport_cpp-36f1e1514e5d5f643bc2.json",
+					"name" : "cone_msgs__rosidl_typesupport_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "cone_msgs__rosidl_typesupport_fastrtps_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-cone_msgs__rosidl_typesupport_fastrtps_c-940cbace68c476841f02.json",
+					"name" : "cone_msgs__rosidl_typesupport_fastrtps_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "cone_msgs__rosidl_typesupport_fastrtps_c__pyext::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-cone_msgs__rosidl_typesupport_fastrtps_c__pyext-8883f9bc390371e852fd.json",
+					"name" : "cone_msgs__rosidl_typesupport_fastrtps_c__pyext",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "cone_msgs__rosidl_typesupport_fastrtps_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-cone_msgs__rosidl_typesupport_fastrtps_cpp-7bdbd6907287ec28e7d9.json",
+					"name" : "cone_msgs__rosidl_typesupport_fastrtps_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "cone_msgs__rosidl_typesupport_introspection_c::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-cone_msgs__rosidl_typesupport_introspection_c-6e1969998eda01a74f76.json",
+					"name" : "cone_msgs__rosidl_typesupport_introspection_c",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "cone_msgs__rosidl_typesupport_introspection_c__pyext::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-cone_msgs__rosidl_typesupport_introspection_c__pyext-ea3cb9ea5d0dd6762f07.json",
+					"name" : "cone_msgs__rosidl_typesupport_introspection_c__pyext",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "cone_msgs__rosidl_typesupport_introspection_cpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-cone_msgs__rosidl_typesupport_introspection_cpp-1dfdee90decc9ef17ec7.json",
+					"name" : "cone_msgs__rosidl_typesupport_introspection_cpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "cone_msgs__rs::@a8bd1b72dc60576d716e",
+					"jsonFile" : "target-cone_msgs__rs-3b9dabd72bfa3d06efea.json",
+					"name" : "cone_msgs__rs",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "cone_msgs_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-cone_msgs_uninstall-90ec8bf095321307e711.json",
+					"name" : "cone_msgs_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-8154883064b96c31958b.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/alr/Desktop/new_perception/new_eufs_ws/build/cone_msgs",
+		"source" : "/home/alr/Desktop/new_perception/new_eufs_ws/src/cone_msgs"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

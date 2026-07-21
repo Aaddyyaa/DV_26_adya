@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "eufs_msgs__rs",
+		"source" : "/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_msgs/eufs_msgs__rs"
+	}
+}

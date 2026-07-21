@@ -1,0 +1,1 @@
+ament_cmake_symlink_install_targets("TARGET_FILES" "/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_plugins/gazebo_simulate_bounding_boxes/libgazebo_simulate_bounding_boxes.so" "TARGETS" "gazebo_simulate_bounding_boxes" "ARCHIVE_DESTINATION" "lib" "LIBRARY_DESTINATION" "lib" "RUNTIME_DESTINATION" "lib")

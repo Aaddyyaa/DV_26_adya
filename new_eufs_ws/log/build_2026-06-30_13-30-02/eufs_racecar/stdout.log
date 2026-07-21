@@ -1,0 +1,42 @@
+running develop
+running egg_info
+creating eufs_racecar.egg-info
+writing eufs_racecar.egg-info/PKG-INFO
+writing dependency_links to eufs_racecar.egg-info/dependency_links.txt
+writing requirements to eufs_racecar.egg-info/requires.txt
+writing top-level names to eufs_racecar.egg-info/top_level.txt
+writing manifest file 'eufs_racecar.egg-info/SOURCES.txt'
+reading manifest file 'eufs_racecar.egg-info/SOURCES.txt'
+writing manifest file 'eufs_racecar.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/lib/python3.10/site-packages/eufs-racecar.egg-link (link to .)
+
+Installed /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar
+running symlink_data
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/ament_index
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/ament_index/resource_index
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/ament_index/resource_index/packages
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/resource/eufs_racecar -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/ament_index/resource_index/packages
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/package.xml -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/meshes
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/meshes/ads_dv_chassis.dae -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/meshes
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/meshes/ads_wheel_right.dae -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/meshes
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/meshes/wheel_left.dae -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/meshes
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/meshes/wheel_right.dae -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/meshes
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/meshes/sisu-20d.dae -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/meshes
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/meshes/ads_wheel_left.dae -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/meshes
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/urdf
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/urdf/wheels.urdf.xacro -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/urdf
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/urdf/eufs_base.urdf.xacro -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/urdf
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/launch
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/launch/load_car.launch.py -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/launch
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/robots
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/robots/eufs
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/robots/eufs/configWet.yaml -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/robots/eufs
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/robots/eufs/robot.urdf.xacro -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/robots/eufs
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/robots/eufs/configDry.yaml -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/robots/eufs
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/robots/ads-dv
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/robots/ads-dv/configWet.yaml -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/robots/ads-dv
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/robots/ads-dv/ADS-DV Sensor Position.pdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/robots/ads-dv
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/robots/ads-dv/robot.urdf.xacro -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/robots/ads-dv
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_racecar/robots/ads-dv/configDry.yaml -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar/share/eufs_racecar/robots/ads-dv

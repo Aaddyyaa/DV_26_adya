@@ -1,0 +1,159 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-9f4b94c1a3f6ca454886.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10.2"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						5
+					]
+				},
+				{
+					"build" : "gazebo_cone_plugins",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-gazebo_cone_plugins-37244adc11813a6d0e40.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "gazebo_cone_plugins",
+					"targetIndexes" : 
+					[
+						1,
+						2
+					]
+				},
+				{
+					"build" : "gazebo_race_car_model",
+					"jsonFile" : "directory-gazebo_race_car_model-d8c2aa6f9b5ccc6b1327.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "gazebo_race_car_model",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "gazebo_simulate_bounding_boxes",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-gazebo_simulate_bounding_boxes-087611d4f0f6b539bc60.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "gazebo_simulate_bounding_boxes",
+					"targetIndexes" : 
+					[
+						4
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					],
+					"name" : "eufs_plugins",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "eufs_plugins_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-eufs_plugins_uninstall-5ab5b9868e1797ad468e.json",
+					"name" : "eufs_plugins_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "gazebo_camera_cones::@b22f54b45b7dc3a0057e",
+					"jsonFile" : "target-gazebo_camera_cones-19f97e5af2a36f8d33df.json",
+					"name" : "gazebo_camera_cones",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "gazebo_ground_truth_cones::@b22f54b45b7dc3a0057e",
+					"jsonFile" : "target-gazebo_ground_truth_cones-7c295084dadef1df9021.json",
+					"name" : "gazebo_ground_truth_cones",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "gazebo_race_car_model::@0836ac7da80f7ff63c61",
+					"jsonFile" : "target-gazebo_race_car_model-c1e80d7902d34afb6f15.json",
+					"name" : "gazebo_race_car_model",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "gazebo_simulate_bounding_boxes::@990e0539a4b8587c8dad",
+					"jsonFile" : "target-gazebo_simulate_bounding_boxes-df2a84b866bc41cda296.json",
+					"name" : "gazebo_simulate_bounding_boxes",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-a3a49f4456ce9535fa1a.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_plugins",
+		"source" : "/home/alr/Desktop/new_perception/new_eufs_ws/src/eufs_sim/eufs_plugins"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

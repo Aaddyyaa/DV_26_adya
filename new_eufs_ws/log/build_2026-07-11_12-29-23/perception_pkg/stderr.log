@@ -1,0 +1,11 @@
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Main/perception_node.cpp:267:6:[m[K [01;31m[Kerror: [m[Kno declaration matches ‘[01m[Kvoid PerceptionNode::temporalFilter(const std::vector<ConeDepth::ConeResult>&, eufs_msgs::msg::ConeArray&)[m[K’
+  267 | void [01;31m[KPerceptionNode[m[K::temporalFilter(
+      |      [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Main/perception_node.cpp:267:6:[m[K [01;36m[Knote: [m[Kno functions named ‘[01m[Kvoid PerceptionNode::temporalFilter(const std::vector<ConeDepth::ConeResult>&, eufs_msgs::msg::ConeArray&)[m[K’
+In file included from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Main/perception_node.cpp:3[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Main/perception_node.h:21:7:[m[K [01;36m[Knote: [m[K‘[01m[Kclass PerceptionNode[m[K’ defined here
+   21 | class [01;36m[KPerceptionNode[m[K : public rclcpp::Node
+      |       [01;36m[K^~~~~~~~~~~~~~[m[K
+gmake[2]: *** [CMakeFiles/perception_node.dir/build.make:90: CMakeFiles/perception_node.dir/src/Main/perception_node.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/perception_node.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

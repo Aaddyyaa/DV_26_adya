@@ -1,0 +1,28 @@
+running develop
+running egg_info
+creating src/eufs_rqt.egg-info
+writing src/eufs_rqt.egg-info/PKG-INFO
+writing dependency_links to src/eufs_rqt.egg-info/dependency_links.txt
+writing requirements to src/eufs_rqt.egg-info/requires.txt
+writing top-level names to src/eufs_rqt.egg-info/top_level.txt
+writing manifest file 'src/eufs_rqt.egg-info/SOURCES.txt'
+reading manifest file 'src/eufs_rqt.egg-info/SOURCES.txt'
+writing manifest file 'src/eufs_rqt.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt/lib/python3.10/site-packages/eufs-rqt.egg-link (link to src)
+Installing eufs_robot_steering_gui script to /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt/lib/eufs_rqt
+Installing mission_control_gui script to /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt/lib/eufs_rqt
+
+Installed /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_rqt/src
+running symlink_data
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt/share/eufs_rqt/config
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_rqt/config/eufs_sim.perspective -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt/share/eufs_rqt/config
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt/share/eufs_rqt/resource
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_rqt/resource/EUFSRobotSteeringGUI.ui -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt/share/eufs_rqt/resource
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_rqt/resource/MissionControlGUI.ui -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt/share/eufs_rqt/resource
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_rqt/plugin.xml -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt/share/eufs_rqt
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt/share/ament_index
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt/share/ament_index/resource_index
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt/share/ament_index/resource_index/packages
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_rqt/resource/eufs_rqt -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt/share/ament_index/resource_index/packages
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_rqt/package.xml -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt/share/eufs_rqt

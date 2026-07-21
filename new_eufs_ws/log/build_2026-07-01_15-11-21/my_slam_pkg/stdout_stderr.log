@@ -1,0 +1,506 @@
+[35m[1mConsolidate compiler generated dependencies of target eufs_slam_node[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/eufs_slam_node.dir/src/Slam.cpp.o[0m
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:129:70:[m[K [01;31m[Kerror: [m[Kexpected ‘[01m[K;[m[K’ at end of member declaration
+  129 |     void conesCallback(const eufs_msgs::msg::ConeArray::SharedPtr msg[01;31m[K)[m[K
+      |                                                                      [01;31m[K^[m[K
+      |                                                                       [32m[K;[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:[m[K In constructor ‘[01m[KFastSLAM2::FastSLAM2()[m[K’:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:85:89:[m[K [01;31m[Kerror: [m[K‘[01m[KrunSLAM[m[K’ is not a member of ‘[01m[KFastSLAM2[m[K’
+   85 |  timer_ = create_wall_timer(std::chrono::milliseconds(50), std::bind(&FastSLAM2::[01;31m[KrunSLAM[m[K, this));
+      |                                                                                  [01;31m[K^~~~~~~[m[K
+
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:[m[K At global scope:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:131:37:[m[K [01;31m[Kerror: [m[Kinvalid declarator before ‘[01m[Klock[m[K’
+  131 |         std::lock_guard<std::mutex> [01;31m[Klock[m[K(slam_mutex_);
+      |                                     [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:132:9:[m[K [01;31m[Kerror: [m[K‘[01m[Kz_buffer_[m[K’ does not name a type
+  132 |         [01;31m[Kz_buffer_[m[K.clear();
+      |         [01;31m[K^~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:133:9:[m[K [01;31m[Kerror: [m[Kexpected unqualified-id before ‘[01m[Kfor[m[K’
+  133 |         [01;31m[Kfor[m[K (const auto &c : msg->blue_cones) addConeToBuffer(c, 0);
+      |         [01;31m[K^~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:134:9:[m[K [01;31m[Kerror: [m[Kexpected unqualified-id before ‘[01m[Kfor[m[K’
+  134 |         [01;31m[Kfor[m[K (const auto &c : msg->yellow_cones) addConeToBuffer(c, 1);
+      |         [01;31m[K^~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:135:9:[m[K [01;31m[Kerror: [m[Kexpected unqualified-id before ‘[01m[Kfor[m[K’
+  135 |         [01;31m[Kfor[m[K (const auto &c : msg->orange_cones) addConeToBuffer(c, 2);
+      |         [01;31m[K^~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:136:9:[m[K [01;31m[Kerror: [m[Kexpected unqualified-id before ‘[01m[Kfor[m[K’
+  136 |         [01;31m[Kfor[m[K (const auto &c : msg->big_orange_cones) addConeToBuffer(c, 2) ;
+      |         [01;31m[K^~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:137:9:[m[K [01;31m[Kerror: [m[Kexpected unqualified-id before ‘[01m[Kfor[m[K’
+  137 |         [01;31m[Kfor[m[K (const auto &c : msg->unknown_color_cones) addConeToBuffer(c, 3);
+      |         [01;31m[K^~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:139:5:[m[K [01;31m[Kerror: [m[Kexpected declaration before ‘[01m[K}[m[K’ token
+  139 |     [01;31m[K}[m[K
+      |     [01;31m[K^[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:[m[K In function ‘[01m[Kvoid addConeToBuffer(const Point&, int)[m[K’:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:146:44:[m[K [01;31m[Kerror: [m[K‘[01m[Kz_buffer_[m[K’ was not declared in this scope
+  146 |         if (z.range > 0.1 && z.range < 15) [01;31m[Kz_buffer_[m[K.push_back(z);
+      |                                            [01;31m[K^~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:[m[K In function ‘[01m[Kvoid predictParticles(double, double, double)[m[K’:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:150:50:[m[K [01;31m[Kerror: [m[K‘[01m[KQ_control_[m[K’ was not declared in this scope
+  150 |         double dyn_vx_noise = std::max(std::sqrt([01;31m[KQ_control_[m[K(0,0)), std::abs(vx) * 0.1);
+      |                                                  [01;31m[K^~~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:158:24:[m[K [01;31m[Kerror: [m[K‘[01m[Kparticles_[m[K’ was not declared in this scope; did you mean ‘[01m[KParticle[m[K’?
+  158 |         for (auto &p : [01;31m[Kparticles_[m[K) {
+      |                        [01;31m[K^~~~~~~~~~[m[K
+      |                        [32m[KParticle[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:159:45:[m[K [01;31m[Kerror: [m[K‘[01m[Kgen_[m[K’ was not declared in this scope
+  159 |             double noisy_vx = vx + noise_vx([01;31m[Kgen_[m[K);
+      |                                             [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:[m[K In function ‘[01m[Kvoid updateParticles(const std::vector<ConeDetection>&)[m[K’:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:178:24:[m[K [01;31m[Kerror: [m[K‘[01m[Kparticles_[m[K’ was not declared in this scope; did you mean ‘[01m[KParticle[m[K’?
+  178 |         for (auto &p : [01;31m[Kparticles_[m[K) {
+      |                        [01;31m[K^~~~~~~~~~[m[K
+      |                        [32m[KParticle[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:204:80:[m[K [01;31m[Kerror: [m[K‘[01m[KR_obs_[m[K’ was not declared in this scope
+  204 |                     Eigen::Matrix2d S = Hf * p.map[i].sigma * Hf.transpose() + [01;31m[KR_obs_[m[K;
+      |                                                                                [01;31m[K^~~~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:207:25:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  207 |                         [01;31m[Kthis[m[K->get_logger(),
+      |                         [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:207:25:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:206:21:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+  206 |                     [01;31m[KRCLCPP_INFO[m[K(
+      |                     [01;31m[K^~~~~~~~~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:207:25:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  207 |                         [01;31m[Kthis[m[K->get_logger(),
+      |                         [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:207:25:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  207 |                         [01;31m[Kthis[m[K->get_logger(),
+      |                         [01;31m[K^~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:214:25:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  214 |                         [01;31m[Kthis[m[K->get_logger(),
+      |                         [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:214:25:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:213:21:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+  213 |                     [01;31m[KRCLCPP_INFO[m[K(
+      |                     [01;31m[K^~~~~~~~~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:214:25:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  214 |                         [01;31m[Kthis[m[K->get_logger(),
+      |                         [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:214:25:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  214 |                         [01;31m[Kthis[m[K->get_logger(),
+      |                         [01;31m[K^~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:225:25:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  225 |                         [01;31m[Kthis[m[K->get_logger(),
+      |                         [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:225:25:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:224:21:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+  224 |                     [01;31m[KRCLCPP_INFO[m[K(
+      |                     [01;31m[K^~~~~~~~~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:225:25:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  225 |                         [01;31m[Kthis[m[K->get_logger(),
+      |                         [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:225:25:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  225 |                         [01;31m[Kthis[m[K->get_logger(),
+      |                         [01;31m[K^~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:238:24:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  238 |                        [01;31m[Kthis[m[K->get_logger(),
+      |                        [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:238:24:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:237:21:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+  237 |                     [01;31m[KRCLCPP_INFO[m[K(
+      |                     [01;31m[K^~~~~~~~~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:238:24:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  238 |                        [01;31m[Kthis[m[K->get_logger(),
+      |                        [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:238:24:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  238 |                        [01;31m[Kthis[m[K->get_logger(),
+      |                        [01;31m[K^~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:252:24:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  252 |                        [01;31m[Kthis[m[K->get_logger(),
+      |                        [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:252:24:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:251:21:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+  251 |                     [01;31m[KRCLCPP_INFO[m[K(
+      |                     [01;31m[K^~~~~~~~~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:252:24:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  252 |                        [01;31m[Kthis[m[K->get_logger(),
+      |                        [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:252:24:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  252 |                        [01;31m[Kthis[m[K->get_logger(),
+      |                        [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:278:74:[m[K [01;31m[Kerror: [m[K‘[01m[KR_obs_[m[K’ was not declared in this scope
+  278 |                     Eigen::Matrix2d S = Hf * lm.sigma * Hf.transpose() + [01;31m[KR_obs_[m[K;
+      |                                                                          [01;31m[K^~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:283:26:[m[K [01;31m[Kerror: [m[K‘[01m[Klap_closed_[m[K’ was not declared in this scope
+  283 |                     if (![01;31m[Klap_closed_[m[K) {
+      |                          [01;31m[K^~~~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:308:11:[m[K [01;31m[Kerror: [m[K‘[01m[Klap_closed_[m[K’ was not declared in this scope
+  308 | else if (![01;31m[Klap_closed_[m[K)
+      |           [01;31m[K^~~~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:312:10:[m[K [01;31m[Kerror: [m[K‘[01m[Ktotal_dist_[m[K’ was not declared in this scope
+  312 |         ([01;31m[Ktotal_dist_[m[K > 30.0 && dist_to_origin < 15.0);
+      |          [01;31m[K^~~~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:345:33:[m[K [01;31m[Kerror: [m[K‘[01m[KR_obs_[m[K’ was not declared in this scope
+  345 |             new_lm.sigma = Gz * [01;31m[KR_obs_[m[K * Gz.transpose();
+      |                                 [01;31m[K^~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:[m[K In function ‘[01m[Kvoid resampleParticles()[m[K’:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:360:30:[m[K [01;31m[Kerror: [m[K‘[01m[Kparticles_[m[K’ was not declared in this scope; did you mean ‘[01m[KParticle[m[K’?
+  360 |         for (const auto &p : [01;31m[Kparticles_[m[K) sum_w += p.weight;
+      |                              [01;31m[K^~~~~~~~~~[m[K
+      |                              [32m[KParticle[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:363:28:[m[K [01;31m[Kerror: [m[K‘[01m[Kparticles_[m[K’ was not declared in this scope; did you mean ‘[01m[KParticle[m[K’?
+  363 |             for (auto &p : [01;31m[Kparticles_[m[K) p.weight = 1.0 / num_particles_;
+      |                            [01;31m[K^~~~~~~~~~[m[K
+      |                            [32m[KParticle[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:363:57:[m[K [01;31m[Kerror: [m[K‘[01m[Knum_particles_[m[K’ was not declared in this scope
+  363 |             for (auto &p : particles_) p.weight = 1.0 / [01;31m[Knum_particles_[m[K;
+      |                                                         [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:368:24:[m[K [01;31m[Kerror: [m[K‘[01m[Kparticles_[m[K’ was not declared in this scope; did you mean ‘[01m[KParticle[m[K’?
+  368 |         for (auto &p : [01;31m[Kparticles_[m[K) {
+      |                        [01;31m[K^~~~~~~~~~[m[K
+      |                        [32m[KParticle[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:374:22:[m[K [01;31m[Kerror: [m[K‘[01m[Knum_particles_[m[K’ was not declared in this scope
+  374 |         if (n_eff >= [01;31m[Knum_particles_[m[K / 2.0) return;
+      |                      [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:377:64:[m[K [01;31m[Kerror: [m[K‘[01m[Knum_particles_[m[K’ was not declared in this scope; did you mean ‘[01m[Knew_particles[m[K’?
+  377 |         std::uniform_real_distribution<double> dist(0.0, 1.0 / [01;31m[Knum_particles_[m[K);
+      |                                                                [01;31m[K^~~~~~~~~~~~~~[m[K
+      |                                                                [32m[Knew_particles[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:378:25:[m[K [01;31m[Kerror: [m[K‘[01m[Kgen_[m[K’ was not declared in this scope
+  378 |         double r = dist([01;31m[Kgen_[m[K);
+      |                         [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:379:20:[m[K [01;31m[Kerror: [m[K‘[01m[Kparticles_[m[K’ was not declared in this scope; did you mean ‘[01m[KParticle[m[K’?
+  379 |         double c = [01;31m[Kparticles_[m[K[0].weight;
+      |                    [01;31m[K^~~~~~~~~~[m[K
+      |                    [32m[KParticle[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:[m[K In function ‘[01m[KParticle getBestParticle()[m[K’:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:406:25:[m[K [01;31m[Kerror: [m[K‘[01m[Kparticles_[m[K’ was not declared in this scope; did you mean ‘[01m[KParticle[m[K’?
+  406 |         Particle best = [01;31m[Kparticles_[m[K[0];
+      |                         [01;31m[K^~~~~~~~~~[m[K
+      |                         [32m[KParticle[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:[m[K In function ‘[01m[Kvoid runSLAM()[m[K’:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:418:46:[m[K [01;31m[Kerror: [m[K‘[01m[Kslam_mutex_[m[K’ was not declared in this scope
+  418 |             std::lock_guard<std::mutex> lock([01;31m[Kslam_mutex_[m[K);
+      |                                              [01;31m[K^~~~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:420:17:[m[K [01;31m[Kerror: [m[K‘[01m[Kdt_[m[K’ was not declared in this scope
+  420 |             if ([01;31m[Kdt_[m[K <= 0.0 || dt_ > 0.2) {
+      |                 [01;31m[K^~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:423:34:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  423 |                 t.header.stamp = [01;31m[Kthis[m[K->now(); t.header.frame_id = "map";
+      |                                  [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:427:17:[m[K [01;31m[Kerror: [m[K‘[01m[Ktf_broadcaster_[m[K’ was not declared in this scope
+  427 |                 [01;31m[Ktf_broadcaster_[m[K->sendTransform(t);
+      |                 [01;31m[K^~~~~~~~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:430:23:[m[K [01;31m[Kerror: [m[K‘[01m[Kz_buffer_[m[K’ was not declared in this scope
+  430 |             local_z = [01;31m[Kz_buffer_[m[K; z_buffer_.clear();
+      |                       [01;31m[K^~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:431:24:[m[K [01;31m[Kerror: [m[K‘[01m[Kdt_[m[K’ was not declared in this scope
+  431 |             local_dt = [01;31m[Kdt_[m[K; dt_ = 0.0;
+      |                        [01;31m[K^~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:432:24:[m[K [01;31m[Kerror: [m[K‘[01m[Kvx_[m[K’ was not declared in this scope
+  432 |             local_vx = [01;31m[Kvx_[m[K; local_yaw_rate = yaw_rate_;
+      |                        [01;31m[K^~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:432:46:[m[K [01;31m[Kerror: [m[K‘[01m[Kyaw_rate_[m[K’ was not declared in this scope
+  432 |             local_vx = vx_; local_yaw_rate = [01;31m[Kyaw_rate_[m[K;
+      |                                              [01;31m[K^~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:437:9:[m[K [01;31m[Kerror: [m[K‘[01m[Ktotal_dist_[m[K’ was not declared in this scope
+  437 |         [01;31m[Ktotal_dist_[m[K += std::abs(local_vx) * local_dt;
+      |         [01;31m[K^~~~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:450:28:[m[K [01;31m[Kerror: [m[K‘[01m[Klast_lap_dist_[m[K’ was not declared in this scope
+  450 |         if ((total_dist_ - [01;31m[Klast_lap_dist_[m[K) >30.0 && orange_cones_seen >= 2 && dist_to_origin <1.0 && facing_forward) {
+      |                            [01;31m[K^~~~~~~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:451:13:[m[K [01;31m[Kerror: [m[K‘[01m[Klap_count_[m[K’ was not declared in this scope
+  451 |             [01;31m[Klap_count_[m[K++;
+      |             [01;31m[K^~~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:453:18:[m[K [01;31m[Kerror: [m[K‘[01m[Klap_closed_[m[K’ was not declared in this scope
+  453 |             if (![01;31m[Klap_closed_[m[K) {
+      |                  [01;31m[K^~~~~~~~~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:455:29:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  455 |                 RCLCPP_WARN([01;31m[Kthis[m[K->get_logger(), "🏁 LAP 1 COMPLETE! Map Locked.");
+      |                             [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:455:29:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:455:17:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+  455 |                 [01;31m[KRCLCPP_WARN[m[K(this->get_logger(), "🏁 LAP 1 COMPLETE! Map Locked.");
+      |                 [01;31m[K^~~~~~~~~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:455:29:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  455 |                 RCLCPP_WARN([01;31m[Kthis[m[K->get_logger(), "🏁 LAP 1 COMPLETE! Map Locked.");
+      |                             [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:455:29:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  455 |                 RCLCPP_WARN([01;31m[Kthis[m[K->get_logger(), "🏁 LAP 1 COMPLETE! Map Locked.");
+      |                             [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:456:32:[m[K [01;31m[Kerror: [m[K‘[01m[Kparticles_[m[K’ was not declared in this scope; did you mean ‘[01m[KParticle[m[K’?
+  456 |                 for (auto &p : [01;31m[Kparticles_[m[K) p.map = best_p.map; // Lock all particles to current best map
+      |                                [01;31m[K^~~~~~~~~~[m[K
+      |                                [32m[KParticle[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:468:14:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  468 |              [01;31m[Kthis[m[K->get_logger(),
+      |              [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:468:14:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:467:10:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+  467 |          [01;31m[KRCLCPP_WARN[m[K(
+      |          [01;31m[K^~~~~~~~~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:468:14:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  468 |              [01;31m[Kthis[m[K->get_logger(),
+      |              [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:468:14:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  468 |              [01;31m[Kthis[m[K->get_logger(),
+      |              [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:475:32:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  475 |         out_msg.header.stamp = [01;31m[Kthis[m[K->now();
+      |                                [01;31m[K^~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:481:13:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  481 |             [01;31m[Kthis[m[K->get_logger(),
+      |             [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:481:13:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:480:9:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+  480 |         [01;31m[KRCLCPP_WARN[m[K(
+      |         [01;31m[K^~~~~~~~~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:481:13:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  481 |             [01;31m[Kthis[m[K->get_logger(),
+      |             [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:481:13:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  481 |             [01;31m[Kthis[m[K->get_logger(),
+      |             [01;31m[K^~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:498:12:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  498 |            [01;31m[Kthis[m[K->get_logger(),
+      |            [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:498:12:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:497:9:[m[K [01;31m[Kerror: [m[Ktemplate argument 1 is invalid
+  497 |         [01;31m[KRCLCPP_WARN[m[K(
+      |         [01;31m[K^~~~~~~~~~~[m[K
+In file included from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/logging.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/client.hpp:40[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/callback_group.hpp:24[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/any_executable.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategy.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/memory_strategies.hpp:18[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor_options.hpp:20[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executor.hpp:37[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors/multi_threaded_executor.hpp:25[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/executors.hpp:21[m[K,
+                 from [01m[K/opt/ros/humble/include/rclcpp/rclcpp/rclcpp.hpp:155[m[K,
+                 from [01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:8[m[K:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:498:12:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  498 |            [01;31m[Kthis[m[K->get_logger(),
+      |            [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:498:12:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  498 |            [01;31m[Kthis[m[K->get_logger(),
+      |            [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:505:9:[m[K [01;31m[Kerror: [m[K‘[01m[Kcones_pub_[m[K’ was not declared in this scope
+  505 |         [01;31m[Kcones_pub_[m[K->publish(out_msg);
+      |         [01;31m[K^~~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:509:34:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  509 |         slam_odom.header.stamp = [01;31m[Kthis[m[K->now();
+      |                                  [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:517:9:[m[K [01;31m[Kerror: [m[K‘[01m[Kslam_odom_pub_[m[K’ was not declared in this scope; did you mean ‘[01m[Kslam_odom[m[K’?
+  517 |         [01;31m[Kslam_odom_pub_[m[K->publish(slam_odom);
+      |         [01;31m[K^~~~~~~~~~~~~~[m[K
+      |         [32m[Kslam_odom[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:521:26:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  521 |         t.header.stamp = [01;31m[Kthis[m[K->now(); t.header.frame_id = "map"; t.child_frame_id = "base_footprint";
+      |                          [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:524:9:[m[K [01;31m[Kerror: [m[K‘[01m[Ktf_broadcaster_[m[K’ was not declared in this scope
+  524 |         [01;31m[Ktf_broadcaster_[m[K->sendTransform(t);
+      |         [01;31m[K^~~~~~~~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:535:30:[m[K [01;31m[Kerror: [m[Kinvalid use of ‘[01m[Kthis[m[K’ in non-member function
+  535 |             m.header.stamp = [01;31m[Kthis[m[K->now(); m.header.frame_id = "map"; m.ns = "track_cones"; m.id = i;
+      |                              [01;31m[K^~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:544:9:[m[K [01;31m[Kerror: [m[K‘[01m[Knative_marker_pub_[m[K’ was not declared in this scope
+  544 |         [01;31m[Knative_marker_pub_[m[K->publish(marker_array);
+      |         [01;31m[K^~~~~~~~~~~~~~~~~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:[m[K At global scope:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/my_slam_pkg/src/Slam.cpp:546:1:[m[K [01;31m[Kerror: [m[Kexpected declaration before ‘[01m[K}[m[K’ token
+  546 | [01;31m[K}[m[K;
+      | [01;31m[K^[m[K
+gmake[2]: *** [CMakeFiles/eufs_slam_node.dir/build.make:76: CMakeFiles/eufs_slam_node.dir/src/Slam.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/eufs_slam_node.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

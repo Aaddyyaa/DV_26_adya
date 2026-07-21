@@ -1,0 +1,1 @@
+/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_msgs/rosidl_typesupport_introspection_c/eufs_msgs/msg/detail/chassis_command__rosidl_typesupport_introspection_c.h

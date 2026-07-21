@@ -1,0 +1,10 @@
+/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg/CMakeFiles/uninstall.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg/CMakeFiles/perception_pkg_uninstall.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg/CMakeFiles/perception_node.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg/CMakeFiles/test.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg/CMakeFiles/edit_cache.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg/CMakeFiles/rebuild_cache.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg/CMakeFiles/list_install_components.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg/CMakeFiles/install.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg/CMakeFiles/install/local.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg/CMakeFiles/install/strip.dir

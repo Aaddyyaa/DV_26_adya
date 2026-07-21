@@ -1,0 +1,7 @@
+#!/usr/bin/python3
+# EASY-INSTALL-DEV-SCRIPT: 'eufs-launcher==2.0.0','eufs_launcher'
+__requires__ = 'eufs-launcher==2.0.0'
+__import__('pkg_resources').require('eufs-launcher==2.0.0')
+__file__ = '/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_launcher/scripts/eufs_launcher'
+with open(__file__) as f:
+    exec(compile(f.read(), __file__, 'exec'))

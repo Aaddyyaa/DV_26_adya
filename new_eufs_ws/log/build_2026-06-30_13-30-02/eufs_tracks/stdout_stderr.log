@@ -1,0 +1,133 @@
+running develop
+running egg_info
+creating eufs_tracks.egg-info
+writing eufs_tracks.egg-info/PKG-INFO
+writing dependency_links to eufs_tracks.egg-info/dependency_links.txt
+writing entry points to eufs_tracks.egg-info/entry_points.txt
+writing requirements to eufs_tracks.egg-info/requires.txt
+writing top-level names to eufs_tracks.egg-info/top_level.txt
+writing manifest file 'eufs_tracks.egg-info/SOURCES.txt'
+reading manifest file 'eufs_tracks.egg-info/SOURCES.txt'
+writing manifest file 'eufs_tracks.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/lib/python3.10/site-packages/eufs-tracks.egg-link (link to .)
+Installing eufs_tracks_converter script to /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/lib/eufs_tracks
+Installing eufs_tracks_generator script to /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/lib/eufs_tracks
+
+Installed /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks
+running symlink_data
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/package.xml -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/plugin.xml -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/ament_index
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/ament_index/resource_index
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/ament_index/resource_index/packages
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/resource/eufs_tracks -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/ament_index/resource_index/packages
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/csv
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/csv/skidpad.csv -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/csv
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/csv/hairpins_increasing_difficulty.csv -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/csv
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/csv/acceleration.csv -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/csv
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/csv/garden_light.csv -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/csv
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/csv/boa_constrictor.csv -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/csv
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/csv/its_a_mess.csv -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/csv
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/csv/bone.csv -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/csv
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/csv/rand.csv -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/csv
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/csv/comp_2021.csv -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/csv
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/csv/small_track.csv -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/csv
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/csv/rectangle.csv -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/csv
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/csv/peanut.csv -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/csv
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/image
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/image/skidpad.png -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/image
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/image/comp_2021.png -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/image
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/launch
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/launch/hairpins_increasing_difficulty.launch -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/launch
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/launch/acceleration.launch -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/launch
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/launch/boa_constrictor.launch -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/launch
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/launch/comp_2021.launch -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/launch
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/launch/rectangle.launch -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/launch
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/launch/eufs_track_generator.launch.py -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/launch
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/launch/empty.launch -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/launch
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/launch/its_a_mess.launch -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/launch
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/launch/small_track.launch -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/launch
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/launch/peanut.launch -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/launch
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/launch/garden_light.launch -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/launch
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/launch/rand.launch -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/launch
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/launch/skidpad.launch -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/launch
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/launch/blacklist.txt -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/launch
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/materials
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/materials/asphalt.jpg -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/materials
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/meshes
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/meshes/cone_blue.dae -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/meshes
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/meshes/cone_big.dae -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/meshes
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/meshes/cone_yellow.dae -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/meshes
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/meshes/MonkeyNoise.dae -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/meshes
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/meshes/NoiseCube.dae -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/meshes
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/meshes/cone.dae -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/meshes
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/worlds
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/worlds/comp_2021.world -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/worlds
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/worlds/garden_light.world -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/worlds
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/worlds/rectangle.world -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/worlds
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/worlds/hairpins_increasing_difficulty.world -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/worlds
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/worlds/skidpad.world -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/worlds
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/worlds/peanut.world -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/worlds
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/worlds/boa_constrictor.world -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/worlds
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/worlds/rand.world -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/worlds
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/worlds/its_a_mess.world -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/worlds
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/worlds/acceleration.world -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/worlds
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/worlds/small_track.world -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/worlds
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/resource
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/resource/randgen_model_template
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/resource/randgen_model_template/model.sdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/resource/randgen_model_template
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/resource/randgen_model_template/model.config -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/resource/randgen_model_template
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/resource/noiseFiles.txt -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/resource
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/resource/randgen_launch_template -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/resource
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/resource/randgen_world_template -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/resource
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/resource/conversion_tool.ui -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/resource
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/ground_plane
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/ground_plane/model.sdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/ground_plane
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/ground_plane/model.config -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/ground_plane
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/orange_cone
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/orange_cone/model.sdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/orange_cone
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/orange_cone/model.config -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/orange_cone
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/yellow_cone
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/yellow_cone/model.sdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/yellow_cone
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/yellow_cone/model.config -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/yellow_cone
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/skidpad
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/skidpad/model.sdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/skidpad
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/skidpad/model.config -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/skidpad
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/its_a_mess
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/its_a_mess/model.sdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/its_a_mess
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/its_a_mess/model.config -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/its_a_mess
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/acceleration
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/acceleration/model.sdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/acceleration
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/acceleration/model.config -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/acceleration
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/hairpins_increasing_difficulty
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/hairpins_increasing_difficulty/model.sdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/hairpins_increasing_difficulty
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/hairpins_increasing_difficulty/model.config -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/hairpins_increasing_difficulty
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/comp_2021
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/comp_2021/model.sdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/comp_2021
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/comp_2021/model.config -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/comp_2021
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/small_track
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/small_track/model.sdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/small_track
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/small_track/model.config -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/small_track
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/rectangle
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/rectangle/model.sdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/rectangle
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/rectangle/model.config -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/rectangle
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/peanut
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/peanut/model.sdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/peanut
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/peanut/model.config -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/peanut
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/blue_cone
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/blue_cone/model.sdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/blue_cone
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/blue_cone/model.config -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/blue_cone
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/rand
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/rand/model.sdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/rand
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/rand/model.config -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/rand
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/boa_constrictor
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/boa_constrictor/model.sdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/boa_constrictor
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/boa_constrictor/model.config -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/boa_constrictor
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/big_cone
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/big_cone/model.sdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/big_cone
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/big_cone/model.config -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/big_cone
+creating /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/garden_light
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/garden_light/model.sdf -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/garden_light
+symbolically linking /home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/models/garden_light/model.config -> /home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks/share/eufs_tracks/models/garden_light

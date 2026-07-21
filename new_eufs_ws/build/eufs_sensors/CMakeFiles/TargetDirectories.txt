@@ -1,0 +1,9 @@
+/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_sensors/CMakeFiles/uninstall.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_sensors/CMakeFiles/eufs_sensors_uninstall.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_sensors/CMakeFiles/test.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_sensors/CMakeFiles/edit_cache.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_sensors/CMakeFiles/rebuild_cache.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_sensors/CMakeFiles/list_install_components.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_sensors/CMakeFiles/install.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_sensors/CMakeFiles/install/local.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_sensors/CMakeFiles/install/strip.dir

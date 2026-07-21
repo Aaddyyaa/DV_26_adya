@@ -1,0 +1,109 @@
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Depth/depth.cpp:[m[K In member function ‘[01m[Kbool ConeDepth::CameraConfig::load_from_file(const string&)[m[K’:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Depth/depth.cpp:66:15:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+   66 |               [01;31m[K<<[m[K " fx=" << fx << " fy=" << fy
+      |               [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Depth/depth.cpp:[m[K In function ‘[01m[KConeDepth::MatchResult ConeDepth::match_keypoint(const cv::Mat&, const cv::Mat&, const Point2f&, const ConeDepth::PipelineConfig&)[m[K’:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Depth/depth.cpp:220:9:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  220 |         [01;31m[K<<[m[K "[MATCH FAIL] "
+      |         [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Depth/depth.cpp:234:9:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  234 |         [01;31m[K<<[m[K "[UNIQUE FAIL] "
+      |         [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Calibration/calibration.cpp:[m[K In function ‘[01m[Kbool collect_corners(const string&, std::vector<std::vector<cv::Point_<float> > >&, cv::Size&, const string&)[m[K’:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Calibration/calibration.cpp:136:15:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  136 |               [01;31m[K<<[m[K "  Image size: " << img_size << "\n";
+      |               [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Calibration/calibration.cpp:[m[K In function ‘[01m[Kvoid compute_rectification_maps(cv::Mat&, cv::Mat&, cv::Mat&, cv::Mat&)[m[K’:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Calibration/calibration.cpp:409:15:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  409 |               [01;31m[K<<[m[K calibration_img_size << " images.\n";
+      |               [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Cone/cone.cpp:[m[K In function ‘[01m[Kstd::vector<Detection> detect(const cv::Mat&, cv::dnn::dnn4_v20250619::Net&)[m[K’:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Cone/cone.cpp:61:11:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+   61 |           [01;31m[K<<[m[K img.cols << "x" << img.rows << std::endl;
+      |           [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Cone/cone.cpp:64:11:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+   64 |           [01;31m[K<<[m[K blob.size[0] << " "
+      |           [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Cone/cone.cpp:83:18:[m[K [01;35m[Kwarning: [m[Kunused variable ‘[01m[Kn[m[K’ [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-variable-Wunused-variable]8;;[m[K]
+   83 | for (const auto &[01;35m[Kn[m[K : out_names)
+      |                  [01;35m[K^[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Cone/cone.cpp:98:15:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+   98 |               [01;31m[K<<[m[K raw.size[i] << std::endl;
+      |               [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Cone/cone.cpp:148:15:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  148 |               [01;31m[K<<[m[K raw.size[i] << std::endl;
+      |               [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Cone/cone.cpp:159:9:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  159 |         [01;31m[K<<[m[K "[" << i << "] "
+      |         [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Cone/cone.cpp:199:13:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  199 |             [01;31m[K<<[m[K "  "
+      |             [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Cone/cone.cpp:207:12:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  207 |            [01;31m[K<<[m[K "Predicted class = "
+      |            [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Cone/cone.cpp:227:5:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  227 |     [01;31m[K<<[m[K "[BOX] "
+      |     [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Cone/cone.cpp:248:5:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  248 |     [01;31m[K<<[m[K "[PRE NMS] "
+      |     [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Cone/cone.cpp:288:9:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  288 |         [01;31m[K<<[m[K "\n========== FINAL DETECTION ==========\n"
+      |         [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Cone/cone.cpp:275:10:[m[K [01;35m[Kwarning: [m[Kunused variable ‘[01m[Kidx[m[K’ [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-variable-Wunused-variable]8;;[m[K]
+  275 | for (int [01;35m[Kidx[m[K : nms_idx)
+      |          [01;35m[K^~~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Cone/cone.cpp:303:11:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  303 |           [01;31m[K<<[m[K detections.size()
+      |           [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Cone/cone.cpp:[m[K In function ‘[01m[Kvoid draw_detections(cv::Mat&, const std::vector<Detection>&)[m[K’:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Cone/cone.cpp:324:13:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  324 |             [01;31m[K<<[m[K "\n========== DRAW ==========\n"
+      |             [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Cone/cone.cpp:337:13:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  337 |             [01;31m[K<<[m[K "BGR = ("
+      |             [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Keypoints/keypoints.cpp:[m[K In function ‘[01m[Kstd::vector<Keypoints> detect_keypoints(std::vector<Detection>&, cv::Mat&, cv::dnn::dnn4_v20250619::Net&)[m[K’:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Keypoints/keypoints.cpp:71:15:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+   71 |               [01;31m[K<<[m[K detections.size() << std::endl;
+      |               [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Keypoints/keypoints.cpp:75:9:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+   75 |         [01;31m[K<<[m[K "[INPUT BOX] "
+      |         [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Keypoints/keypoints.cpp:85:5:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+   85 |     [01;31m[K<<[m[K "img = "
+      |     [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Keypoints/keypoints.cpp:90:5:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+   90 |     [01;31m[K<<[m[K "det = "
+      |     [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Keypoints/keypoints.cpp:102:5:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  102 |     [01;31m[K<<[m[K "roi = "
+      |     [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Keypoints/keypoints.cpp:112:11:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  112 |           [01;31m[K<<[m[K roi_rect.x << " "
+      |           [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Keypoints/keypoints.cpp:159:5:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  159 |     [01;31m[K<<[m[K "[BOX] "
+      |     [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Keypoints/keypoints.cpp:208:11:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  208 |           [01;31m[K<<[m[K best.confidence << std::endl;
+      |           [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Keypoints/keypoints.cpp:214:11:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  214 |           [01;31m[K<<[m[K results.size() << std::endl;
+      |           [01;31m[K^~[m[K
+gmake[2]: *** [CMakeFiles/perception_node.dir/build.make:146: CMakeFiles/perception_node.dir/src/Calibration/calibration.cpp.o] Error 1
+gmake[2]: *** Waiting for unfinished jobs....
+gmake[2]: *** [CMakeFiles/perception_node.dir/build.make:132: CMakeFiles/perception_node.dir/src/Depth/depth.cpp.o] Error 1
+gmake[2]: *** [CMakeFiles/perception_node.dir/build.make:104: CMakeFiles/perception_node.dir/src/Cone/cone.cpp.o] Error 1
+gmake[2]: *** [CMakeFiles/perception_node.dir/build.make:118: CMakeFiles/perception_node.dir/src/Keypoints/keypoints.cpp.o] Error 1
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Main/perception_node.cpp:[m[K In member function ‘[01m[Kvoid PerceptionNode::processFrame()[m[K’:
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Main/perception_node.cpp:167:9:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  167 |         [01;31m[K<<[m[K "class_id=" << d.class_id
+      |         [01;31m[K^~[m[K
+[01m[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Main/perception_node.cpp:227:8:[m[K [01;31m[Kerror: [m[Kexpected primary-expression before ‘[01m[K<<[m[K’ token
+  227 |        [01;31m[K<<[m[K "\n========== PUBLISH ==========\n"
+      |        [01;31m[K^~[m[K
+gmake[2]: *** [CMakeFiles/perception_node.dir/build.make:90: CMakeFiles/perception_node.dir/src/Main/perception_node.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/perception_node.dir/all] Error 2
+gmake: *** [Makefile:146: all] Error 2

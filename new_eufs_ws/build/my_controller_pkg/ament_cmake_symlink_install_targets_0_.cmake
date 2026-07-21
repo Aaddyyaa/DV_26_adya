@@ -1,0 +1,1 @@
+ament_cmake_symlink_install_targets("TARGET_FILES" "/home/alr/Desktop/new_perception/new_eufs_ws/build/my_controller_pkg/pure_pursuit_node" "/home/alr/Desktop/new_perception/new_eufs_ws/build/my_controller_pkg/mission_manager" "TARGETS" "pure_pursuit_node" "mission_manager" "DESTINATION" "lib/my_controller_pkg")

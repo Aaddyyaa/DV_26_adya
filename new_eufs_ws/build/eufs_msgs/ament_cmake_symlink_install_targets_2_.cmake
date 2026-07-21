@@ -1,0 +1,1 @@
+ament_cmake_symlink_install_targets("TARGET_FILES" "/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_msgs/rosidl_generator_py/eufs_msgs/eufs_msgs_s__rosidl_typesupport_c.cpython-310-x86_64-linux-gnu.so" "TARGETS" "eufs_msgs__rosidl_typesupport_c__pyext" "DESTINATION" "local/lib/python3.10/dist-packages/eufs_msgs")

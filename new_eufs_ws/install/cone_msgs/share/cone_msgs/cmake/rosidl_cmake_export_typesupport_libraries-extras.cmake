@@ -1,0 +1,1 @@
+/home/alr/Desktop/new_perception/new_eufs_ws/build/cone_msgs/rosidl_cmake/rosidl_cmake_export_typesupport_libraries-extras.cmake

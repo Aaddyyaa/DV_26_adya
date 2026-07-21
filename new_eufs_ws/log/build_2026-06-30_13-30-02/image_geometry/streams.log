@@ -1,0 +1,99 @@
+[0.013s] Invoking command in '/home/alr/Desktop/new_perception/new_eufs_ws/build/image_geometry': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/alr/Desktop/new_perception/new_eufs_ws/install/opencv_tests:/home/alr/Desktop/new_perception/new_eufs_ws/install/fsd_planner:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar:/opt/ros/humble /usr/bin/cmake /home/alr/Desktop/new_perception/new_eufs_ws/src/vision_opencv/image_geometry -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry
+[0.343s] -- The C compiler identification is GNU 11.4.0
+[0.343s] -- The CXX compiler identification is GNU 11.4.0
+[0.343s] -- Detecting C compiler ABI info
+[0.343s] -- Detecting C compiler ABI info - done
+[0.343s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.343s] -- Detecting C compile features
+[0.343s] -- Detecting C compile features - done
+[0.343s] -- Detecting CXX compiler ABI info
+[0.343s] -- Detecting CXX compiler ABI info - done
+[0.343s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.343s] -- Detecting CXX compile features
+[0.343s] -- Detecting CXX compile features - done
+[0.343s] -- Found ament_cmake_python: 1.3.14 (/opt/ros/humble/share/ament_cmake_python/cmake)
+[0.343s] -- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)
+[0.636s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.705s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.867s] -- Looking for pthread.h
+[0.933s] -- Looking for pthread.h - found
+[0.933s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[0.993s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[0.994s] -- Found Threads: TRUE  
+[1.009s] -- Found CUDA: /usr/local/cuda-12.9 (found suitable exact version "12.9") 
+[1.013s] -- Found OpenCV: /opt/opencv-4.12 (found version "4.12.0") found components: calib3d core highgui imgproc 
+[1.014s] -- Found sensor_msgs: 4.9.1 (/opt/ros/humble/share/sensor_msgs/cmake)
+[1.031s] -- Found rosidl_generator_c: 3.1.8 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[1.034s] -- Found rosidl_adapter: 3.1.8 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[1.039s] -- Found rosidl_generator_cpp: 3.1.8 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[1.051s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.058s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.112s] -- Found gtest sources under '/opt/ros/humble/src/gtest_vendor': C++ tests using 'Google Test' will be built
+[1.187s] -- Configuring done
+[1.195s] -- Generating done
+[1.198s] -- Build files have been written to: /home/alr/Desktop/new_perception/new_eufs_ws/build/image_geometry
+[1.252s] Invoked command in '/home/alr/Desktop/new_perception/new_eufs_ws/build/image_geometry' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/alr/Desktop/new_perception/new_eufs_ws/install/opencv_tests:/home/alr/Desktop/new_perception/new_eufs_ws/install/fsd_planner:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar:/opt/ros/humble /usr/bin/cmake /home/alr/Desktop/new_perception/new_eufs_ws/src/vision_opencv/image_geometry -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry
+[1.253s] Invoking command in '/home/alr/Desktop/new_perception/new_eufs_ws/build/image_geometry': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/alr/Desktop/new_perception/new_eufs_ws/install/opencv_tests:/home/alr/Desktop/new_perception/new_eufs_ws/install/fsd_planner:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar:/opt/ros/humble /usr/bin/cmake --build /home/alr/Desktop/new_perception/new_eufs_ws/build/image_geometry -- -j20 -l20
+[1.292s] [ 11%] [32mBuilding CXX object gtest/CMakeFiles/gtest.dir/src/gtest-all.cc.o[0m
+[1.295s] [ 22%] [32mBuilding CXX object gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o[0m
+[1.295s] [ 44%] [32mBuilding CXX object CMakeFiles/image_geometry.dir/src/pinhole_camera_model.cpp.o[0m
+[1.295s] [ 44%] [32mBuilding CXX object CMakeFiles/image_geometry.dir/src/stereo_camera_model.cpp.o[0m
+[1.303s] [ 44%] Built target ament_cmake_python_symlink_image_geometry
+[1.612s] running egg_info
+[1.612s] creating image_geometry.egg-info
+[1.613s] writing image_geometry.egg-info/PKG-INFO
+[1.613s] writing dependency_links to image_geometry.egg-info/dependency_links.txt
+[1.613s] writing top-level names to image_geometry.egg-info/top_level.txt
+[1.615s] writing manifest file 'image_geometry.egg-info/SOURCES.txt'
+[1.615s] reading manifest file 'image_geometry.egg-info/SOURCES.txt'
+[1.615s] writing manifest file 'image_geometry.egg-info/SOURCES.txt'
+[1.637s] [ 44%] Built target ament_cmake_python_build_image_geometry_egg
+[1.890s] [ 55%] [32m[1mLinking CXX static library libgtest_main.a[0m
+[1.928s] [ 55%] Built target gtest_main
+[2.554s] [ 66%] [32m[1mLinking CXX shared library libimage_geometry.so[0m
+[2.635s] [ 66%] Built target image_geometry
+[3.545s] [ 77%] [32m[1mLinking CXX static library libgtest.a[0m
+[3.593s] [ 77%] Built target gtest
+[3.615s] [ 88%] [32mBuilding CXX object CMakeFiles/image_geometry-utest.dir/test/utest.cpp.o[0m
+[4.611s] [100%] [32m[1mLinking CXX executable image_geometry-utest[0m
+[4.732s] [100%] Built target image_geometry-utest
+[4.742s] Invoked command in '/home/alr/Desktop/new_perception/new_eufs_ws/build/image_geometry' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/alr/Desktop/new_perception/new_eufs_ws/install/opencv_tests:/home/alr/Desktop/new_perception/new_eufs_ws/install/fsd_planner:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar:/opt/ros/humble /usr/bin/cmake --build /home/alr/Desktop/new_perception/new_eufs_ws/build/image_geometry -- -j20 -l20
+[4.743s] Invoking command in '/home/alr/Desktop/new_perception/new_eufs_ws/build/image_geometry': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/alr/Desktop/new_perception/new_eufs_ws/install/opencv_tests:/home/alr/Desktop/new_perception/new_eufs_ws/install/fsd_planner:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar:/opt/ros/humble /usr/bin/cmake --install /home/alr/Desktop/new_perception/new_eufs_ws/build/image_geometry
+[4.751s] -- Install configuration: ""
+[4.751s] -- Execute custom install script
+[4.751s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/environment/pythonpath.sh
+[4.757s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/environment/pythonpath.dsv
+[4.765s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/local/lib/python3.10/dist-packages/image_geometry-3.2.1-py3.10.egg-info/PKG-INFO
+[4.773s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/local/lib/python3.10/dist-packages/image_geometry-3.2.1-py3.10.egg-info/SOURCES.txt
+[4.778s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/local/lib/python3.10/dist-packages/image_geometry-3.2.1-py3.10.egg-info/dependency_links.txt
+[4.786s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/local/lib/python3.10/dist-packages/image_geometry-3.2.1-py3.10.egg-info/top_level.txt
+[4.792s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/local/lib/python3.10/dist-packages/image_geometry/__init__.py
+[4.800s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/local/lib/python3.10/dist-packages/image_geometry/cameramodels.py
+[4.808s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/include/image_geometry/image_geometry/pinhole_camera_model.h
+[4.816s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/include/image_geometry/image_geometry/stereo_camera_model.h
+[4.823s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/include/image_geometry/image_geometry/visibility_control.hpp
+[4.831s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/ament_index/resource_index/package_run_dependencies/image_geometry
+[4.839s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/ament_index/resource_index/parent_prefix_path/image_geometry
+[4.847s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/environment/ament_prefix_path.sh
+[4.853s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/environment/ament_prefix_path.dsv
+[4.861s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/environment/path.sh
+[4.868s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/environment/path.dsv
+[4.874s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/local_setup.bash
+[4.882s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/local_setup.sh
+[4.888s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/local_setup.zsh
+[4.894s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/local_setup.dsv
+[4.901s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/package.dsv
+[4.908s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/ament_index/resource_index/packages/image_geometry
+[4.914s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/cmake/ament_cmake_export_targets-extras.cmake
+[4.922s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/cmake/ament_cmake_export_dependencies-extras.cmake
+[4.928s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/cmake/image_geometryConfig.cmake
+[4.934s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/cmake/image_geometryConfig-version.cmake
+[4.941s] -- Symlinking: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/package.xml
+[4.974s] Listing '/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/local/lib/python3.10/dist-packages/image_geometry'...
+[4.974s] Compiling '/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/local/lib/python3.10/dist-packages/image_geometry/__init__.py'...
+[4.974s] Compiling '/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/local/lib/python3.10/dist-packages/image_geometry/cameramodels.py'...
+[4.976s] -- Installing: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/lib/libimage_geometry.so
+[4.977s] -- Set runtime path of "/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/lib/libimage_geometry.so" to ""
+[4.977s] -- Installing: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/cmake/export_image_geometryExport.cmake
+[4.977s] -- Installing: /home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/cmake/export_image_geometryExport-noconfig.cmake
+[4.979s] Invoked command in '/home/alr/Desktop/new_perception/new_eufs_ws/build/image_geometry' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/home/alr/Desktop/new_perception/new_eufs_ws/install/opencv_tests:/home/alr/Desktop/new_perception/new_eufs_ws/install/fsd_planner:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_launcher:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_tracks:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_rqt:/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_racecar:/opt/ros/humble /usr/bin/cmake --install /home/alr/Desktop/new_perception/new_eufs_ws/build/image_geometry

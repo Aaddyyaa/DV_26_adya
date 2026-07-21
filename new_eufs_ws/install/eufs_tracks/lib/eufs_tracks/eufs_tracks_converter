@@ -1,0 +1,7 @@
+#!/usr/bin/python3
+# EASY-INSTALL-DEV-SCRIPT: 'eufs-tracks==2.0.0','eufs_tracks_converter'
+__requires__ = 'eufs-tracks==2.0.0'
+__import__('pkg_resources').require('eufs-tracks==2.0.0')
+__file__ = '/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_tracks/scripts/eufs_tracks_converter'
+with open(__file__) as f:
+    exec(compile(f.read(), __file__, 'exec'))

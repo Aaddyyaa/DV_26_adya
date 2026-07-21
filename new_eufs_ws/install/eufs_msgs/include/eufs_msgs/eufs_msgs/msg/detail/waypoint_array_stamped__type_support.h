@@ -1,0 +1,1 @@
+/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_msgs/rosidl_generator_c/eufs_msgs/msg/detail/waypoint_array_stamped__type_support.h

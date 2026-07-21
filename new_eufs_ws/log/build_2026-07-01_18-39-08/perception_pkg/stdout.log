@@ -1,0 +1,27 @@
+-- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)
+-- Override CMake install command with custom implementation using symlinks instead of copying resources
+-- Found rclcpp: 16.0.19 (/opt/ros/humble/share/rclcpp/cmake)
+-- Found rosidl_generator_c: 3.1.8 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+-- Found rosidl_adapter: 3.1.8 (/opt/ros/humble/share/rosidl_adapter/cmake)
+-- Found rosidl_generator_cpp: 3.1.8 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+-- Found rmw_fastrtps_cpp: 6.2.10 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+-- Using RMW implementation 'rmw_fastrtps_cpp' as default
+-- Found sensor_msgs: 4.9.1 (/opt/ros/humble/share/sensor_msgs/cmake)
+-- Found cone_msgs: 0.0.0 (/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs/share/cone_msgs/cmake)
+-- Found eufs_msgs: 2.0.0 (/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs/share/eufs_msgs/cmake)
+-- Found cv_bridge: 3.2.1 (/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge/share/cv_bridge/cmake)
+-- Found image_transport: 3.1.12 (/opt/ros/humble/share/image_transport/cmake)
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg
+[35m[1mConsolidate compiler generated dependencies of target perception_node[0m
+[ 37%] [32mBuilding CXX object CMakeFiles/perception_node.dir/src/Calibration/calibration.cpp.o[0m
+[ 37%] [32mBuilding CXX object CMakeFiles/perception_node.dir/src/Depth/depth.cpp.o[0m
+[ 37%] [32mBuilding CXX object CMakeFiles/perception_node.dir/src/Keypoints/keypoints.cpp.o[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/perception_node.dir/src/Calibration/rectification.cpp.o[0m
+[ 62%] [32mBuilding CXX object CMakeFiles/perception_node.dir/src/Main/main.cpp.o[0m
+[ 75%] [32mBuilding CXX object CMakeFiles/perception_node.dir/src/Main/perception_node.cpp.o[0m
+[ 87%] [32mBuilding CXX object CMakeFiles/perception_node.dir/src/Cone/cone.cpp.o[0m

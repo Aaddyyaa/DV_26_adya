@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sort -k2)",
+      "Bash(xargs ls -la --time-style=+%H:%M:%S)"
+    ]
+  }
+}

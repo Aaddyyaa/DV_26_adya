@@ -1,0 +1,13 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from cone_msgs/msg/ConeArray.msg
+// generated code does not contain a copyright notice
+
+#include "cone_msgs/msg/Cone.idl"
+
+module cone_msgs {
+  module msg {
+    struct ConeArray {
+      sequence<cone_msgs::msg::Cone> cones;
+    };
+  };
+};

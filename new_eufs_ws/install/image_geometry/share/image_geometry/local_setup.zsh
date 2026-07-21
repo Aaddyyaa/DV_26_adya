@@ -1,0 +1,1 @@
+/home/alr/Desktop/new_perception/new_eufs_ws/build/image_geometry/ament_cmake_environment_hooks/local_setup.zsh

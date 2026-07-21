@@ -1,0 +1,16 @@
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg/lib/my_slam_pkg/eufs_slam_node
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg/share/ament_index/resource_index/package_run_dependencies/my_slam_pkg
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg/share/ament_index/resource_index/parent_prefix_path/my_slam_pkg
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg/share/my_slam_pkg/environment/ament_prefix_path.sh
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg/share/my_slam_pkg/environment/ament_prefix_path.dsv
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg/share/my_slam_pkg/environment/path.sh
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg/share/my_slam_pkg/environment/path.dsv
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg/share/my_slam_pkg/local_setup.bash
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg/share/my_slam_pkg/local_setup.sh
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg/share/my_slam_pkg/local_setup.zsh
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg/share/my_slam_pkg/local_setup.dsv
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg/share/my_slam_pkg/package.dsv
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg/share/ament_index/resource_index/packages/my_slam_pkg
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg/share/my_slam_pkg/cmake/my_slam_pkgConfig.cmake
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg/share/my_slam_pkg/cmake/my_slam_pkgConfig-version.cmake
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_slam_pkg/share/my_slam_pkg/package.xml

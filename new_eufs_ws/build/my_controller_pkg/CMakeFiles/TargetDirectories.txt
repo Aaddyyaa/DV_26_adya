@@ -1,0 +1,11 @@
+/home/alr/Desktop/new_perception/new_eufs_ws/build/my_controller_pkg/CMakeFiles/uninstall.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/my_controller_pkg/CMakeFiles/my_controller_pkg_uninstall.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/my_controller_pkg/CMakeFiles/pure_pursuit_node.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/my_controller_pkg/CMakeFiles/mission_manager.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/my_controller_pkg/CMakeFiles/test.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/my_controller_pkg/CMakeFiles/edit_cache.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/my_controller_pkg/CMakeFiles/rebuild_cache.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/my_controller_pkg/CMakeFiles/list_install_components.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/my_controller_pkg/CMakeFiles/install.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/my_controller_pkg/CMakeFiles/install/local.dir
+/home/alr/Desktop/new_perception/new_eufs_ws/build/my_controller_pkg/CMakeFiles/install/strip.dir

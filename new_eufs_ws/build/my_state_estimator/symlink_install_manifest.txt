@@ -1,0 +1,16 @@
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator/lib/my_state_estimator/state_estimator_node
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator/share/ament_index/resource_index/package_run_dependencies/my_state_estimator
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator/share/ament_index/resource_index/parent_prefix_path/my_state_estimator
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator/share/my_state_estimator/environment/ament_prefix_path.sh
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator/share/my_state_estimator/environment/ament_prefix_path.dsv
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator/share/my_state_estimator/environment/path.sh
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator/share/my_state_estimator/environment/path.dsv
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator/share/my_state_estimator/local_setup.bash
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator/share/my_state_estimator/local_setup.sh
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator/share/my_state_estimator/local_setup.zsh
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator/share/my_state_estimator/local_setup.dsv
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator/share/my_state_estimator/package.dsv
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator/share/ament_index/resource_index/packages/my_state_estimator
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator/share/my_state_estimator/cmake/my_state_estimatorConfig.cmake
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator/share/my_state_estimator/cmake/my_state_estimatorConfig-version.cmake
+/home/alr/Desktop/new_perception/new_eufs_ws/install/my_state_estimator/share/my_state_estimator/package.xml

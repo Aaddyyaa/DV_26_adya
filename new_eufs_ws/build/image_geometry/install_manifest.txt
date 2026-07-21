@@ -1,0 +1,3 @@
+/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/lib/libimage_geometry.so
+/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/cmake/export_image_geometryExport.cmake
+/home/alr/Desktop/new_perception/new_eufs_ws/install/image_geometry/share/image_geometry/cmake/export_image_geometryExport-noconfig.cmake

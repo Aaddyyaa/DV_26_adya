@@ -1,0 +1,1 @@
+ament_cmake_symlink_install_targets("TARGET_FILES" "/home/alr/Desktop/new_perception/new_eufs_ws/build/eufs_plugins/gazebo_cone_plugins/libgazebo_camera_cones.so" "TARGETS" "gazebo_camera_cones" "ARCHIVE_DESTINATION" "lib" "LIBRARY_DESTINATION" "lib" "RUNTIME_DESTINATION" "lib")

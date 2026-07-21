@@ -1,0 +1,73 @@
+[0.000000] (-) TimerEvent: {}
+[0.000111] (-) JobUnselected: {'identifier': 'cone_msgs'}
+[0.000141] (-) JobUnselected: {'identifier': 'cv_bridge'}
+[0.000162] (-) JobUnselected: {'identifier': 'eufs_launcher'}
+[0.000189] (-) JobUnselected: {'identifier': 'eufs_models'}
+[0.000211] (-) JobUnselected: {'identifier': 'eufs_msgs'}
+[0.000478] (-) JobUnselected: {'identifier': 'eufs_plugins'}
+[0.000499] (-) JobUnselected: {'identifier': 'eufs_racecar'}
+[0.000507] (-) JobUnselected: {'identifier': 'eufs_rqt'}
+[0.000514] (-) JobUnselected: {'identifier': 'eufs_sensors'}
+[0.000521] (-) JobUnselected: {'identifier': 'eufs_tracks'}
+[0.000528] (-) JobUnselected: {'identifier': 'fsd_planner'}
+[0.000535] (-) JobUnselected: {'identifier': 'image_geometry'}
+[0.000542] (-) JobUnselected: {'identifier': 'my_controller_pkg'}
+[0.000549] (-) JobUnselected: {'identifier': 'my_slam_pkg'}
+[0.000555] (-) JobUnselected: {'identifier': 'my_state_estimator'}
+[0.000566] (-) JobUnselected: {'identifier': 'opencv_tests'}
+[0.000573] (-) JobUnselected: {'identifier': 'vision_opencv'}
+[0.000587] (perception_pkg) JobQueued: {'identifier': 'perception_pkg', 'dependencies': OrderedDict([('cone_msgs', '/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs'), ('cv_bridge', '/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge'), ('eufs_msgs', '/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs')])}
+[0.000600] (perception_pkg) JobStarted: {'identifier': 'perception_pkg'}
+[0.019133] (perception_pkg) JobProgress: {'identifier': 'perception_pkg', 'progress': 'cmake'}
+[0.020666] (perception_pkg) JobProgress: {'identifier': 'perception_pkg', 'progress': 'build'}
+[0.020711] (perception_pkg) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg', '--', '-j20', '-l20'], 'cwd': '/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('LANGUAGE', 'en_IN:en'), ('USER', 'alr'), ('XDG_SESSION_TYPE', 'x11'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge/lib:/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/local/cuda-12.9/lib64'), ('HOME', '/home/alr'), ('OLDPWD', '/home/alr'), ('DESKTOP_SESSION', 'ubuntu'), ('EUFS_CLI_HOME', '/home/alr/eufs/eufs_cli'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('SYSTEMD_EXEC_PID', '2213'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('ROS_DISTRO', 'humble'), ('GTK_IM_MODULE', 'ibus'), ('LOGNAME', 'alr'), ('EUFS_MASTER', '/home/alr/eufs/eufs-master'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'alr'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('ROS_LOCALHOST_ONLY', '0'), ('WINDOWPATH', '2'), ('PATH', '/opt/ros/humble/bin:/usr/local/cuda-12.9/bin:/home/alr/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/alr/.local/bin'), ('SESSION_MANAGER', 'local/alr-ROG-Strix-G614JU-G614JUC4:@/tmp/.ICE-unix/2042,unix/alr-ROG-Strix-G614JU-G614JUC4:/tmp/.ICE-unix/2042'), ('XDG_MENU_PREFIX', 'gnome-'), ('GNOME_TERMINAL_SCREEN', '/org/gnome/Terminal/screen/036c2747_bbf1_42d0_a05e_f9ed7990adb9'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':1'), ('LANG', 'en_US.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/gdm/Xauthority'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('GNOME_TERMINAL_SERVICE', ':1.100'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('AMENT_PREFIX_PATH', '/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs:/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge:/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('GPG_AGENT_INFO', '/run/user/1000/gnupg/S.gpg-agent:0:1'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/alr/Desktop/new_perception/new_eufs_ws/build/perception_pkg'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/share/gnome:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('PYTHONPATH', '/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs/local/lib/python3.10/dist-packages:/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge/local/lib/python3.10/dist-packages:/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs/local/lib/python3.10/dist-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('VTE_VERSION', '6800'), ('CMAKE_PREFIX_PATH', '/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_msgs:/home/alr/Desktop/new_perception/new_eufs_ws/install/cv_bridge:/home/alr/Desktop/new_perception/new_eufs_ws/install/cone_msgs:/opt/ros/humble')]), 'shell': False}
+[0.099612] (-) TimerEvent: {}
+[0.121401] (perception_pkg) StdoutLine: {'line': b'\x1b[35m\x1b[1mConsolidate compiler generated dependencies of target perception_node\x1b[0m\n'}
+[0.172010] (perception_pkg) StdoutLine: {'line': b'[ 12%] \x1b[32mBuilding CXX object CMakeFiles/perception_node.dir/src/Main/main.cpp.o\x1b[0m\n'}
+[0.172396] (perception_pkg) StdoutLine: {'line': b'[ 25%] \x1b[32mBuilding CXX object CMakeFiles/perception_node.dir/src/Main/perception_node.cpp.o\x1b[0m\n'}
+[0.199788] (-) TimerEvent: {}
+[0.300244] (-) TimerEvent: {}
+[0.400539] (-) TimerEvent: {}
+[0.500904] (-) TimerEvent: {}
+[0.601272] (-) TimerEvent: {}
+[0.701659] (-) TimerEvent: {}
+[0.802043] (-) TimerEvent: {}
+[0.902446] (-) TimerEvent: {}
+[1.002833] (-) TimerEvent: {}
+[1.103323] (-) TimerEvent: {}
+[1.203590] (-) TimerEvent: {}
+[1.303901] (-) TimerEvent: {}
+[1.404224] (-) TimerEvent: {}
+[1.504456] (-) TimerEvent: {}
+[1.604754] (-) TimerEvent: {}
+[1.705057] (-) TimerEvent: {}
+[1.805290] (-) TimerEvent: {}
+[1.891477] (perception_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Main/perception_node.cpp:267:6:\x1b[m\x1b[K \x1b[01;31m\x1b[Kerror: \x1b[m\x1b[Kno declaration matches \xe2\x80\x98\x1b[01m\x1b[Kvoid PerceptionNode::temporalFilter(const std::vector<ConeDepth::ConeResult>&, eufs_msgs::msg::ConeArray&)\x1b[m\x1b[K\xe2\x80\x99\n'}
+[1.891642] (perception_pkg) StderrLine: {'line': b'  267 | void \x1b[01;31m\x1b[KPerceptionNode\x1b[m\x1b[K::temporalFilter(\n'}
+[1.891675] (perception_pkg) StderrLine: {'line': b'      |      \x1b[01;31m\x1b[K^~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.891713] (perception_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Main/perception_node.cpp:267:6:\x1b[m\x1b[K \x1b[01;36m\x1b[Knote: \x1b[m\x1b[Kno functions named \xe2\x80\x98\x1b[01m\x1b[Kvoid PerceptionNode::temporalFilter(const std::vector<ConeDepth::ConeResult>&, eufs_msgs::msg::ConeArray&)\x1b[m\x1b[K\xe2\x80\x99\n'}
+[1.891739] (perception_pkg) StderrLine: {'line': b'In file included from \x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Main/perception_node.cpp:3\x1b[m\x1b[K:\n'}
+[1.891768] (perception_pkg) StderrLine: {'line': b'\x1b[01m\x1b[K/home/alr/Desktop/new_perception/new_eufs_ws/src/perception_pkg/src/Main/perception_node.h:21:7:\x1b[m\x1b[K \x1b[01;36m\x1b[Knote: \x1b[m\x1b[K\xe2\x80\x98\x1b[01m\x1b[Kclass PerceptionNode\x1b[m\x1b[K\xe2\x80\x99 defined here\n'}
+[1.891795] (perception_pkg) StderrLine: {'line': b'   21 | class \x1b[01;36m\x1b[KPerceptionNode\x1b[m\x1b[K : public rclcpp::Node\n'}
+[1.891820] (perception_pkg) StderrLine: {'line': b'      |       \x1b[01;36m\x1b[K^~~~~~~~~~~~~~\x1b[m\x1b[K\n'}
+[1.905365] (-) TimerEvent: {}
+[2.005591] (-) TimerEvent: {}
+[2.105898] (-) TimerEvent: {}
+[2.206207] (-) TimerEvent: {}
+[2.306434] (-) TimerEvent: {}
+[2.406688] (-) TimerEvent: {}
+[2.506992] (-) TimerEvent: {}
+[2.607245] (-) TimerEvent: {}
+[2.707574] (-) TimerEvent: {}
+[2.807877] (-) TimerEvent: {}
+[2.908193] (-) TimerEvent: {}
+[3.008506] (-) TimerEvent: {}
+[3.108802] (-) TimerEvent: {}
+[3.209099] (-) TimerEvent: {}
+[3.308911] (perception_pkg) StderrLine: {'line': b'gmake[2]: *** [CMakeFiles/perception_node.dir/build.make:90: CMakeFiles/perception_node.dir/src/Main/perception_node.cpp.o] Error 1\n'}
+[3.309201] (-) TimerEvent: {}
+[3.309291] (perception_pkg) StderrLine: {'line': b'gmake[1]: *** [CMakeFiles/Makefile2:137: CMakeFiles/perception_node.dir/all] Error 2\n'}
+[3.309453] (perception_pkg) StderrLine: {'line': b'gmake: *** [Makefile:146: all] Error 2\n'}
+[3.310970] (perception_pkg) CommandEnded: {'returncode': 2}
+[3.327758] (perception_pkg) JobEnded: {'identifier': 'perception_pkg', 'rc': 2}
+[3.338208] (-) EventReactorShutdown: {}

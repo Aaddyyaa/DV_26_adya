@@ -1,0 +1,2 @@
+/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_plugins/share/eufs_plugins/config/cone_recolor.yaml
+/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_plugins/share/eufs_plugins/config/boundingBoxes.yaml

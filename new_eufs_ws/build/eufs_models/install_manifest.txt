@@ -1,0 +1,3 @@
+/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_models/lib/libeufs_models.a
+/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_models/share/eufs_models/cmake/export_eufs_modelsExport.cmake
+/home/alr/Desktop/new_perception/new_eufs_ws/install/eufs_models/share/eufs_models/cmake/export_eufs_modelsExport-noconfig.cmake
