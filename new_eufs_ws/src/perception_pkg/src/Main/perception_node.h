@@ -13,7 +13,9 @@
 #include "Depth/cone_depth.hpp"
 #include "main.h"
 #include <eufs_msgs/msg/cone_array.hpp>
+#include <eufs_msgs/msg/cone_array_with_covariance.hpp>
 #include <geometry_msgs/msg/point.hpp>
+#include <array>
 #include <deque>
 #include <vector>
 
@@ -39,6 +41,7 @@ private:
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr right_sub_;
 
     rclcpp::Publisher<eufs_msgs::msg::ConeArray>::SharedPtr cone_pub_;
+    rclcpp::Publisher<eufs_msgs::msg::ConeArrayWithCovariance>::SharedPtr cone_cov_pub_;
 
 Rectifier rectifier_;
 
@@ -61,6 +64,7 @@ cv::dnn::Net keypoints_net_;
 struct TemporalCone
 {
     geometry_msgs::msg::Point point;
+    std::array<double, 4> covariance;
     int class_id;
 };
 
@@ -74,5 +78,13 @@ const double MATCH_DISTANCE = 0.60;    // widen so a real cone correlates frame-
 
 void temporalFilter(
     const std::vector<ConeDepth::ConeResult>& input,
-    eufs_msgs::msg::ConeArray& output);
+    eufs_msgs::msg::ConeArray& output,
+    eufs_msgs::msg::ConeArrayWithCovariance& covariance_output);
+
+bool measurementCovariance(
+    const ConeDepth::ConeResult& result,
+    std::array<double, 4>& covariance) const;
+
+double pixel_sigma_at_unit_quality_ = 0.5;
+double min_disparity_sigma_px_ = 0.05;
 };

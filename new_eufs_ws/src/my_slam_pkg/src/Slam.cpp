@@ -1,4 +1,5 @@
 #include <vector>
+#include <array>
 #include <cmath>
 #include <algorithm>
 #include <mutex>
@@ -11,7 +12,7 @@
 
 // EUFS Custom Messages
 #include "eufs_msgs/msg/cone_array.hpp"
-#include "eufs_msgs/msg/cone_array.hpp"
+#include "eufs_msgs/msg/cone_array_with_covariance.hpp"
 
 // RViz Visualization Headers
 #include <tf2_ros/transform_broadcaster.h>
@@ -29,9 +30,10 @@ inline double wrapToPi(double a) {
 }
 
 struct ConeDetection {
-    double range; 
-    double bearing; 
-    int color; 
+    double range;
+    double bearing;
+    int color;
+    Eigen::Matrix2d covariance;
 };
 
 struct Landmark {
@@ -58,9 +60,6 @@ public:
         Q_control_ << std::pow(0.2, 2), 0, 
                       0, std::pow(0.15, 2); 
                       
-        R_obs_ << std::pow(0.1, 2), 0, 
-                  0, std::pow(0.035, 2); 
-
         for (int i = 0; i < num_particles_; ++i) {
             Particle p;
             p.weight = 1.0 / num_particles_;
@@ -71,14 +70,17 @@ public:
 
         // Publishers
         cones_pub_ = create_publisher<eufs_msgs::msg::ConeArray>("/planning/cones", 10);
-        slam_odom_pub_ = create_publisher<nav_msgs::msg::Odometry>("/slam/odom", 10);    
+        landmark_cov_pub_ = create_publisher<eufs_msgs::msg::ConeArrayWithCovariance>(
+            "/slam/landmarks", 10);
+        slam_odom_pub_ = create_publisher<nav_msgs::msg::Odometry>("/slam/odom", 10);
         native_marker_pub_ = create_publisher<visualization_msgs::msg::MarkerArray>("/slam/native_cones", 10);
         tf_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
 
         // Subscribers
         auto qos = rclcpp::QoS(rclcpp::KeepLast(10)).best_effort();
-        cones_sub_ = create_subscription<eufs_msgs::msg::ConeArray>(
-            "/perception/cones", qos, std::bind(&FastSLAM2::conesCallback, this, _1));
+        cones_sub_ = create_subscription<eufs_msgs::msg::ConeArrayWithCovariance>(
+            "/perception/cones_with_covariance", qos,
+            std::bind(&FastSLAM2::conesCallback, this, _1));
         odom_sub_ = create_subscription<nav_msgs::msg::Odometry>(
             "/custom_odom", 10, std::bind(&FastSLAM2::odomCallback, this, _1));
 
@@ -91,7 +93,6 @@ private:
     int num_particles_;
     std::vector<Particle> particles_;
     Eigen::Matrix2d Q_control_;
-    Eigen::Matrix2d R_obs_;
     
     std::vector<ConeDetection> z_buffer_;
     std::mutex slam_mutex_; 
@@ -106,10 +107,11 @@ private:
     double vx_ = 0.0, yaw_rate_ = 0.0, dt_ = 0.0;
     rclcpp::Time last_odom_time_{0, 0, RCL_ROS_TIME};
 
-    rclcpp::Subscription<eufs_msgs::msg::ConeArray>::SharedPtr cones_sub_;
+    rclcpp::Subscription<eufs_msgs::msg::ConeArrayWithCovariance>::SharedPtr cones_sub_;
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
     
     rclcpp::Publisher<eufs_msgs::msg::ConeArray>::SharedPtr cones_pub_;
+    rclcpp::Publisher<eufs_msgs::msg::ConeArrayWithCovariance>::SharedPtr landmark_cov_pub_;
     rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr slam_odom_pub_;
     rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr native_marker_pub_;
     std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
@@ -126,7 +128,7 @@ private:
         last_odom_time_ = msg_time;
     }
 
-    void conesCallback(const eufs_msgs::msg::ConeArray::SharedPtr msg)
+    void conesCallback(const eufs_msgs::msg::ConeArrayWithCovariance::SharedPtr msg)
     {
         std::lock_guard<std::mutex> lock(slam_mutex_);
         z_buffer_.clear();
@@ -138,12 +140,40 @@ private:
 
     }
 
-    void addConeToBuffer(const geometry_msgs::msg::Point &cone, int color) {
+    bool validCovariance(const Eigen::Matrix2d& covariance) const {
+        if (!covariance.allFinite()) return false;
+        if (std::abs(covariance(0, 1) - covariance(1, 0)) > 1e-9) return false;
+        if (covariance(0, 0) <= 0.0 || covariance(1, 1) <= 0.0) return false;
+        return covariance.determinant() >= -1e-12;
+    }
+
+    bool validPoseCovariance(const Eigen::Matrix3d& covariance) const {
+        if (!covariance.allFinite()) return false;
+        if ((covariance - covariance.transpose()).cwiseAbs().maxCoeff() > 1e-9) return false;
+        Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(covariance);
+        return solver.info() == Eigen::Success && solver.eigenvalues().minCoeff() >= -1e-10;
+    }
+
+    void addConeToBuffer(const eufs_msgs::msg::ConeWithCovariance &cone, int color) {
         ConeDetection z;
-        z.range = std::hypot(cone.x, cone.y);
-        z.bearing = std::atan2(cone.y, cone.x);
+        z.range = std::hypot(cone.point.x, cone.point.y);
+        z.bearing = std::atan2(cone.point.y, cone.point.x);
         z.color = color;
-        if (z.range > 0.1 && z.range < 15) z_buffer_.push_back(z);
+        Eigen::Matrix2d point_covariance;
+        point_covariance << cone.covariance[0], cone.covariance[1],
+                            cone.covariance[2], cone.covariance[3];
+        if (z.range <= 0.1 || z.range >= 15 || !validCovariance(point_covariance)) {
+            RCLCPP_WARN(this->get_logger(), "Rejected cone with invalid measurement covariance");
+            return;
+        }
+
+        const double range_sq = z.range * z.range;
+        Eigen::Matrix2d H_polar;
+        H_polar << cone.point.x / z.range, cone.point.y / z.range,
+                  -cone.point.y / range_sq, cone.point.x / range_sq;
+        z.covariance = H_polar * point_covariance * H_polar.transpose();
+        z.covariance = 0.5 * (z.covariance + z.covariance.transpose());
+        if (validCovariance(z.covariance)) z_buffer_.push_back(z);
     }
 
     void predictParticles(double dt, double vx, double yaw_rate) {
@@ -201,7 +231,7 @@ private:
                     Hf <<  dx_r / r_hat,  dy_r / r_hat, 
                           -dy_r / q,      dx_r / q;
 
-                    Eigen::Matrix2d S = Hf * p.map[i].sigma * Hf.transpose() + R_obs_;
+                    Eigen::Matrix2d S = Hf * p.map[i].sigma * Hf.transpose() + z.covariance;
                     
                     RCLCPP_INFO(
                         this->get_logger(),
@@ -275,7 +305,7 @@ private:
                     Hv << -dx_r / r_hat, -dy_r / r_hat, 0.0,
                            dy_r / q,     -dx_r / q,    -1.0;
 
-                    Eigen::Matrix2d S = Hf * lm.sigma * Hf.transpose() + R_obs_;
+                    Eigen::Matrix2d S = Hf * lm.sigma * Hf.transpose() + z.covariance;
                     Eigen::Matrix2d S_inv = S.inverse();
                     Eigen::Vector2d z_hat(r_hat, wrapToPi(std::atan2(dy_r, dx_r) - p.yaw));
                     Eigen::Vector2d v(z.range - z_hat(0), wrapToPi(z.bearing - z_hat(1)));
@@ -342,7 +372,12 @@ else if (!lap_closed_)
             Gz << c, -z.range * s,
                   s,  z.range * c;
 
-            new_lm.sigma = Gz * R_obs_ * Gz.transpose();
+            Eigen::Matrix<double, 2, 3> Gpose;
+            Gpose << 1.0, 0.0, -z.range * s,
+                     0.0, 1.0,  z.range * c;
+            new_lm.sigma = Gz * z.covariance * Gz.transpose() +
+                Gpose * p.P * Gpose.transpose();
+            new_lm.sigma = 0.5 * (new_lm.sigma + new_lm.sigma.transpose());
             new_lm.color = z.color;
             new_lm.hits = 1;
 
@@ -408,6 +443,106 @@ else if (!lap_closed_)
             if (p.weight > best.weight) best = p;
         }
         return best;
+    }
+
+    void aggregatePose(Eigen::Vector3d& mean, Eigen::Matrix3d& covariance) const {
+        double sum_weight = 0.0;
+        for (const auto& particle : particles_) sum_weight += particle.weight;
+        const bool use_uniform = !std::isfinite(sum_weight) || sum_weight <= 1e-12;
+        const double fallback_weight = 1.0 / static_cast<double>(particles_.size());
+
+        mean.setZero();
+        double sin_yaw = 0.0;
+        double cos_yaw = 0.0;
+        for (const auto& particle : particles_) {
+            const double weight = use_uniform ? fallback_weight : particle.weight / sum_weight;
+            mean(0) += weight * particle.x;
+            mean(1) += weight * particle.y;
+            sin_yaw += weight * std::sin(particle.yaw);
+            cos_yaw += weight * std::cos(particle.yaw);
+        }
+        mean(2) = std::atan2(sin_yaw, cos_yaw);
+
+        covariance.setZero();
+        for (const auto& particle : particles_) {
+            const double weight = use_uniform ? fallback_weight : particle.weight / sum_weight;
+            Eigen::Vector3d delta(
+                particle.x - mean(0), particle.y - mean(1),
+                wrapToPi(particle.yaw - mean(2)));
+            covariance += weight * (particle.P + delta * delta.transpose());
+        }
+        covariance = 0.5 * (covariance + covariance.transpose());
+    }
+
+    eufs_msgs::msg::ConeArrayWithCovariance aggregateLandmarks(
+        const Particle& reference, const rclcpp::Time& stamp) const {
+        eufs_msgs::msg::ConeArrayWithCovariance output;
+        output.header.stamp = stamp;
+        output.header.frame_id = "map";
+
+        double sum_weight = 0.0;
+        for (const auto& particle : particles_) sum_weight += particle.weight;
+        const bool use_uniform = !std::isfinite(sum_weight) || sum_weight <= 1e-12;
+        const double fallback_weight = 1.0 / static_cast<double>(particles_.size());
+
+        for (const auto& landmark : reference.map) {
+            if (landmark.hits < 2) continue;
+            Eigen::Vector2d mean = Eigen::Vector2d::Zero();
+            double matched_weight = 0.0;
+
+            for (const auto& particle : particles_) {
+                const Landmark* nearest = nullptr;
+                double nearest_distance = 1.5;
+                for (const auto& candidate : particle.map) {
+                    if (candidate.color != landmark.color) continue;
+                    const double distance = (candidate.mu - landmark.mu).norm();
+                    if (distance < nearest_distance) {
+                        nearest = &candidate;
+                        nearest_distance = distance;
+                    }
+                }
+                if (nearest == nullptr) continue;
+                const double weight = use_uniform ? fallback_weight : particle.weight / sum_weight;
+                mean += weight * nearest->mu;
+                matched_weight += weight;
+            }
+            if (matched_weight <= 1e-12) continue;
+            mean /= matched_weight;
+
+            Eigen::Matrix2d covariance = Eigen::Matrix2d::Zero();
+            for (const auto& particle : particles_) {
+                const Landmark* nearest = nullptr;
+                double nearest_distance = 1.5;
+                for (const auto& candidate : particle.map) {
+                    if (candidate.color != landmark.color) continue;
+                    const double distance = (candidate.mu - landmark.mu).norm();
+                    if (distance < nearest_distance) {
+                        nearest = &candidate;
+                        nearest_distance = distance;
+                    }
+                }
+                if (nearest == nullptr) continue;
+                const double weight = (use_uniform ? fallback_weight : particle.weight / sum_weight) /
+                    matched_weight;
+                const Eigen::Vector2d delta = nearest->mu - mean;
+                covariance += weight * (nearest->sigma + delta * delta.transpose());
+            }
+            covariance = 0.5 * (covariance + covariance.transpose());
+            if (!validCovariance(covariance)) continue;
+
+            eufs_msgs::msg::ConeWithCovariance out;
+            out.point.x = mean(0);
+            out.point.y = mean(1);
+            out.point.z = 0.0;
+            out.covariance = {
+                covariance(0, 0), covariance(0, 1),
+                covariance(1, 0), covariance(1, 1)};
+            if (landmark.color == 0) output.blue_cones.push_back(out);
+            else if (landmark.color == 1) output.yellow_cones.push_back(out);
+            else if (landmark.color == 2) output.big_orange_cones.push_back(out);
+            else output.unknown_color_cones.push_back(out);
+        }
+        return output;
     }
 
     void runSLAM() {
@@ -515,24 +650,43 @@ else if (!lap_closed_)
         );
 
         cones_pub_->publish(out_msg);
+        const rclcpp::Time output_stamp = this->now();
+        landmark_cov_pub_->publish(aggregateLandmarks(best_p, output_stamp));
 
         // 6. Publisher: SLAM Odometry
         nav_msgs::msg::Odometry slam_odom;
-        slam_odom.header.stamp = this->now();
+        Eigen::Vector3d pose_mean;
+        Eigen::Matrix3d pose_covariance;
+        aggregatePose(pose_mean, pose_covariance);
+        if (!validPoseCovariance(pose_covariance)) {
+            RCLCPP_ERROR(this->get_logger(), "Not publishing invalid aggregate pose covariance");
+            return;
+        }
+        slam_odom.header.stamp = output_stamp;
         slam_odom.header.frame_id = "map";
-        slam_odom.pose.pose.position.x = best_p.x; 
-        slam_odom.pose.pose.position.y = best_p.y;
-        slam_odom.pose.pose.orientation.z = std::sin(best_p.yaw * 0.5); 
-        slam_odom.pose.pose.orientation.w = std::cos(best_p.yaw * 0.5);
-        slam_odom.twist.twist.linear.x = local_vx; 
+        slam_odom.child_frame_id = "base_footprint";
+        slam_odom.pose.pose.position.x = pose_mean(0);
+        slam_odom.pose.pose.position.y = pose_mean(1);
+        slam_odom.pose.pose.orientation.z = std::sin(pose_mean(2) * 0.5);
+        slam_odom.pose.pose.orientation.w = std::cos(pose_mean(2) * 0.5);
+        slam_odom.pose.covariance[0] = pose_covariance(0, 0);
+        slam_odom.pose.covariance[1] = pose_covariance(0, 1);
+        slam_odom.pose.covariance[5] = pose_covariance(0, 2);
+        slam_odom.pose.covariance[6] = pose_covariance(1, 0);
+        slam_odom.pose.covariance[7] = pose_covariance(1, 1);
+        slam_odom.pose.covariance[11] = pose_covariance(1, 2);
+        slam_odom.pose.covariance[30] = pose_covariance(2, 0);
+        slam_odom.pose.covariance[31] = pose_covariance(2, 1);
+        slam_odom.pose.covariance[35] = pose_covariance(2, 2);
+        slam_odom.twist.twist.linear.x = local_vx;
         slam_odom.twist.twist.angular.z = local_yaw_rate;
         slam_odom_pub_->publish(slam_odom);
 
         // 7. TF Broadcaster
         geometry_msgs::msg::TransformStamped t;
-        t.header.stamp = this->now(); t.header.frame_id = "map"; t.child_frame_id = "base_footprint"; 
-        t.transform.translation.x = best_p.x; t.transform.translation.y = best_p.y;
-        t.transform.rotation.z = std::sin(best_p.yaw * 0.5); t.transform.rotation.w = std::cos(best_p.yaw * 0.5);
+        t.header.stamp = output_stamp; t.header.frame_id = "map"; t.child_frame_id = "base_footprint";
+        t.transform.translation.x = pose_mean(0); t.transform.translation.y = pose_mean(1);
+        t.transform.rotation.z = std::sin(pose_mean(2) * 0.5); t.transform.rotation.w = std::cos(pose_mean(2) * 0.5);
         tf_broadcaster_->sendTransform(t);
 
         // 8. Publisher: Native RViz Markers (Consensus Filtered)
