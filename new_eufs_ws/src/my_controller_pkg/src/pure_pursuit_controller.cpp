@@ -25,14 +25,11 @@ public:
         this->declare_parameter("max_speed_limit", 2.0); // Absolute max speed (m/s)
         this->declare_parameter("max_accel", 1.0);        // Max positive acceleration (m/s^2)
         this->declare_parameter("max_decel", 4.0);        // Max braking capability (m/s^2)
+        this->declare_parameter("min_speed_mps", 1.0);
 
         // Subscribers
         odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
             "/slam/odom", 10, std::bind(&HybridControllerNode::odomCallback, this, _1));
-        
-        speed_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
-            "/ground_truth/odom", 10, std::bind(&HybridControllerNode::speedCallback, this, _1));    
-        
         path_sub_ = this->create_subscription<nav_msgs::msg::Path>(
             "/target_path", 10, std::bind(&HybridControllerNode::pathCallback, this, _1));
 
@@ -59,7 +56,6 @@ private:
 
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
     rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr path_sub_;
-    rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr speed_sub_; 
     rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr speed_profile_sub_;
 
     rclcpp::Publisher<ackermann_msgs::msg::AckermannDriveStamped>::SharedPtr drive_pub_;
@@ -78,19 +74,18 @@ private:
         );
         double r, p, yaw; 
         tf2::Matrix3x3(q).getRPY(r, p, yaw); 
-        psi_ = yaw; 
+        psi_ = yaw;
+        vx_ = msg->twist.twist.linear.x;
         has_odom_ = true;
     }
-
-    void speedCallback(const nav_msgs::msg::Odometry::SharedPtr msg) {
-        vx_ = msg->twist.twist.linear.x; 
-    }
-
     void pathCallback(const nav_msgs::msg::Path::SharedPtr msg) {
-        if (msg->poses.empty()) return;
-        path_ = *msg; 
-        has_path_ = true; 
+        path_ = *msg;
+        has_path_ = !path_.poses.empty();
         last_closest_idx_ = 0;
+        if (!has_path_) {
+            last_steering_ = 0.0;
+            vx_ = 0.0;
+        }
     }
 
     void speedProfileCallback(const std_msgs::msg::Float64MultiArray::SharedPtr msg) {
@@ -181,7 +176,8 @@ private:
         }
 
         // Final safety bounds (lower bound reduced to 1.5 for sharper hairpins)
-        target_velocity = std::clamp(target_velocity, 1.5, max_speed_limit);
+        const double min_speed = std::max(0.0, get_parameter("min_speed_mps").as_double());
+        target_velocity = std::clamp(target_velocity, std::min(min_speed, max_speed_limit), max_speed_limit);
 
         drive_msg.drive.speed = target_velocity;
         
