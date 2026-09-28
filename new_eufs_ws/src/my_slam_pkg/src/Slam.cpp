@@ -79,7 +79,7 @@ public:
         declare_parameter<double>("fallback_dt", DEFAULT_DT);
         declare_parameter<std::string>(
             "cones_topic", "/perception/cones_with_covariance");
-        declare_parameter<std::string>("odom_topic", "/custom_odom");
+        declare_parameter<std::string>("odom_topic", "/odometry/filtered");
 
         num_particles_ = static_cast<int>(std::max<int64_t>(5, get_parameter("num_particles").as_int()));
         process_noise_xy_ =
