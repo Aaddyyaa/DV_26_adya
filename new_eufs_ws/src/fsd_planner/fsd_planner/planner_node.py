@@ -33,7 +33,7 @@ class CentrelinePlanner(Node):
         speeds_topic = self.declare_parameter('target_speeds_topic', '/target_speeds').value
         self._min_track_width = self.declare_parameter('min_track_width_m', 1.5).value
         self._max_track_width = self.declare_parameter('max_track_width_m', 6.0).value
-        self._min_points = self.declare_parameter('min_centerline_points', 3).value
+        self._min_points = self.declare_parameter('min_centerline_points', 2).value
         self._max_speed = self.declare_parameter('max_speed_mps', 3.0).value
         self._min_speed = self.declare_parameter('min_speed_mps', 1.0).value
         self._max_lateral_accel = self.declare_parameter('max_lateral_accel', 3.0).value
