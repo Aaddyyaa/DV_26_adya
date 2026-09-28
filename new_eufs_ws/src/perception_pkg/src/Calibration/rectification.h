@@ -8,7 +8,7 @@ class Rectifier
 public:
     Rectifier() = default;
 
-    bool init_from_file(const std::string& path = "extrinsics.txt");
+    bool init_from_file(const std::string& path = "extrinsics.yml");
 
     void rectify(
         const cv::Mat& left,

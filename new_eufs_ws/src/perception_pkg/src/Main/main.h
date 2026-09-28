@@ -30,12 +30,12 @@ inline const cv::Size MODEL_SIZE = cv::Size(640, 640);
 
 // YOLOv8m cone detection model
 inline const std::string cone_path =
-    "/home/aadddyaa/projects/DV_26/new_eufs_ws/models/"
+    "/home/aaddyyaa/projects/DV_26/new_eufs_ws/models/"
     "yolov8m_new/bestyolov8m_new.onnx";
 
 // YOLOv8n-pose cone keypoint model
 inline const std::string keypoints_path =
-    "/home/aadddyaa/projects/DV_26/new_eufs_ws/models/"
+    "/home/aaddyyaa/projects/DV_26/new_eufs_ws/models/"
     "yolov8n/weights/yolov8nposebest.onnx";
 
 // ============================================================
@@ -44,9 +44,9 @@ inline const std::string keypoints_path =
 // ============================================================
 
 inline const std::string img_path_left =
-    "/home/aadddyaa/projects/DV_26/new_eufs_ws/"
+    "/home/aaddyyaa/projects/DV_26/new_eufs_ws/"
     "runs/detect/predict-2/img2.jpg";
 
 inline const std::string img_path_right =
-    "/home/aadddyaa/projects/DV_26/new_eufs_ws/"
+    "/home/aaddyyaa/projects/DV_26/new_eufs_ws/"
     "runs/detect/predict/img2.jpg";

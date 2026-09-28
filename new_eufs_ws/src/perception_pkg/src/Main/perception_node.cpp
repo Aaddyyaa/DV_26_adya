@@ -14,11 +14,11 @@ PerceptionNode::PerceptionNode()
     // --------------------------------------------------
 
     if (!rectifier_.init_from_file(
-        "/home/aaddyyyaa/projects/DV_26/new_eufs_ws/src/perception_pkg/config/extrinsics.txt"))
+        "/tmp/extrinsics.yml"))
     {
         RCLCPP_FATAL(
             this->get_logger(),
-            "Failed to load extrinsics.txt");
+            "Failed to load extrinsics.yml");
 
         rclcpp::shutdown();
 
@@ -30,7 +30,7 @@ PerceptionNode::PerceptionNode()
     // --------------------------------------------------
 
     if (!cam_.load_from_file(
-        "/home/aaddyyyaa/projects/DV_26/new_eufs_ws/src/perception_pkg/config/extrinsics.txt"))
+        "/tmp/extrinsics.yml"))
     {
         RCLCPP_FATAL(
             this->get_logger(),

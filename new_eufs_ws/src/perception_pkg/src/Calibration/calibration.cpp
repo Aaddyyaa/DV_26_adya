@@ -2,7 +2,7 @@
  * calibration.cpp
  *
  * Intrinsic calibration (left + right) and stereo extrinsic computation.
- * Saves all results to extrinsics.txt for use by the depth pipeline.
+ * Saves all results to extrinsics.yml for use by the depth pipeline.
  *
  * Fixes applied vs original:
  *   1. stereo_calibrate: simple per-image averaging of R/T is WRONG.
@@ -21,7 +21,7 @@
  *      explicitly asserted consistent across frames.
  *   6. save_extrinsics() added: writes cam_left, dist_left, cam_right,
  *      dist_right, R_stereo, T_stereo, R1, R2, P1, P2, Q, baseline,
- *      image size to extrinsics.txt as a cv::FileStorage YAML file.
+ *      image size to extrinsics.yml as a cv::FileStorage YAML file.
  *      load_extrinsics() reads them back for the depth pipeline.
  */
 
@@ -284,7 +284,7 @@ void stereo_calibrate() {
 // ─────────────────────────────────────────────────────────────────────────────
 // save_extrinsics
 //
-// Writes all calibration results to extrinsics.txt as a YAML FileStorage.
+// Writes all calibration results to extrinsics.yml as a YAML FileStorage.
 // The depth pipeline reads this file with load_extrinsics().
 //
 // Keys written:
@@ -341,7 +341,7 @@ bool save_extrinsics(const std::string& path) {
 // ─────────────────────────────────────────────────────────────────────────────
 // load_extrinsics
 //
-// Reads calibration results back from extrinsics.txt.
+// Reads calibration results back from extrinsics.yml.
 // Call this at the start of the depth pipeline instead of running calibration.
 // ─────────────────────────────────────────────────────────────────────────────
 

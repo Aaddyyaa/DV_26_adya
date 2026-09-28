@@ -4,7 +4,7 @@
  * calibration.h
  *
  * Stereo camera calibration — intrinsic and extrinsic.
- * Results saved to / loaded from extrinsics.txt (YAML format).
+ * Results saved to / loaded from extrinsics.yml (YAML format).
  *
  * Typical usage flow:
  *
@@ -16,10 +16,10 @@
  *     pthread_join(tL, nullptr);
  *     pthread_join(tR, nullptr);
  *     stereo_calibrate();
- *     save_extrinsics("extrinsics.txt");
+ *     save_extrinsics("extrinsics.yml");
  *
  *   PER-SESSION (load saved calibration, skip re-running):
- *     load_extrinsics("extrinsics.txt");
+ *     load_extrinsics("extrinsics.yml");
  *     cv::Mat map1L, map2L, map1R, map2R;
  *     compute_rectification_maps(map1L, map2L, map1R, map2R);
  *     // Then apply with cv::remap() before passing to depth pipeline
@@ -115,10 +115,10 @@ void stereo_calibrate();
 /**
  * save_extrinsics
  * Writes all calibration results to a YAML file at the given path.
- * Default path: "extrinsics.txt"
+ * Default path: "extrinsics.yml"
  * Returns true on success.
  */
-bool save_extrinsics(const std::string& path = "extrinsics.txt");
+bool save_extrinsics(const std::string& path = "extrinsics.yml");
 
 /**
  * load_extrinsics
@@ -127,7 +127,7 @@ bool save_extrinsics(const std::string& path = "extrinsics.txt");
  * Returns true on success.
  * Call this instead of running calibration if you have a saved file.
  */
-bool load_extrinsics(const std::string& path = "extrinsics.txt");
+bool load_extrinsics(const std::string& path = "extrinsics.yml");
 
 /**
  * compute_rectification_maps

@@ -42,12 +42,12 @@ private:
         } 
         else if (current_state_ == 1) { 
             std::string mission_str = this->get_parameter("mission").as_string();
-            int ami_state = 4; // Default to Trackdrive
+            int ami_state = eufs_msgs::msg::CanState::AMI_TRACK_DRIVE; // Default to Trackdrive
 
-            if (mission_str == "acceleration") ami_state = 1;
-            else if (mission_str == "skidpad") ami_state = 3;
-            else if (mission_str == "autocross") ami_state = 2;
-            else if (mission_str == "trackdrive") ami_state = 4;
+            if (mission_str == "acceleration") ami_state = eufs_msgs::msg::CanState::AMI_ACCELERATION;
+            else if (mission_str == "skidpad") ami_state = eufs_msgs::msg::CanState::AMI_SKIDPAD;
+            else if (mission_str == "autocross") ami_state = eufs_msgs::msg::CanState::AMI_AUTOCROSS;
+            else if (mission_str == "trackdrive") ami_state = eufs_msgs::msg::CanState::AMI_TRACK_DRIVE;
 
             RCLCPP_INFO_ONCE(this->get_logger(), "Car is READY. Sending Service Call for %s...", mission_str.c_str());
             

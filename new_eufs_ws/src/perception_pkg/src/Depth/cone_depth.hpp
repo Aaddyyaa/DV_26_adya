@@ -8,16 +8,16 @@
  *
  * Workflow:
  *   1. Rectify images via Rectifier (rectification.h)
- *   2. Load intrinsics into CameraConfig from extrinsics.txt
+ *   2. Load intrinsics into CameraConfig from extrinsics.yml
  *   3. Call estimate_depths() with rectified images + YOLO keypoints
  *
  * Example:
  *   // Setup (once per session)
  *   Rectifier rect;
- *   rect.init_from_file("extrinsics.txt");
+ *   rect.init_from_file("extrinsics.yml");
  *
  *   ConeDepth::CameraConfig cam;
- *   cam.load_from_file("extrinsics.txt");
+ *   cam.load_from_file("extrinsics.yml");
  *
  *   ConeDepth::PipelineConfig cfg;
  *   cfg.disp_max = (int)(cam.fx * cam.baseline / 0.5) + 30;
@@ -50,10 +50,10 @@ using ::Keypoints;
  * Values come from P1 (left rectified projection matrix from stereoRectify):
  *   fx = P1[0][0]   fy = P1[1][1]
  *   cx = P1[0][2]   cy = P1[1][2]
- *   baseline = |T_stereo| in metres (saved as "baseline" key in extrinsics.txt)
+ *   baseline = |T_stereo| in metres (saved as "baseline" key in extrinsics.yml)
  *
  * Two ways to populate:
- *   A) load_from_file("extrinsics.txt")  — reads P1 + baseline from the YAML
+ *   A) load_from_file("extrinsics.yml")  — reads P1 + baseline from the YAML
  *   B) hardcode(fx, fy, cx, cy, B)       — set directly, no file I/O
  */
 struct CameraConfig {
@@ -69,7 +69,7 @@ struct CameraConfig {
      * by save_extrinsics() in calibration.cpp.
      * Returns false if the file cannot be opened or required keys are absent.
      */
-    bool load_from_file(const std::string& path = "extrinsics.txt");
+    bool load_from_file(const std::string& path = "extrinsics.yml");
 
     /**
      * hardcode

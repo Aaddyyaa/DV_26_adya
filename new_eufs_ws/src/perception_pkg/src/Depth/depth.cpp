@@ -19,7 +19,7 @@ namespace ConeDepth {
 // ─────────────────────────────────────────────────────────────────────────────
 // CameraConfig::load_from_file
 //
-// Reads the P1 matrix and baseline from extrinsics.txt (YAML format)
+// Reads the P1 matrix and baseline from extrinsics.yml (YAML format)
 // written by save_extrinsics() in calibration.cpp.
 //
 // P1 is the left rectified projection matrix from cv::stereoRectify:
