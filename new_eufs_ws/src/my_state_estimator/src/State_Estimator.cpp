@@ -90,7 +90,8 @@ private:
         double v_rl = 0.0, v_rr = 0.0;
         int wheels_found = 0; // FIX: Track how many wheels we actually found
         
-        for (size_t i = 0; i < msg->name.size(); i++) {
+        const size_t count = std::min(msg->name.size(), msg->velocity.size());
+        for (size_t i = 0; i < count; i++) {
             if (msg->name[i] == "wheel_rl_joint" || msg->name[i] == "left_rear_axle") {
                 v_rl = (msg->velocity[i] / gear_ratio) * r_wheel; 
                 wheels_found++;
