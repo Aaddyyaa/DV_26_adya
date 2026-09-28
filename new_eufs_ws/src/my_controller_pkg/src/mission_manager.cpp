@@ -100,6 +100,7 @@ private:
     rclcpp::Subscription<eufs_msgs::msg::CanState>::SharedPtr sub_state_;
     rclcpp::TimerBase::SharedPtr timer_;
     uint16_t current_state_ = 0;
+    bool mission_sent_ = false;
 };
 
 int main(int argc, char **argv) {
