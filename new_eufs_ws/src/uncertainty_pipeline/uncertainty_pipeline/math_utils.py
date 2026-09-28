@@ -256,6 +256,12 @@ def build_corridor(
         right_start = max(first_boundary[0].s, second_boundary[0].s)
         if right_start - left_end > max(2.0 * step_m, 1.0):
             return []
+        # Bridge only the nearest support gap; each side must be able to
+        # provide a value at both ends through interpolation or a singleton.
+        if len(first_boundary) > 1 and not (first_boundary[0].s <= left_end <= first_boundary[-1].s):
+            return []
+        if len(second_boundary) > 1 and not (second_boundary[0].s <= right_start <= second_boundary[-1].s):
+            return []
         start, end = left_end, right_start
 
     output: List[CorridorSample] = []
