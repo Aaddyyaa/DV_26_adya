@@ -17,7 +17,7 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'odom_topic': '/odometry/filtered',
-                'cones_topic': '/perception/cones_with_covariance',
+                'cones_topic': '/camera_0/cones',
                 'min_landmark_hits': 1,
             }],
         ),
