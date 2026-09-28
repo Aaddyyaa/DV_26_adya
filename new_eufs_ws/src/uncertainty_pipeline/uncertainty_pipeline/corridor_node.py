@@ -108,14 +108,17 @@ class CorridorNode(Node):
             self._landmarks, self._pose, self._pose_covariance, YELLOW)
         corridor = build_corridor(blue, yellow, self._safety_k, self._grid_step_m)
         if not corridor:
-            self._publish_status('no overlapping blue/yellow boundary support')
+            self._publish_status(
+                f'insufficient boundary support: blue={len(blue)} yellow={len(yellow)}')
             return
         self._publish_corridor(corridor)
         self._publish_paths(corridor)
         self._publish_markers(blue, yellow, corridor)
         invalid = sum(1 for sample in corridor if not sample.valid)
+        valid = len(corridor) - invalid
         self._publish_status(
-            f'k={self._safety_k:g}; samples={len(corridor)}; collapsed={invalid}')
+            f'k={self._safety_k:g}; blue={len(blue)}; yellow={len(yellow)}; '
+            f'samples={len(corridor)}; valid={valid}; collapsed={invalid}')
 
     def _publish_corridor(self, corridor) -> None:
         # Each row is [s, lower_mu, lower_sigma, upper_mu, upper_sigma,
