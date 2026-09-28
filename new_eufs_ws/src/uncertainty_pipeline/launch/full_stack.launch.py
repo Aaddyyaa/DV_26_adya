@@ -9,6 +9,7 @@ def generate_launch_description():
             executable='state_estimator_node',
             name='state_estimator',
             output='screen',
+            parameters=[{'use_sim_time': True}],
         ),
         Node(
             package='my_slam_pkg',
@@ -16,6 +17,7 @@ def generate_launch_description():
             name='fast_slam_node',
             output='screen',
             parameters=[{
+                'use_sim_time': True,
                 'odom_topic': '/odometry/filtered',
                 'cones_topic': '/camera_0/cones',
                 'min_landmark_hits': 1,
@@ -27,6 +29,7 @@ def generate_launch_description():
             name='path_planner',
             output='screen',
             parameters=[{
+                'use_sim_time': True,
                 'min_centerline_points': 2,
             }],
         ),
@@ -36,6 +39,7 @@ def generate_launch_description():
             name='uncertainty_corridor',
             output='screen',
             parameters=[{
+                'use_sim_time': True,
                 'safety_k': 2.0,
                 'grid_step_m': 0.5,
             }],
@@ -45,12 +49,13 @@ def generate_launch_description():
             executable='pure_pursuit_node',
             name='pure_pursuit_node',
             output='screen',
+            parameters=[{'use_sim_time': True}],
         ),
         Node(
             package='my_controller_pkg',
             executable='mission_manager',
             name='mission_manager',
             output='screen',
-            parameters=[{'mission': 'trackdrive'}],
+            parameters=[{'use_sim_time': True, 'mission': 'trackdrive'}],
         ),
     ])
