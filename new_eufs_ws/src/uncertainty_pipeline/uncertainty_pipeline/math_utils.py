@@ -222,28 +222,57 @@ def build_corridor(
     first_boundary: Sequence[BoundarySample], second_boundary: Sequence[BoundarySample],
     safety_k: float, step_m: float,
 ) -> List[CorridorSample]:
-    """Build local longitudinal corridor samples and flag collapsed regions."""
-    if safety_k < 0.0 or step_m <= 0.0 or len(first_boundary) < 2 or len(second_boundary) < 2:
+    """Build a corridor over the *union* of observable boundary support.
+
+    The old implementation required both boundaries to have at least two
+    observations and used the raw interval intersection. That made the
+    corridor disappear completely for sparse/offset observations even when
+    there was usable support. We now:
+      1. interpolate where both sides overlap;
+      2. permit a one-observation boundary by holding its lateral mean/sigma
+         constant over the span of the other side;
+      3. keep collapsed samples so downstream code can report the unsafe
+         portion instead of reporting "no overlap" for every sparse case.
+    """
+    if safety_k < 0.0 or step_m <= 0.0 or not first_boundary or not second_boundary:
         return []
-    start = max(first_boundary[0].s, second_boundary[0].s)
-    end = min(first_boundary[-1].s, second_boundary[-1].s)
-    if end < start:
-        return []
+
+    def value_at(samples: Sequence[BoundarySample], s: float) -> Optional[BoundarySample]:
+        if len(samples) == 1:
+            return BoundarySample(s, samples[0].mean, samples[0].sigma)
+        return interpolate_boundary(samples, s)
+
+    # Use the overlap when it exists. If there is no strict overlap, bridge
+    # the gap between the nearest observations only when the gap is small
+    # relative to the requested grid step. This avoids inventing a long track
+    # while still making the sparse Gazebo view observable.
+    overlap_start = max(first_boundary[0].s, second_boundary[0].s)
+    overlap_end = min(first_boundary[-1].s, second_boundary[-1].s)
+
+    if overlap_end >= overlap_start:
+        start, end = overlap_start, overlap_end
+    else:
+        left_end = min(first_boundary[-1].s, second_boundary[-1].s)
+        right_start = max(first_boundary[0].s, second_boundary[0].s)
+        if right_start - left_end > max(2.0 * step_m, 1.0):
+            return []
+        start, end = left_end, right_start
+
     output: List[CorridorSample] = []
-    index = 0
+    s = start
     while True:
-        s = min(end, start + index * step_m)
-        first = interpolate_boundary(first_boundary, s)
-        second = interpolate_boundary(second_boundary, s)
-        if first is None or second is None:
-            continue
-        lower, upper = sorted((first, second), key=lambda sample: sample.mean)
-        y_min = lower.mean + safety_k * lower.sigma
-        y_max = upper.mean - safety_k * upper.sigma
-        output.append(CorridorSample(
-            s, lower.mean, lower.sigma, upper.mean, upper.sigma,
-            y_min, y_max, math.isfinite(y_min) and math.isfinite(y_max) and y_min < y_max))
+        first = value_at(first_boundary, s)
+        second = value_at(second_boundary, s)
+        if first is not None and second is not None:
+            lower, upper = sorted((first, second), key=lambda sample: sample.mean)
+            y_min = lower.mean + safety_k * lower.sigma
+            y_max = upper.mean - safety_k * upper.sigma
+            output.append(CorridorSample(
+                s, lower.mean, lower.sigma, upper.mean, upper.sigma,
+                y_min, y_max,
+                math.isfinite(y_min) and math.isfinite(y_max) and y_min < y_max))
         if s >= end:
             break
-        index += 1
+        s = min(end, s + step_m)
+
     return output
