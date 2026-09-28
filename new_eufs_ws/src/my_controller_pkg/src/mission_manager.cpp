@@ -30,34 +30,67 @@ private:
     }
 
     void check_status() {
-        if (!client_reset_->wait_for_service(1s)) {
-            RCLCPP_INFO_ONCE(this->get_logger(), "Waiting for EUFS services...");
+        if (!client_mission_->wait_for_service(1s)) {
+            RCLCPP_INFO_ONCE(this->get_logger(), "Waiting for EUFS mission service...");
             return;
         }
 
-        if (current_state_ == 0) { 
-            RCLCPP_INFO_ONCE(this->get_logger(), "Car is OFF. Requesting Reset...");
-            auto req = std::make_shared<std_srvs::srv::Trigger::Request>();
-            client_reset_->async_send_request(req);
-        } 
-        else if (current_state_ == 1) { 
-            std::string mission_str = this->get_parameter("mission").as_string();
-            int ami_state = eufs_msgs::msg::CanState::AMI_TRACK_DRIVE; // Default to Trackdrive
+        std::string mission_str = get_parameter("mission").as_string();
+        int ami_state = eufs_msgs::msg::CanState::AMI_TRACK_DRIVE;
 
-            if (mission_str == "acceleration") ami_state = eufs_msgs::msg::CanState::AMI_ACCELERATION;
-            else if (mission_str == "skidpad") ami_state = eufs_msgs::msg::CanState::AMI_SKIDPAD;
-            else if (mission_str == "autocross") ami_state = eufs_msgs::msg::CanState::AMI_AUTOCROSS;
-            else if (mission_str == "trackdrive") ami_state = eufs_msgs::msg::CanState::AMI_TRACK_DRIVE;
+        if (mission_str == "acceleration")
+            ami_state = eufs_msgs::msg::CanState::AMI_ACCELERATION;
+        else if (mission_str == "skidpad")
+            ami_state = eufs_msgs::msg::CanState::AMI_SKIDPAD;
+        else if (mission_str == "autocross")
+            ami_state = eufs_msgs::msg::CanState::AMI_AUTOCROSS;
+        else if (mission_str == "trackdrive")
+            ami_state = eufs_msgs::msg::CanState::AMI_TRACK_DRIVE;
 
-            RCLCPP_INFO_ONCE(this->get_logger(), "Car is READY. Sending Service Call for %s...", mission_str.c_str());
-            
+        // The EUFS simulator starts in AS_OFF with AMI_NOT_SELECTED.
+        // Selecting the mission is what moves it to AS_READY; repeatedly
+        // calling /ros_can/reset here kept the car permanently OFF.
+        if (current_state_ == eufs_msgs::msg::CanState::AS_OFF && !mission_sent_) {
             auto req = std::make_shared<eufs_msgs::srv::SetCanState::Request>();
-            req->ami_state = ami_state; 
-            req->as_state = 4;  // AS_DRIVING
-            client_mission_->async_send_request(req);
+            req->ami_state = ami_state;
+            req->as_state = eufs_msgs::msg::CanState::AS_DRIVING;
+
+            RCLCPP_INFO(
+                this->get_logger(),
+                "AS is OFF. Selecting autonomous mission: %s",
+                mission_str.c_str());
+
+            client_mission_->async_send_request(
+                req,
+                [this](rclcpp::Client<eufs_msgs::srv::SetCanState>::SharedFuture future) {
+                    try {
+                        if (future.get()->success) {
+                            mission_sent_ = true;
+                            RCLCPP_INFO(
+                                this->get_logger(),
+                                "Mission selected; waiting for EUFS AS_READY -> AS_DRIVING transition.");
+                        } else {
+                            RCLCPP_WARN(
+                                this->get_logger(),
+                                "EUFS rejected the mission request.");
+                        }
+                    } catch (const std::exception &error) {
+                        RCLCPP_ERROR(
+                            this->get_logger(),
+                            "Mission request failed: %s",
+                            error.what());
+                    }
+                });
         }
-        else if (current_state_ == 2) {
-            RCLCPP_INFO_ONCE(this->get_logger(), "SUCCESS: Car is in DRIVE mode.");
+        else if (current_state_ == eufs_msgs::msg::CanState::AS_READY) {
+            RCLCPP_INFO_ONCE(
+                this->get_logger(),
+                "EUFS AS_READY: waiting for automatic transition to AS_DRIVING.");
+        }
+        else if (current_state_ == eufs_msgs::msg::CanState::AS_DRIVING) {
+            RCLCPP_INFO_ONCE(
+                this->get_logger(),
+                "SUCCESS: EUFS is in AS_DRIVING.");
         }
     }
 
