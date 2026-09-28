@@ -264,11 +264,25 @@ def build_corridor(
             return []
         start, end = left_end, right_start
 
+
+    def _gap_supported(samples: Sequence[BoundarySample], s: float) -> bool:
+        # One-sample boundaries are treated as locally constant. Multi-sample
+        # boundaries are evaluated only inside their measured support.
+        return len(samples) == 1 or samples[0].s <= s <= samples[-1].s
     output: List[CorridorSample] = []
     s = start
     while True:
         first = value_at(first_boundary, s)
         second = value_at(second_boundary, s)
+        # In a sparse, non-overlapping case we may be bridging a short gap.
+        # For a multi-point boundary, don't silently extrapolate beyond its
+        # measured support; singleton support may be held constant.
+        if (not _gap_supported(first_boundary, s) or
+                not _gap_supported(second_boundary, s)):
+            if s >= end:
+                break
+            s = min(end, s + step_m)
+            continue
         if first is not None and second is not None:
             lower, upper = sorted((first, second), key=lambda sample: sample.mean)
             y_min = lower.mean + safety_k * lower.sigma
