@@ -1,111 +1,159 @@
 #include <rclcpp/rclcpp.hpp>
 #include <eufs_msgs/srv/set_can_state.hpp>
 #include <eufs_msgs/msg/can_state.hpp>
-#include <std_srvs/srv/trigger.hpp>
 #include <chrono>
+#include <string>
 
 using namespace std::chrono_literals;
 
-class MissionManager : public rclcpp::Node {
+class MissionManager : public rclcpp::Node
+{
 public:
-    MissionManager() : Node("mission_manager") {
-        this->declare_parameter("mission", "skidpad");
+    MissionManager() : Node("mission_manager")
+    {
+        declare_parameter<std::string>("mission", "trackdrive");
+        declare_parameter<bool>("enable", false);
 
-        client_reset_ = this->create_client<std_srvs::srv::Trigger>("/ros_can/reset");
-        client_mission_ = this->create_client<eufs_msgs::srv::SetCanState>("/ros_can/set_mission");
-        
-        state_pub_ = this->create_publisher<eufs_msgs::msg::CanState>("/ros_can/state", 10);
-        
-        sub_state_ = this->create_subscription<eufs_msgs::msg::CanState>(
-            "/ros_can/state", 10, std::bind(&MissionManager::state_cb, this, std::placeholders::_1));
-            
-        timer_ = this->create_wall_timer(1000ms, std::bind(&MissionManager::check_status, this));
-        
-        RCLCPP_INFO(this->get_logger(), "Universal Mission Manager Initialized.");
+        client_mission_ =
+            create_client<eufs_msgs::srv::SetCanState>(
+                "/ros_can/set_mission");
+
+        state_sub_ =
+            create_subscription<eufs_msgs::msg::CanState>(
+                "/ros_can/state",
+                10,
+                std::bind(
+                    &MissionManager::stateCallback,
+                    this,
+                    std::placeholders::_1));
+
+        timer_ =
+            create_wall_timer(
+                500ms,
+                std::bind(
+                    &MissionManager::checkStatus,
+                    this));
+
+        RCLCPP_INFO(
+            get_logger(),
+            "Mission manager ready. Mission selection is disabled by default; "
+            "use the official EUFS GUI for Track Drive.");
     }
 
 private:
-    void state_cb(const eufs_msgs::msg::CanState::SharedPtr msg) { 
-        current_state_ = msg->as_state; 
+    void stateCallback(
+        const eufs_msgs::msg::CanState::SharedPtr msg)
+    {
+        current_state_ = msg->as_state;
+        have_state_ = true;
+
+        if (current_state_ ==
+            eufs_msgs::msg::CanState::AS_DRIVING)
+        {
+            RCLCPP_INFO_ONCE(
+                get_logger(),
+                "EUFS reports AS_DRIVING.");
+        }
     }
 
-    void check_status() {
-        if (!client_mission_->wait_for_service(1s)) {
-            RCLCPP_INFO_ONCE(this->get_logger(), "Waiting for EUFS mission service...");
+    void checkStatus()
+    {
+        // This node is intentionally passive unless explicitly enabled.
+        // The official ros_can_sim GUI owns mission selection and Manual Drive
+        // transitions; sending competing /ros_can/set_mission requests from a
+        // second node was a source of state conflicts.
+        if (!get_parameter("enable").get<bool>())
+            return;
+
+        if (!have_state_)
+            return;
+
+        if (!client_mission_->service_is_ready())
+            return;
+
+        if (mission_sent_)
+            return;
+
+        if (current_state_ !=
+            eufs_msgs::msg::CanState::AS_OFF)
+        {
             return;
         }
 
-        std::string mission_str = get_parameter("mission").as_string();
-        int ami_state = eufs_msgs::msg::CanState::AMI_TRACK_DRIVE;
+        const std::string mission =
+            get_parameter("mission").as_string();
 
-        if (mission_str == "acceleration")
-            ami_state = eufs_msgs::msg::CanState::AMI_ACCELERATION;
-        else if (mission_str == "skidpad")
-            ami_state = eufs_msgs::msg::CanState::AMI_SKIDPAD;
-        else if (mission_str == "autocross")
-            ami_state = eufs_msgs::msg::CanState::AMI_AUTOCROSS;
-        else if (mission_str == "trackdrive")
-            ami_state = eufs_msgs::msg::CanState::AMI_TRACK_DRIVE;
+        int ami_state =
+            eufs_msgs::msg::CanState::AMI_TRACK_DRIVE;
 
-        // The EUFS simulator starts in AS_OFF with AMI_NOT_SELECTED.
-        // Selecting the mission is what moves it to AS_READY; repeatedly
-        // calling /ros_can/reset here kept the car permanently OFF.
-        if (current_state_ == eufs_msgs::msg::CanState::AS_OFF && !mission_sent_) {
-            auto req = std::make_shared<eufs_msgs::srv::SetCanState::Request>();
-            req->ami_state = ami_state;
-            req->as_state = eufs_msgs::msg::CanState::AS_DRIVING;
+        if (mission == "acceleration")
+            ami_state =
+                eufs_msgs::msg::CanState::AMI_ACCELERATION;
+        else if (mission == "skidpad")
+            ami_state =
+                eufs_msgs::msg::CanState::AMI_SKIDPAD;
+        else if (mission == "autocross")
+            ami_state =
+                eufs_msgs::msg::CanState::AMI_AUTOCROSS;
 
-            RCLCPP_INFO(
-                this->get_logger(),
-                "AS is OFF. Selecting autonomous mission: %s",
-                mission_str.c_str());
+        auto request =
+            std::make_shared<
+                eufs_msgs::srv::SetCanState::Request>();
 
-            client_mission_->async_send_request(
-                req,
-                [this](rclcpp::Client<eufs_msgs::srv::SetCanState>::SharedFuture future) {
-                    try {
-                        if (future.get()->success) {
-                            mission_sent_ = true;
-                            RCLCPP_INFO(
-                                this->get_logger(),
-                                "Mission selected; waiting for EUFS AS_READY -> AS_DRIVING transition.");
-                        } else {
-                            RCLCPP_WARN(
-                                this->get_logger(),
-                                "EUFS rejected the mission request.");
-                        }
-                    } catch (const std::exception &error) {
-                        RCLCPP_ERROR(
-                            this->get_logger(),
-                            "Mission request failed: %s",
-                            error.what());
+        request->ami_state = ami_state;
+        request->as_state =
+            eufs_msgs::msg::CanState::AS_READY;
+
+        client_mission_->async_send_request(
+            request,
+            [this](
+                rclcpp::Client<
+                    eufs_msgs::srv::SetCanState>::SharedFuture future)
+            {
+                try
+                {
+                    if (future.get()->success)
+                    {
+                        mission_sent_ = true;
+                        RCLCPP_INFO(
+                            get_logger(),
+                            "Mission selected successfully.");
                     }
-                });
-        }
-        else if (current_state_ == eufs_msgs::msg::CanState::AS_READY) {
-            RCLCPP_INFO_ONCE(
-                this->get_logger(),
-                "EUFS AS_READY: waiting for automatic transition to AS_DRIVING.");
-        }
-        else if (current_state_ == eufs_msgs::msg::CanState::AS_DRIVING) {
-            RCLCPP_INFO_ONCE(
-                this->get_logger(),
-                "SUCCESS: EUFS is in AS_DRIVING.");
-        }
+                    else
+                    {
+                        RCLCPP_WARN(
+                            get_logger(),
+                            "EUFS rejected mission selection.");
+                    }
+                }
+                catch (const std::exception &error)
+                {
+                    RCLCPP_ERROR(
+                        get_logger(),
+                        "Mission service call failed: %s",
+                        error.what());
+                }
+            });
     }
 
-    rclcpp::Client<std_srvs::srv::Trigger>::SharedPtr client_reset_;
-    rclcpp::Client<eufs_msgs::srv::SetCanState>::SharedPtr client_mission_;
-    rclcpp::Publisher<eufs_msgs::msg::CanState>::SharedPtr state_pub_;
-    rclcpp::Subscription<eufs_msgs::msg::CanState>::SharedPtr sub_state_;
+    rclcpp::Client<
+        eufs_msgs::srv::SetCanState>::SharedPtr client_mission_;
+
+    rclcpp::Subscription<
+        eufs_msgs::msg::CanState>::SharedPtr state_sub_;
+
     rclcpp::TimerBase::SharedPtr timer_;
-    uint16_t current_state_ = 0;
-    bool mission_sent_ = false;
+
+    uint8_t current_state_{0};
+    bool have_state_{false};
+    bool mission_sent_{false};
 };
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<MissionManager>());
+    rclcpp::spin(
+        std::make_shared<MissionManager>());
     rclcpp::shutdown();
     return 0;
 }
