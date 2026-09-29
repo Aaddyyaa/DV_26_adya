@@ -108,15 +108,15 @@ class CorridorNode(Node):
             self._landmarks, self._pose, self._pose_covariance, YELLOW)
         corridor = build_corridor(blue, yellow, self._safety_k, self._grid_step_m)
         if not corridor:
-            # Keep publishing empty outputs so stale RViz geometry is not
-            # mistaken for current uncertainty data.
+            # Keep raw boundary means visible even when there is no positive
+            # safety corridor. Do not allow stale centerline/envelopes to remain.
             self._corridor_pub.publish(Float64MultiArray())
             self._lower_path_pub.publish(Path())
             self._upper_path_pub.publish(Path())
             self._centre_path_pub.publish(Path())
-            self._publish_markers(blue, yellow, [])
+            self._publish_boundary_only(blue, yellow)
             self._publish_status(
-                f'insufficient boundary support: blue={len(blue)} yellow={len(yellow)}')
+                f'no corridor: blue={len(blue)} yellow={len(yellow)}')
             return
         self._publish_corridor(corridor)
         self._publish_paths(corridor)
@@ -127,6 +127,24 @@ class CorridorNode(Node):
             f'k={self._safety_k:g}; blue={len(blue)}; yellow={len(yellow)}; '
             f'samples={len(corridor)}; valid={valid}; collapsed={invalid}')
 
+    def _publish_boundary_only(self, blue: Sequence[BoundarySample], yellow: Sequence[BoundarySample]) -> None:
+        # Boundary means remain useful even when k-safety leaves no positive
+        # corridor. This keeps the raw uncertainty data visible for debugging.
+        if self._pose is None:
+            return
+        self._markers_pub.publish(
+            MarkerArray(
+                markers=[
+                    self._line_marker(
+                        1, 'boundary_mean',
+                        [(sample.s, sample.mean) for sample in blue],
+                        (0.1, 0.2, 1.0)),
+                    self._line_marker(
+                        2, 'boundary_mean',
+                        [(sample.s, sample.mean) for sample in yellow],
+                        (1.0, 0.9, 0.1)),
+                ]))
+        
     def _publish_corridor(self, corridor) -> None:
         # Each row is [s, lower_mu, lower_sigma, upper_mu, upper_sigma,
         #              y_min, y_max, valid]. Coordinates are vehicle-local.
