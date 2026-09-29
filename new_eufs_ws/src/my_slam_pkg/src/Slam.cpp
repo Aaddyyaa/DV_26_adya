@@ -1025,99 +1025,109 @@ private:
         return output;
     }
 
-    void publishPlanningCones(const Particle &particle)
+    void publishPlanningCones(
+        const eufs_msgs::msg::ConeArrayWithCovariance &landmarks)
     {
         eufs_msgs::msg::ConeArray output;
-        output.header.stamp = now();
-        output.header.frame_id = "map";
+        output.header = landmarks.header;
 
-        for (const auto &landmark : particle.map)
+        auto append = [&output](
+            const std::vector<eufs_msgs::msg::ConeWithCovariance> &cones,
+            int color)
         {
-            if (landmark.hits < min_landmark_hits_)
-                continue;
+            for (const auto &landmark : cones)
+            {
+                geometry_msgs::msg::Point point;
+                point.x = landmark.point.x;
+                point.y = landmark.point.y;
+                point.z = 0.0;
 
-            geometry_msgs::msg::Point point;
-            point.x = landmark.mu(0);
-            point.y = landmark.mu(1);
-            point.z = 0.0;
+                if (color == 0)
+                    output.blue_cones.push_back(point);
+                else if (color == 1)
+                    output.yellow_cones.push_back(point);
+                else if (color == 2)
+                    output.big_orange_cones.push_back(point);
+            }
+        };
 
-            if (landmark.color == 0)
-                output.blue_cones.push_back(point);
-            else if (landmark.color == 1)
-                output.yellow_cones.push_back(point);
-            else if (landmark.color == 2)
-                output.big_orange_cones.push_back(point);
-        }
+        append(landmarks.blue_cones, 0);
+        append(landmarks.yellow_cones, 1);
+        append(landmarks.orange_cones, 2);
+        append(landmarks.big_orange_cones, 2);
 
         cones_pub_->publish(output);
     }
 
     void publishNativeMarkers(
-        const Particle &particle)
+        const eufs_msgs::msg::ConeArrayWithCovariance &landmarks)
     {
         visualization_msgs::msg::MarkerArray array;
 
         visualization_msgs::msg::Marker clear;
-        clear.action =
-            visualization_msgs::msg::Marker::DELETEALL;
+        clear.action = visualization_msgs::msg::Marker::DELETEALL;
         array.markers.push_back(clear);
 
         int id = 0;
 
-        for (const auto &landmark : particle.map)
+        auto append = [&array, &id, &landmarks](
+            const std::vector<eufs_msgs::msg::ConeWithCovariance> &cones,
+            int color)
         {
-            if (landmark.hits < min_landmark_hits_)
-                continue;
-
-            visualization_msgs::msg::Marker marker;
-
-            marker.header.stamp = now();
-            marker.header.frame_id = "map";
-            marker.ns = "track_cones";
-            marker.id = id++;
-
-            marker.type =
-                visualization_msgs::msg::Marker::CYLINDER;
-            marker.action =
-                visualization_msgs::msg::Marker::ADD;
-
-            marker.pose.position.x = landmark.mu(0);
-            marker.pose.position.y = landmark.mu(1);
-            marker.pose.position.z = 0.15;
-
-            marker.scale.x = 0.32;
-            marker.scale.y = 0.32;
-            marker.scale.z = 0.30;
-
-            marker.color.a = 1.0;
-
-            if (landmark.color == 0)
+            for (const auto &landmark : cones)
             {
-                marker.color.r = 0.0;
-                marker.color.g = 0.15;
-                marker.color.b = 1.0;
-            }
-            else if (landmark.color == 1)
-            {
-                marker.color.r = 1.0;
-                marker.color.g = 0.9;
-                marker.color.b = 0.0;
-            }
-            else if (landmark.color == 2)
-            {
-                marker.color.r = 1.0;
-                marker.color.g = 0.35;
-                marker.color.b = 0.0;
-            }
-            else
-            {
-                marker.color.r = 0.7;
-                marker.color.g = 0.7;
-                marker.color.b = 0.7;
-            }
+                visualization_msgs::msg::Marker marker;
 
-            array.markers.push_back(marker);
-        }
+                marker.header.stamp = landmarks.header.stamp;
+                marker.header.frame_id = "map";
+                marker.ns = "track_cones";
+                marker.id = id++;
+                marker.type = visualization_msgs::msg::Marker::CYLINDER;
+                marker.action = visualization_msgs::msg::Marker::ADD;
+
+                marker.pose.position.x = landmark.point.x;
+                marker.pose.position.y = landmark.point.y;
+                marker.pose.position.z = 0.15;
+
+                marker.scale.x = 0.32;
+                marker.scale.y = 0.32;
+                marker.scale.z = 0.30;
+                marker.color.a = 1.0;
+
+                if (color == 0)
+                {
+                    marker.color.r = 0.0;
+                    marker.color.g = 0.15;
+                    marker.color.b = 1.0;
+                }
+                else if (color == 1)
+                {
+                    marker.color.r = 1.0;
+                    marker.color.g = 0.9;
+                    marker.color.b = 0.0;
+                }
+                else if (color == 2)
+                {
+                    marker.color.r = 1.0;
+                    marker.color.g = 0.35;
+                    marker.color.b = 0.0;
+                }
+                else
+                {
+                    marker.color.r = 0.7;
+                    marker.color.g = 0.7;
+                    marker.color.b = 0.7;
+                }
+
+                array.markers.push_back(marker);
+            }
+        };
+
+        append(landmarks.blue_cones, 0);
+        append(landmarks.yellow_cones, 1);
+        append(landmarks.orange_cones, 2);
+        append(landmarks.big_orange_cones, 2);
+        append(landmarks.unknown_color_cones, 3);
 
         native_marker_pub_->publish(array);
     }
@@ -1236,14 +1246,18 @@ private:
         const Particle best_particle =
             getBestParticle();
 
-        publishPlanningCones(best_particle);
-
         const rclcpp::Time stamp = now();
 
-        landmark_cov_pub_->publish(
+        // Use one covariance-aware aggregated map for planning, uncertainty,
+        // and visualization so particle resampling cannot move the visible
+        // boundary between frames.
+        const auto aggregated_landmarks =
             aggregateLandmarks(
                 best_particle,
-                stamp));
+                stamp);
+
+        publishPlanningCones(aggregated_landmarks);
+        landmark_cov_pub_->publish(aggregated_landmarks);
 
         Eigen::Vector3d pose_mean;
         Eigen::Matrix3d pose_covariance;
@@ -1267,7 +1281,7 @@ private:
             local_yaw_rate,
             stamp);
 
-        publishNativeMarkers(best_particle);
+        publishNativeMarkers(aggregated_landmarks);
 
         if (!local_measurements.empty())
         {
