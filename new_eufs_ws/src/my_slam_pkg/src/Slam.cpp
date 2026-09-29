@@ -175,6 +175,7 @@ private:
     double process_noise_yaw_{0.0001};
     double landmark_match_distance_{1.0};
     double fallback_dt_{DEFAULT_DT};
+    double max_process_dt_{0.2};
 
     std::string cones_topic_;
     std::string odom_topic_;
@@ -1315,7 +1316,7 @@ private:
             dt = std::clamp(
                 dt,
                 0.005,
-                0.2);
+                max_process_dt_);
         }
 
         if (measurements.empty() &&
@@ -1347,7 +1348,8 @@ private:
                 reference,
                 stamp);
 
-        // The same stable map is sent to planning, uncertainty, and RViz.
+        // Publish immediately, even when no pair is available yet. The planner
+        // can then see the observed cone map while it waits for a valid pair.
         publishPlanningCones(landmarks);
         landmark_cov_pub_->publish(
             landmarks);
