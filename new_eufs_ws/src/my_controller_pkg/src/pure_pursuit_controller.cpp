@@ -157,7 +157,7 @@ private:
         // --- LONGITUDINAL CONTROL (PREDICTIVE BRAKING) ---
         double max_speed_limit = get_parameter("max_speed_limit").as_double();
         double deceleration_limit = get_parameter("max_decel").as_double(); 
-        double target_velocity = max_speed_limit; 
+        double target_velocity = std::min(max_speed_limit, 1.5); 
         
         int velocity_scan_limit = std::min(static_cast<int>(last_closest_idx_) + 80, static_cast<int>(N) - 1);
         
@@ -189,7 +189,7 @@ private:
         if (target_velocity < vx_) {
             drive_msg.drive.acceleration = -deceleration_limit; 
         } else {
-            drive_msg.drive.acceleration = get_parameter("max_accel").as_double(); 
+            drive_msg.drive.acceleration = std::min(get_parameter("max_accel").as_double(), 1.0); 
         }
         
         RCLCPP_INFO_THROTTLE(
