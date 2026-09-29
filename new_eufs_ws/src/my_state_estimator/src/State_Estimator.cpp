@@ -76,6 +76,7 @@ private:
     double gx_, gy_, gyaw_;
     double latest_vx_meas_;
     bool has_meas_;
+    bool have_joint_state_ = false;
     rclcpp::Time last_time_;
 
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
@@ -132,6 +133,7 @@ private:
 
         // Predict Covariance
         P_ = F * P_ * F.transpose() + Q_;
+        P_ = 0.5 * (P_ + P_.transpose());
 
         // ==========================================
         // STEP 2: EKF UPDATE (Measurement Correction)
@@ -198,6 +200,16 @@ private:
         odom.twist.twist.linear.x = x_hat_(0);
         odom.twist.twist.linear.y = x_hat_(1);
         odom.twist.twist.angular.z = x_hat_(2);
+
+        odom.pose.covariance[0] = P_(0,0);
+        odom.pose.covariance[1] = P_(0,1);
+        odom.pose.covariance[5] = 0.0;
+        odom.pose.covariance[6] = P_(1,0);
+        odom.pose.covariance[7] = P_(1,1);
+        odom.pose.covariance[11] = 0.0;
+        odom.pose.covariance[30] = 0.0;
+        odom.pose.covariance[31] = 0.0;
+        odom.pose.covariance[35] = std::max(P_(2,2), 1e-6);
 
         state_pub_->publish(odom);
     }
