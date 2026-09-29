@@ -20,13 +20,13 @@ public:
         x_hat_ = Eigen::Vector3d::Zero();
         
         // Covariance Matrix (Uncertainty)
-        P_ = Eigen::Matrix3d::Identity() * 0.1;
+        P_ = Eigen::Matrix3d::Identity() * 0.01;
         
         // Process Noise (Trust in the IMU prediction)
-        Q_ = Eigen::Matrix3d::Identity() * 0.05;
+        Q_ = Eigen::Matrix3d::Identity() * 0.001;
         
         // Measurement Noise (Trust in the wheel speeds)
-        R_meas_ = 0.1; 
+        R_meas_ = 0.02; 
         
         y_raw_ = Eigen::Vector3d::Zero();
         gx_ = 0.0; gy_ = 0.0; gyaw_ = 0.0;
