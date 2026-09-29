@@ -86,6 +86,17 @@ def generate_launch_description():
             }],
         ),
 
-        # Mission selection is intentionally left to the official EUFS GUI.
-        # Do not run a second node that competes with ros_can_sim for /ros_can/state.
+        # Keep the mission manager available but passive. The official EUFS
+        # GUI remains the only component that changes AS/AMI state during demo.
+        Node(
+            package='my_controller_pkg',
+            executable='mission_manager',
+            name='mission_manager',
+            output='screen',
+            parameters=[{
+                'use_sim_time': True,
+                'enable': False,
+                'mission': 'trackdrive',
+            }],
+        ),
     ])
