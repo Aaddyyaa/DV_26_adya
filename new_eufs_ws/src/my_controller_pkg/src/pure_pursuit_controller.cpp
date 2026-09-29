@@ -18,7 +18,7 @@ public:
     HybridControllerNode() : Node("pure_pursuit_node") {
         // Lateral Control (Steering) Parameters
         this->declare_parameter("L_base", 1.53);      
-        this->declare_parameter("L_min", 3.0);        
+        this->declare_parameter("L_min", 1.5);        
         this->declare_parameter("k_pure", 0.2);          
 
         // Longitudinal Control (Acceleration/Braking) Parameters
@@ -26,7 +26,7 @@ public:
         this->declare_parameter("max_accel", 1.0);        // Max positive acceleration (m/s^2)
         this->declare_parameter("max_decel", 4.0);
         this->declare_parameter("max_steering", 0.5);        // Max braking capability (m/s^2)
-        this->declare_parameter("min_speed_mps", 1.0);
+        this->declare_parameter("min_speed_mps", 0.6);
 
         // Subscribers
         odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
@@ -106,7 +106,7 @@ private:
         }
 
         double L_base = get_parameter("L_base").as_double();
-        double Ld = get_parameter("L_min").as_double() + get_parameter("k_pure").as_double() * std::abs(vx_);
+        double Ld = std::max(1.2, get_parameter("L_min").as_double() + get_parameter("k_pure").as_double() * std::abs(vx_));
         
         // 2. Find the Lookahead Point
         size_t idx_ld = last_closest_idx_;
