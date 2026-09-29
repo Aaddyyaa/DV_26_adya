@@ -24,7 +24,8 @@ public:
         // Longitudinal Control (Acceleration/Braking) Parameters
         this->declare_parameter("max_speed_limit", 2.0); // Absolute max speed (m/s)
         this->declare_parameter("max_accel", 1.0);        // Max positive acceleration (m/s^2)
-        this->declare_parameter("max_decel", 4.0);        // Max braking capability (m/s^2)
+        this->declare_parameter("max_decel", 4.0);
+        this->declare_parameter("max_steering", 0.5);        // Max braking capability (m/s^2)
         this->declare_parameter("min_speed_mps", 1.0);
 
         // Subscribers
@@ -145,7 +146,10 @@ private:
         ackermann_msgs::msg::AckermannDriveStamped drive_msg;
         drive_msg.header.stamp = this->now();
         
-        double raw_steering = std::clamp(delta, -0.5, 0.5);
+        double raw_steering = std::clamp(
+            delta,
+            -get_parameter("max_steering").as_double(),
+            get_parameter("max_steering").as_double());
         double smoothed_steering = (0.60 * raw_steering) + (0.40 * last_steering_);
         last_steering_ = smoothed_steering;
         drive_msg.drive.steering_angle = smoothed_steering;
@@ -180,6 +184,7 @@ private:
         target_velocity = std::clamp(target_velocity, std::min(min_speed, max_speed_limit), max_speed_limit);
 
         drive_msg.drive.speed = target_velocity;
+        drive_msg.drive.jerk = 0.0;
         
         if (target_velocity < vx_) {
             drive_msg.drive.acceleration = -deceleration_limit; 
@@ -187,6 +192,12 @@ private:
             drive_msg.drive.acceleration = get_parameter("max_accel").as_double(); 
         }
         
+        RCLCPP_INFO_THROTTLE(
+            this->get_logger(), *this->get_clock(), 2000,
+            "CMD speed=%.2f steer=%.3f path_points=%zu",
+            drive_msg.drive.speed,
+            drive_msg.drive.steering_angle,
+            N);
         drive_pub_->publish(drive_msg);
     }
 };
