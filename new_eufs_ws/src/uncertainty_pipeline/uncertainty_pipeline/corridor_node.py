@@ -108,6 +108,13 @@ class CorridorNode(Node):
             self._landmarks, self._pose, self._pose_covariance, YELLOW)
         corridor = build_corridor(blue, yellow, self._safety_k, self._grid_step_m)
         if not corridor:
+            # Keep publishing empty outputs so stale RViz geometry is not
+            # mistaken for current uncertainty data.
+            self._corridor_pub.publish(Float64MultiArray())
+            self._lower_path_pub.publish(Path())
+            self._upper_path_pub.publish(Path())
+            self._centre_path_pub.publish(Path())
+            self._publish_markers(blue, yellow, [])
             self._publish_status(
                 f'insufficient boundary support: blue={len(blue)} yellow={len(yellow)}')
             return
