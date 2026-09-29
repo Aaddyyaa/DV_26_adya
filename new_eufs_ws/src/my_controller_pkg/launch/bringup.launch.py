@@ -33,7 +33,7 @@ def generate_launch_description():
                 'use_sim_time': True,
                 'cones_topic': '/camera_0/cones',
                 'odom_topic': '/custom_odom',
-                'min_landmark_hits': 3,
+                'min_landmark_hits': 1,
                 'num_particles': 30,
                 'landmark_match_distance': 0.75,
                 'fallback_dt': 0.05,
@@ -49,10 +49,10 @@ def generate_launch_description():
                 'use_sim_time': True,
                 'planning_cones_topic': '/planning/cones',
                 'odom_topic': '/slam/odom',
-                'min_centerline_points': 3,
-                'min_track_width_m': 2.0,
-                'max_track_width_m': 5.0,
-                'max_segment_length_m': 8.0,
+                'min_centerline_points': 2,
+                'min_track_width_m': 1.5,
+                'max_track_width_m': 6.0,
+                'max_segment_length_m': 12.0,
                 'max_speed_mps': 1.5,
                 'min_speed_mps': 0.6,
             }],
@@ -87,8 +87,8 @@ def generate_launch_description():
             }],
         ),
 
-        # Keep the mission manager available but passive. The official EUFS
-        # GUI remains the only component that changes AS/AMI state during demo.
+        # Automatically request Track Drive once the EUFS state service is ready.
+        # This removes the need to use Manual Drive or remember a GUI mission step.
         Node(
             package='my_controller_pkg',
             executable='mission_manager',
@@ -96,7 +96,7 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'use_sim_time': True,
-                'enable': False,
+                'enable': True,
                 'mission': 'trackdrive',
             }],
         ),
