@@ -202,6 +202,63 @@ def local_boundary_samples(
     return sorted(samples, key=lambda sample: sample.s)
 
 
+def local_boundary_samples(
+    landmarks: Sequence[Landmark], pose: Pose2, pose_covariance: Matrix3,
+    color: int,
+) -> List[BoundarySample]:
+    """Transform landmarks into vehicle coordinates and keep local support."""
+    raw: List[BoundarySample] = []
+    for landmark in landmarks:
+        if landmark.color != color:
+            continue
+        try:
+            local, covariance = world_to_vehicle_covariance(
+                landmark.mean, landmark.covariance, pose, pose_covariance)
+        except ValueError:
+            continue
+        lateral_variance = covariance[1][1]
+        if lateral_variance < 0.0 or not math.isfinite(lateral_variance):
+            continue
+        raw.append(BoundarySample(
+            local[0], local[1], math.sqrt(lateral_variance)))
+
+    raw.sort(key=lambda sample: sample.s)
+    if len(raw) <= 1:
+        return raw
+
+    forward = [sample for sample in raw if sample.s >= -0.5]
+    if not forward:
+        return []
+
+    start = min(forward, key=lambda sample: abs(sample.s))
+    remaining = [sample for sample in forward if sample is not start]
+    ordered = [start]
+
+    max_forward_gap = 8.0
+    max_lateral_change = 3.0
+
+    while remaining:
+        previous = ordered[-1]
+        candidates = []
+        for sample in remaining:
+            ds = sample.s - previous.s
+            if ds <= 0.2 or ds > max_forward_gap:
+                continue
+            dy = abs(sample.mean - previous.mean)
+            if dy > max_lateral_change:
+                continue
+            candidates.append((dy + 0.25 * ds, ds, sample))
+
+        if not candidates:
+            break
+
+        _, _, next_sample = min(candidates, key=lambda item: (item[0], item[1]))
+        ordered.append(next_sample)
+        remaining.remove(next_sample)
+
+    return ordered
+
+
 def interpolate_boundary(samples: Sequence[BoundarySample], s: float) -> Optional[BoundarySample]:
     """Piecewise-linear boundary mean and first-order propagated variance."""
     if len(samples) < 2 or s < samples[0].s or s > samples[-1].s:
