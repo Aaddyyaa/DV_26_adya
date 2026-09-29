@@ -65,27 +65,53 @@ class CentrelinePlanner(Node):
         self._have_odom = True
 
     def _matched_midpoints(self, cones: ConeArray) -> List[Point2]:
+        # Match only forward-facing cone pairs. The previous global
+        # nearest-width matching could pair cones from different sections of
+        # a bend because width alone contains no longitudinal information.
         blue = [(cone.x, cone.y) for cone in cones.blue_cones]
         yellow = [(cone.x, cone.y) for cone in cones.yellow_cones]
-        candidates: List[Tuple[float, int, int]] = []
+        heading = (math.cos(self._yaw), math.sin(self._yaw))
+
+        candidates: List[Tuple[float, float, int, int]] = []
         for blue_index, blue_point in enumerate(blue):
             for yellow_index, yellow_point in enumerate(yellow):
+                midpoint = (
+                    0.5 * (blue_point[0] + yellow_point[0]),
+                    0.5 * (blue_point[1] + yellow_point[1]))
+                forward = (
+                    (midpoint[0] - self._position[0]) * heading[0] +
+                    (midpoint[1] - self._position[1]) * heading[1])
+                if forward < -0.5:
+                    continue
+
                 width = distance(blue_point, yellow_point)
                 if self._min_track_width <= width <= self._max_track_width:
-                    candidates.append((width, blue_index, yellow_index))
+                    # Prefer locally small width error, then shorter
+                    # longitudinal distance. This preserves the nearest
+                    # drivable corridor rather than crossing distant cones.
+                    longitudinal = abs(
+                        (midpoint[0] - self._position[0]) * heading[0] +
+                        (midpoint[1] - self._position[1]) * heading[1])
+                    candidates.append(
+                        (abs(width - 3.0), longitudinal,
+                         blue_index, yellow_index))
+
         candidates.sort()
         used_blue: Set[int] = set()
         used_yellow: Set[int] = set()
         midpoints: List[Point2] = []
-        for _, blue_index, yellow_index in candidates:
+
+        for _, _, blue_index, yellow_index in candidates:
             if blue_index in used_blue or yellow_index in used_yellow:
                 continue
             used_blue.add(blue_index)
             used_yellow.add(yellow_index)
             blue_point = blue[blue_index]
             yellow_point = yellow[yellow_index]
-            midpoints.append(((blue_point[0] + yellow_point[0]) * 0.5,
-                              (blue_point[1] + yellow_point[1]) * 0.5))
+            midpoints.append((
+                0.5 * (blue_point[0] + yellow_point[0]),
+                0.5 * (blue_point[1] + yellow_point[1])))
+
         return midpoints
 
     def _order_midpoints(self, midpoints: Sequence[Point2]) -> List[Point2]:
