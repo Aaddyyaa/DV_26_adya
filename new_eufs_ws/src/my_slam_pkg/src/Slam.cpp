@@ -924,6 +924,7 @@ private:
                 Eigen::Vector2d::Zero();
 
             double matched_weight = 0.0;
+            bool had_match = false;
 
             for (std::size_t particle_index = 0;
                  particle_index < particles_.size();
@@ -949,6 +950,7 @@ private:
                         static_cast<std::size_t>(candidate_index)].mu;
 
                 matched_weight += weight;
+                had_match = true;
             }
 
             if (matched_weight <= 1e-12)
@@ -965,10 +967,9 @@ private:
             }
 
             Eigen::Matrix2d covariance =
-                matched_weight <= 1.0 + 1e-12 &&
-                (reference_landmark.mu - mean).norm() < 1e-12
-                    ? reference_landmark.sigma
-                    : Eigen::Matrix2d::Zero();
+                had_match
+                    ? Eigen::Matrix2d::Zero()
+                    : reference_landmark.sigma;
 
             for (std::size_t particle_index = 0;
                  particle_index < particles_.size();
