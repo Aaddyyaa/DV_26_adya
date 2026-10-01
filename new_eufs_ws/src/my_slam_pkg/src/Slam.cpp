@@ -952,12 +952,23 @@ private:
             }
 
             if (matched_weight <= 1e-12)
-                continue;
-
-            mean /= matched_weight;
+            {
+                // The reference particle is itself a valid estimate. Do not
+                // delete a visible landmark merely because other particles
+                // drifted outside the aggregation gate.
+                mean = reference_landmark.mu;
+                matched_weight = 1.0;
+            }
+            else
+            {
+                mean /= matched_weight;
+            }
 
             Eigen::Matrix2d covariance =
-                Eigen::Matrix2d::Zero();
+                matched_weight <= 1.0 + 1e-12 &&
+                (reference_landmark.mu - mean).norm() < 1e-12
+                    ? reference_landmark.sigma
+                    : Eigen::Matrix2d::Zero();
 
             for (std::size_t particle_index = 0;
                  particle_index < particles_.size();
@@ -1256,7 +1267,10 @@ private:
                 best_particle,
                 stamp);
 
-        publishPlanningCones(aggregated_landmarks);
+        // Keep the planner on the proven best-particle map. The covariance
+        // aggregate remains the uncertainty output, but an aggregate with
+        // sparse particle matches must never make the drive path disappear.
+        publishPlanningCones(best_particle);
         landmark_cov_pub_->publish(aggregated_landmarks);
 
         Eigen::Vector3d pose_mean;
@@ -1281,7 +1295,7 @@ private:
             local_yaw_rate,
             stamp);
 
-        publishNativeMarkers(aggregated_landmarks);
+        publishNativeMarkers(best_particle);
 
         if (!local_measurements.empty())
         {
