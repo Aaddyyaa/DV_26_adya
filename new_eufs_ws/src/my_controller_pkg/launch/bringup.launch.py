@@ -12,6 +12,17 @@ def generate_launch_description():
     sim_time = {'use_sim_time': True}
 
     return LaunchDescription([
+        # EUFS publishes simulator joint states on /eufs/joint_states.
+        # Relay them to the standard /joint_states topic consumed by
+        # robot_state_publisher and the state estimator.
+        Node(
+            package='topic_tools',
+            executable='relay',
+            name='eufs_joint_states_relay',
+            output='screen',
+            arguments=['/eufs/joint_states', '/joint_states'],
+        ),
+
         Node(
             package='my_state_estimator',
             executable='state_estimator_node',
@@ -32,6 +43,8 @@ def generate_launch_description():
             parameters=[{
                 'use_sim_time': True,
                 'cones_topic': '/camera_0/cones',
+                'cones_topic_secondary': '/camera_1/cones',
+                'cone_merge_distance': 0.45,
                 'odom_topic': '/custom_odom',
                 'min_landmark_hits': 1,
                 'num_particles': 30,
