@@ -150,7 +150,7 @@ class RunMetricsLogger(Node):
 
         q = message.pose.pose.orientation
         self._yaw = math.atan2(
-            2.0 * (q.w * q.z + q.x * q.w),
+            2.0 * (q.w * q.z + q.x * q.y),
             1.0 - 2.0 * (q.y * q.y + q.z * q.z),
         )
 
