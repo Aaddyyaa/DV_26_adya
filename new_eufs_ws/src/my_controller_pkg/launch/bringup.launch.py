@@ -115,7 +115,19 @@ def generate_launch_description():
             }],
         ),
 
-        # Automatically request Track Drive once the EUFS state service is ready.
+        Node(
+            package='my_controller_pkg',
+            executable='lap_guard_node',
+            name='lap_guard',
+            output='screen',
+            parameters=[{
+                'use_sim_time': True,
+                'min_distance_before_finish_m': 60.0,
+                'finish_radius_m': 2.0,
+            }],
+        ),
+
+        # Mission selection remains owned by the official EUFS GUI.
         # This removes the need to use Manual Drive or remember a GUI mission step.
         Node(
             package='my_controller_pkg',
