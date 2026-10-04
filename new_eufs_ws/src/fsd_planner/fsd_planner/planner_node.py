@@ -46,6 +46,9 @@ class CentrelinePlanner(Node):
         self._position: Point2 = (0.0, 0.0)
         self._yaw = 0.0
         self._have_odom = False
+        self._last_path: Optional[Path] = None
+        self._last_speeds: List[float] = []
+        self._last_valid_plan_time: Optional[float] = None
 
         self._cones_sub = self.create_subscription(
             ConeArray, cones_topic, self._cones_callback, 10)
@@ -276,6 +279,17 @@ class CentrelinePlanner(Node):
             speeds[0] = min(speeds[0], speeds[1] if len(speeds) > 1 else self._max_speed)
             speeds[-1] = min(speeds[-1], speeds[-2] if len(speeds) > 1 else self._max_speed)
         return speeds
+
+    def _restamp_path(self, source: Path) -> Path:
+        path = Path()
+        path.header.stamp = self.get_clock().now().to_msg()
+        path.header.frame_id = source.header.frame_id or 'map'
+        for source_pose in source.poses:
+            pose = PoseStamped()
+            pose.header = path.header
+            pose.pose = source_pose.pose
+            path.poses.append(pose)
+        return path
 
     def _publish_plan(self) -> None:
         path = Path()
