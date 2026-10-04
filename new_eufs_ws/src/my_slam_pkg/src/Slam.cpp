@@ -79,7 +79,10 @@ public:
         declare_parameter<double>("fallback_dt", DEFAULT_DT);
         declare_parameter<std::string>(
             "cones_topic", "/camera_0/cones");
+        declare_parameter<std::string>(
+            "cones_topic_secondary", "/camera_1/cones");
         declare_parameter<std::string>("odom_topic", "/odometry/filtered");
+        declare_parameter<double>("cone_merge_distance", 0.45);
 
         num_particles_ = static_cast<int>(std::max<int64_t>(5, get_parameter("num_particles").as_int()));
         process_noise_xy_ =
@@ -94,6 +97,10 @@ public:
             std::clamp(get_parameter("fallback_dt").as_double(), 0.005, 0.2);
 
         cones_topic_ = get_parameter("cones_topic").as_string();
+        cones_topic_secondary_ =
+            get_parameter("cones_topic_secondary").as_string();
+        cone_merge_distance_ =
+            std::clamp(get_parameter("cone_merge_distance").as_double(), 0.05, 1.0);
         odom_topic_ = get_parameter("odom_topic").as_string();
 
         Q_control_ << 0.2 * 0.2, 0.0,
@@ -127,7 +134,16 @@ public:
             create_subscription<eufs_msgs::msg::ConeArrayWithCovariance>(
                 cones_topic_,
                 cone_qos,
-                std::bind(&FastSLAM2::conesCallback, this, _1));
+                std::bind(&FastSLAM2::primaryConesCallback, this, _1));
+
+        if (!cones_topic_secondary_.empty() &&
+            cones_topic_secondary_ != cones_topic_)
+        {
+            cones_sub_secondary_ =
+                create_subscription<eufs_msgs::msg::ConeArrayWithCovariance>(
+                    cones_topic_secondary_,
+                    cone_qos,
+                    std::bind(&FastSLAM2::secondaryConesCallback, this, _1));
 
         const auto odom_qos = rclcpp::QoS(rclcpp::KeepLast(50));
         odom_sub_ = create_subscription<nav_msgs::msg::Odometry>(
@@ -141,11 +157,13 @@ public:
 
         RCLCPP_INFO(
             get_logger(),
-            "FastSLAM 2.0 ready: cones=%s odom=%s particles=%d min_hits=%d",
+            "FastSLAM 2.0 ready: cones=%s secondary=%s odom=%s particles=%d min_hits=%d merge=%.2fm",
             cones_topic_.c_str(),
+            cones_topic_secondary_.c_str(),
             odom_topic_.c_str(),
             num_particles_,
-            min_landmark_hits_);
+            min_landmark_hits_,
+            cone_merge_distance_);
     }
 
 private:
@@ -158,12 +176,15 @@ private:
     double fallback_dt_{DEFAULT_DT};
 
     std::string cones_topic_;
+    std::string cones_topic_secondary_;
     std::string odom_topic_;
+    double cone_merge_distance_{0.45};
 
     std::vector<Particle> particles_;
     Eigen::Matrix2d Q_control_{Eigen::Matrix2d::Zero()};
 
-    std::vector<ConeDetection> z_buffer_;
+    std::vector<ConeDetection> primary_z_buffer_;
+    std::vector<ConeDetection> secondary_z_buffer_;
     std::mutex slam_mutex_;
 
     std::random_device rd_;
@@ -177,6 +198,8 @@ private:
 
     rclcpp::Subscription<eufs_msgs::msg::ConeArrayWithCovariance>::SharedPtr
         cones_sub_;
+    rclcpp::Subscription<eufs_msgs::msg::ConeArrayWithCovariance>::SharedPtr
+        cones_sub_secondary_;
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
 
     rclcpp::Publisher<eufs_msgs::msg::ConeArray>::SharedPtr cones_pub_;
@@ -225,7 +248,8 @@ private:
 
     void addConeToBuffer(
         const eufs_msgs::msg::ConeWithCovariance &cone,
-        int color)
+        int color,
+        std::vector<ConeDetection> &buffer)
     {
         ConeDetection detection;
         detection.range = std::hypot(cone.point.x, cone.point.y);
@@ -261,44 +285,121 @@ private:
                    detection.covariance.transpose());
 
         if (validCovariance(detection.covariance))
-            z_buffer_.push_back(detection);
+            buffer.push_back(detection);
     }
 
-    void conesCallback(
+    void appendConesToBuffer(
+        const eufs_msgs::msg::ConeArrayWithCovariance::SharedPtr msg,
+        std::vector<ConeDetection> &buffer)
+    {
+        buffer.clear();
+
+        for (const auto &cone : msg->blue_cones)
+            addConeToBuffer(cone, 0, buffer);
+
+        for (const auto &cone : msg->yellow_cones)
+            addConeToBuffer(cone, 1, buffer);
+
+        for (const auto &cone : msg->orange_cones)
+            addConeToBuffer(cone, 2, buffer);
+
+        for (const auto &cone : msg->big_orange_cones)
+            addConeToBuffer(cone, 2, buffer);
+
+        for (const auto &cone : msg->unknown_color_cones)
+            addConeToBuffer(cone, 3, buffer);
+    }
+
+    void primaryConesCallback(
         const eufs_msgs::msg::ConeArrayWithCovariance::SharedPtr msg)
     {
         std::lock_guard<std::mutex> lock(slam_mutex_);
+        appendConesToBuffer(msg, primary_z_buffer_);
+        last_cone_time_sec_ = stampToSec(msg->header.stamp);
+    }
 
-        z_buffer_.clear();
-
-        for (const auto &cone : msg->blue_cones)
-            addConeToBuffer(cone, 0);
-
-        for (const auto &cone : msg->yellow_cones)
-            addConeToBuffer(cone, 1);
-
-        for (const auto &cone : msg->orange_cones)
-            addConeToBuffer(cone, 2);
-
-        for (const auto &cone : msg->big_orange_cones)
-            addConeToBuffer(cone, 2);
-
-        for (const auto &cone : msg->unknown_color_cones)
-            addConeToBuffer(cone, 3);
+    void secondaryConesCallback(
+        const eufs_msgs::msg::ConeArrayWithCovariance::SharedPtr msg)
+    {
+        std::lock_guard<std::mutex> lock(slam_mutex_);
+        appendConesToBuffer(msg, secondary_z_buffer_);
 
         const double current_time = stampToSec(msg->header.stamp);
+        if (last_cone_time_sec_ <= 0.0)
+            last_cone_time_sec_ = current_time;
+    }
 
-        if (last_cone_time_sec_ > 0.0)
+    void mergeConeBuffers(
+        std::vector<ConeDetection> &measurements)
+    {
+        measurements.clear();
+        measurements.insert(
+            measurements.end(),
+            primary_z_buffer_.begin(),
+            primary_z_buffer_.end());
+        measurements.insert(
+            measurements.end(),
+            secondary_z_buffer_.begin(),
+            secondary_z_buffer_.end());
+
+        // Both simulator camera plugins can observe the same physical cone.
+        // Merge close same-color detections so the extra camera increases
+        // coverage without creating duplicate SLAM landmarks.
+        std::vector<ConeDetection> unique;
+        unique.reserve(measurements.size());
+
+        for (const auto &candidate : measurements)
         {
-            const double cone_dt = current_time - last_cone_time_sec_;
+            const double cx =
+                candidate.range * std::cos(candidate.bearing);
+            const double cy =
+                candidate.range * std::sin(candidate.bearing);
 
-            // If no usable odometry is arriving, cone timestamps provide
-            // a deterministic fallback clock so SLAM can still initialize.
-            if (cone_dt > 1e-4 && cone_dt < 0.2)
-                pending_dt_ = std::max(pending_dt_, cone_dt);
+            int duplicate_index = -1;
+            double best_distance = std::numeric_limits<double>::max();
+
+            for (std::size_t i = 0; i < unique.size(); ++i)
+            {
+                if (unique[i].color != candidate.color)
+                    continue;
+
+                const double ux =
+                    unique[i].range * std::cos(unique[i].bearing);
+                const double uy =
+                    unique[i].range * std::sin(unique[i].bearing);
+
+                const double distance =
+                    std::hypot(cx - ux, cy - uy);
+
+                if (distance < best_distance)
+                {
+                    best_distance = distance;
+                    duplicate_index = static_cast<int>(i);
+                }
+            }
+
+            if (duplicate_index >= 0 &&
+                best_distance <= cone_merge_distance_)
+            {
+                const double candidate_quality =
+                    candidate.covariance.trace();
+                const double existing_quality =
+                    unique[static_cast<std::size_t>(duplicate_index)]
+                        .covariance.trace();
+
+                if (candidate_quality < existing_quality)
+                {
+                    unique[static_cast<std::size_t>(duplicate_index)] =
+                        candidate;
+                }
+            }
+            else
+            {
+                unique.push_back(candidate);
+            }
         }
 
-        last_cone_time_sec_ = current_time;
+        measurements = std::move(unique);
     }
 
     void odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg)
@@ -1211,10 +1312,12 @@ private:
         {
             std::lock_guard<std::mutex> lock(slam_mutex_);
 
-            if (!z_buffer_.empty())
+            if (!primary_z_buffer_.empty() ||
+                !secondary_z_buffer_.empty())
             {
-                local_measurements = z_buffer_;
-                z_buffer_.clear();
+                mergeConeBuffers(local_measurements);
+                primary_z_buffer_.clear();
+                secondary_z_buffer_.clear();
             }
 
             local_dt = pending_dt_;
