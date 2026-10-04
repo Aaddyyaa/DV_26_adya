@@ -13,10 +13,9 @@ public:
     LapGuardNode()
         : Node("lap_guard")
     {
-        leave_radius_ = declare_parameter("leave_start_radius_m", 5.0);
-        finish_radius_ = declare_parameter("finish_radius_m", 3.0);
-        minimum_distance_ = declare_parameter("minimum_distance_before_finish_m", 15.0);
-        heading_tolerance_ = declare_parameter("finish_heading_tolerance_rad", 1.2);
+        leave_radius_ = declare_parameter("leave_start_radius_m", 6.0);
+        finish_radius_ = declare_parameter("finish_radius_m", 6.0);
+        minimum_distance_ = declare_parameter("minimum_distance_before_finish_m", 50.0);
 
         gt_sub_ = create_subscription<eufs_msgs::msg::CarState>(
             "/ground_truth/state",
@@ -48,27 +47,40 @@ public:
     }
 
 private:
-    static double yawFromQuaternion(
-        const geometry_msgs::msg::Quaternion &q)
-    {
-        return std::atan2(
-            2.0 * (q.w * q.z + q.x * q.y),
-            1.0 - 2.0 * (q.y * q.y + q.z * q.z));
-    }
-
     void stateCallback(
         const eufs_msgs::msg::CanState::SharedPtr msg)
     {
-        driving_ =
-            (msg->as_state == eufs_msgs::msg::CanState::AS_DRIVING);
-
-        if (!driving_ && !completed_)
+        if (msg->as_state == eufs_msgs::msg::CanState::AS_DRIVING)
         {
-            armed_ = false;
-            have_start_ = false;
-            left_start_zone_ = false;
-            total_distance_ = 0.0;
+            driving_ = true;
+
+            if (!have_start_ && !completed_ && have_latest_pose_)
+            {
+                captureStart(
+                    latest_x_,
+                    latest_y_);
+            }
         }
+        else if (!have_start_)
+        {
+            driving_ = false;
+        }
+    }
+
+    void captureStart(double x, double y)
+    {
+        start_x_ = x;
+        start_y_ = y;
+        have_start_ = true;
+        armed_ = true;
+        total_distance_ = 0.0;
+        left_start_zone_ = false;
+
+        RCLCPP_INFO(
+            get_logger(),
+            "Lap start captured at (%.2f, %.2f).",
+            start_x_,
+            start_y_);
     }
 
     void groundTruthCallback(
@@ -76,7 +88,10 @@ private:
     {
         const double x = msg->pose.pose.position.x;
         const double y = msg->pose.pose.position.y;
-        const double yaw = yawFromQuaternion(msg->pose.pose.orientation);
+
+        latest_x_ = x;
+        latest_y_ = y;
+        have_latest_pose_ = true;
 
         if (!driving_ || completed_)
         {
@@ -91,6 +106,11 @@ private:
             previous_x_ = x;
             previous_y_ = y;
             have_previous_ = true;
+
+            if (!have_start_)
+                captureStart(x, y);
+
+            return;
         }
 
         total_distance_ += std::hypot(
@@ -100,32 +120,19 @@ private:
         previous_x_ = x;
         previous_y_ = y;
 
-        // Capture the real start pose only after Track Drive has entered
-        // AS_DRIVING. This prevents startup/GUI settling from becoming the
-        // finish reference.
+        // Capture the first pose seen while Track Drive is actually driving.
+        // This is preferable to a startup pose from before the mission began.
         if (!have_start_)
         {
-            start_x_ = x;
-            start_y_ = y;
-            start_yaw_ = yaw;
-            have_start_ = true;
-            armed_ = true;
-
-            RCLCPP_INFO(
-                get_logger(),
-                "Lap start captured at (%.2f, %.2f), yaw %.2f rad.",
-                start_x_,
-                start_y_,
-                start_yaw_);
+            captureStart(x, y);
             return;
         }
 
         const double distance_to_start =
             std::hypot(x - start_x_, y - start_y_);
 
-        // The car must first leave the start/finish area. Without this
-        // hysteresis, a stationary car on the grid could immediately satisfy
-        // the finish test.
+        // Hysteresis: the car must leave the grid/start region before a
+        // return to that same region can count as a completed lap.
         if (!left_start_zone_ &&
             distance_to_start >= leave_radius_)
         {
@@ -144,12 +151,10 @@ private:
             return;
         }
 
-        const double heading_error = std::atan2(
-            std::sin(yaw - start_yaw_),
-            std::cos(yaw - start_yaw_));
-
-        if (distance_to_start <= finish_radius_ &&
-            std::abs(heading_error) <= heading_tolerance_)
+        // Do not require a heading match. EUFS can approach the grid/finish
+        // area with a different yaw after a tight final turn. Position plus
+        // travelled distance is the robust completion condition here.
+        if (distance_to_start <= finish_radius_)
         {
             std_msgs::msg::Bool completed_msg;
             completed_msg.data = true;
@@ -160,11 +165,9 @@ private:
 
             RCLCPP_WARN(
                 get_logger(),
-                "FULL LAP COMPLETE: travelled %.2f m, finish distance %.2f m, "
-                "heading error %.2f rad.",
+                "FULL LAP COMPLETE: travelled %.2f m, finish distance %.2f m.",
                 total_distance_,
-                distance_to_start,
-                std::abs(heading_error));
+                distance_to_start);
         }
     }
 
@@ -172,20 +175,22 @@ private:
     rclcpp::Subscription<eufs_msgs::msg::CanState>::SharedPtr state_sub_;
     rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr finish_pub_;
 
-    double leave_radius_{5.0};
-    double finish_radius_{3.0};
-    double minimum_distance_{15.0};
-    double heading_tolerance_{1.2};
+    double leave_radius_{6.0};
+    double finish_radius_{6.0};
+    double minimum_distance_{50.0};
 
     double start_x_{0.0};
     double start_y_{0.0};
-    double start_yaw_{0.0};
 
+    double latest_x_{0.0};
+    double latest_y_{0.0};
     double previous_x_{0.0};
     double previous_y_{0.0};
+
     double total_distance_{0.0};
 
     bool driving_{false};
+    bool have_latest_pose_{false};
     bool have_previous_{false};
     bool have_start_{false};
     bool armed_{false};
