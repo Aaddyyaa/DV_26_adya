@@ -38,6 +38,8 @@ class CentrelinePlanner(Node):
         self._min_speed = self.declare_parameter('min_speed_mps', 1.0).value
         self._max_lateral_accel = self.declare_parameter('max_lateral_accel', 3.0).value
         self._max_segment = self.declare_parameter('max_segment_length_m', 12.0).value
+        self._allow_pair_reuse_fallback = self.declare_parameter(
+            'allow_pair_reuse_fallback', True).value
         self._cones: Optional[ConeArray] = None
         self._position: Point2 = (0.0, 0.0)
         self._yaw = 0.0
@@ -111,6 +113,46 @@ class CentrelinePlanner(Node):
             midpoints.append((
                 0.5 * (blue_point[0] + yellow_point[0]),
                 0.5 * (blue_point[1] + yellow_point[1])))
+
+        # Startup fallback: sparse/partially observed tracks can temporarily
+        # contain fewer unique opposite-boundary cones than the planner needs.
+        # If strict one-to-one matching cannot produce the minimum path,
+        # reuse only additional *valid* local pairs until that minimum is met.
+        # Normal operation still uses strict one-to-one matching.
+        if self._allow_pair_reuse_fallback and len(midpoints) < self._min_points:
+            fallback_candidates = sorted(
+                candidates,
+                key=lambda item: (
+                    item[1],
+                    item[0],
+                    item[2],
+                    item[3],
+                ),
+            )
+            existing = list(midpoints)
+            for _, _, blue_index, yellow_index in fallback_candidates:
+                if len(midpoints) >= self._min_points:
+                    break
+
+                blue_point = blue[blue_index]
+                yellow_point = yellow[yellow_index]
+                midpoint = (
+                    0.5 * (blue_point[0] + yellow_point[0]),
+                    0.5 * (blue_point[1] + yellow_point[1]),
+                )
+
+                # Do not add the same midpoint twice. Reuse is allowed only
+                # because strict matching could not provide enough points.
+                if any(distance(midpoint, point) < 0.25 for point in existing):
+                    continue
+
+                midpoints.append(midpoint)
+                existing.append(midpoint)
+
+            if len(midpoints) >= self._min_points:
+                self.get_logger().warn(
+                    'Planner startup fallback reused a boundary cone because '
+                    'strict one-to-one matching produced too few centerline points.')
 
         return midpoints
 
