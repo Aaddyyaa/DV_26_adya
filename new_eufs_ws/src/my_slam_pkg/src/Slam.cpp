@@ -145,6 +145,8 @@ public:
                     cone_qos,
                     std::bind(&FastSLAM2::secondaryConesCallback, this, _1));
 
+                }
+
         const auto odom_qos = rclcpp::QoS(rclcpp::KeepLast(50));
         odom_sub_ = create_subscription<nav_msgs::msg::Odometry>(
             odom_topic_,
