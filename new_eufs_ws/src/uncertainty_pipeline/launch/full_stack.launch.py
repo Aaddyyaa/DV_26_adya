@@ -42,6 +42,7 @@ def generate_launch_description():
                 'odom_topic': '/slam/odom',
                 'min_centerline_points': 2,
                 'max_speed_mps': 2.0,
+                'allow_pair_reuse_fallback': True,
             }],
         ),
         Node(
