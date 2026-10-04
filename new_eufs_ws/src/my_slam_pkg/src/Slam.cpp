@@ -91,7 +91,7 @@ public:
         declare_parameter<double>("negative_evidence_range_m", 15.0);
         declare_parameter<double>("negative_evidence_fov_deg", 120.0);
         declare_parameter<int>("landmark_publish_stride", 2);
-        declare_parameter<double>("visible_landmark_range_m", 15.0);
+        declare_parameter<double>("visible_landmark_range_m", 18.0);
         declare_parameter<double>("visible_landmark_fov_deg", 120.0);
         declare_parameter<double>("visible_landmark_lateral_limit_m", 8.0);
         declare_parameter<double>("counted_cone_merge_distance_m", 1.0);
@@ -226,7 +226,7 @@ private:
     int landmark_publish_stride_{2};
     int slam_update_count_{0};
 
-    double visible_landmark_range_m_{15.0};
+    double visible_landmark_range_m_{18.0};
     double visible_landmark_fov_rad_{2.09439510239};
     double visible_landmark_lateral_limit_m_{8.0};
     double counted_cone_merge_distance_m_{1.0};
@@ -1092,14 +1092,19 @@ private:
             -dx * std::sin(particle.yaw) +
             dy * std::cos(particle.yaw);
 
-        if (forward <= 0.0 || forward > visible_landmark_range_m_)
+        // Allow a cone slightly behind the current body x-axis when the
+        // track turns sharply; the observation itself still has to be near
+        // the vehicle and inside the lateral/FOV limits.
+        if (forward < -2.0 || forward > visible_landmark_range_m_)
             return false;
 
         if (std::abs(lateral) > visible_landmark_lateral_limit_m_)
             return false;
 
         const double bearing = std::atan2(lateral, forward);
-        return std::abs(bearing) <= 0.5 * visible_landmark_fov_rad_;
+        return std::abs(bearing) <= std::min(
+            0.5 * visible_landmark_fov_rad_,
+            110.0 * PI / 180.0);
     }
 
     void updateCountedCones(const Particle &reference)
@@ -1210,6 +1215,7 @@ private:
                 reference.map[reference_index];
 
             if (reference_landmark.hits < min_landmark_hits_ ||
+                reference_landmark.missed_updates != 0 ||
                 !isLandmarkVisibleFromPose(reference, reference_landmark))
                 continue;
 
@@ -1401,6 +1407,7 @@ private:
         for (const auto &landmark : particle.map)
         {
             if (landmark.hits < min_landmark_hits_ ||
+                landmark.missed_updates != 0 ||
                 !validCovariance(landmark.sigma) ||
                 !isLandmarkVisibleFromPose(particle, landmark))
             {
