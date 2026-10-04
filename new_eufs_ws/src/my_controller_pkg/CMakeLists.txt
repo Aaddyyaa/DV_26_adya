@@ -50,11 +50,19 @@ ament_target_dependencies(mission_manager
   std_srvs
 )
 
+add_executable(lap_guard_node src/lap_guard_node.cpp)
+ament_target_dependencies(lap_guard_node
+  rclcpp
+  eufs_msgs
+  std_msgs
+)
+
 # Install BOTH nodes
 install(TARGETS 
   joint_state_relay
   pure_pursuit_node
   mission_manager
+  lap_guard_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
