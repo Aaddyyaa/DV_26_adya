@@ -1486,6 +1486,23 @@ private:
             if (measurement.color < 0 || measurement.color > 3)
                 continue;
 
+            // Sensor-consistent local window. The planner must not
+            // see cones far behind or far to the side when the vehicle is
+            // near a turn. Those observations are useful to the persistent
+            // SLAM/counting map, but not to local track following.
+            const double forward =
+                measurement.range * std::cos(measurement.bearing);
+            const double lateral =
+                measurement.range * std::sin(measurement.bearing);
+
+            if (forward < -3.0 ||
+                forward > 18.0 ||
+                std::abs(lateral) > 10.0 ||
+                std::abs(measurement.bearing) > 110.0 * PI / 180.0)
+            {
+                continue;
+            }
+
             const double theta =
                 wrapToPi(particle.yaw + measurement.bearing);
 
