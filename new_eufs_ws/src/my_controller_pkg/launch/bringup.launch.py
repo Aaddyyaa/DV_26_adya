@@ -56,8 +56,6 @@ def generate_launch_description():
                 'num_particles': 15,
                 'landmark_match_distance': 0.75,
                 'fallback_dt': 0.05,
-                'local_cone_smoothing_alpha': 0.55,
-                'local_cone_match_distance_m': 1.0,
             }],
         ),
 
@@ -76,7 +74,7 @@ def generate_launch_description():
                 'max_segment_length_m': 12.0,
                 'allow_pair_reuse_fallback': False,
                 'cone_dedup_distance_m': 0.75,
-                'path_hold_time_sec': 4.0,
+                'path_hold_time_sec': 2.5,
                 'max_speed_mps': 2.0,
                 'min_speed_mps': 0.6,
             }],
@@ -130,9 +128,8 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'use_sim_time': True,
-                'leave_start_radius_m': 6.0,
-                'finish_radius_m': 6.0,
-                'minimum_distance_before_finish_m': 50.0,
+                'min_distance_before_finish_m': 60.0,
+                'finish_radius_m': 2.0,
             }],
         ),
 
