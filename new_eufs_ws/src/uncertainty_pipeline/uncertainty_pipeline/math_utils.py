@@ -187,26 +187,9 @@ def weighted_pose_distribution(
 
 def local_boundary_samples(
     landmarks: Sequence[Landmark], pose: Pose2, pose_covariance: Matrix3,
-    color: int,
+    color: int, dedup_distance_m: float = 0.75,
 ) -> List[BoundarySample]:
-    samples: List[BoundarySample] = []
-    for landmark in landmarks:
-        if landmark.color != color:
-            continue
-        local, covariance = world_to_vehicle_covariance(
-            landmark.mean, landmark.covariance, pose, pose_covariance)
-        lateral_variance = covariance[1][1]
-        if lateral_variance < 0.0 or not math.isfinite(lateral_variance):
-            continue
-        samples.append(BoundarySample(local[0], local[1], math.sqrt(lateral_variance)))
-    return sorted(samples, key=lambda sample: sample.s)
-
-
-def local_boundary_samples(
-    landmarks: Sequence[Landmark], pose: Pose2, pose_covariance: Matrix3,
-    color: int,
-) -> List[BoundarySample]:
-    """Transform landmarks into vehicle coordinates and keep local support."""
+    """Transform landmarks to vehicle coordinates and remove local duplicates."""
     raw: List[BoundarySample] = []
     for landmark in landmarks:
         if landmark.color != color:
@@ -219,24 +202,40 @@ def local_boundary_samples(
         lateral_variance = covariance[1][1]
         if lateral_variance < 0.0 or not math.isfinite(lateral_variance):
             continue
-        raw.append(BoundarySample(
-            local[0], local[1], math.sqrt(lateral_variance)))
-
+        raw.append(BoundarySample(local[0], local[1], math.sqrt(lateral_variance)))
     raw.sort(key=lambda sample: sample.s)
     if len(raw) <= 1:
         return raw
-
-    forward = [sample for sample in raw if sample.s >= -0.5]
+    threshold = max(0.10, float(dedup_distance_m))
+    deduped: List[BoundarySample] = []
+    for sample in raw:
+        match = -1
+        best_distance = float('inf')
+        for i, existing in enumerate(deduped):
+            d = math.hypot(sample.s - existing.s, sample.mean - existing.mean)
+            if d <= threshold and d < best_distance:
+                match = i
+                best_distance = d
+        if match < 0:
+            deduped.append(sample)
+            continue
+        existing = deduped[match]
+        we = 1.0 / max(existing.sigma * existing.sigma, 1e-6)
+        ws = 1.0 / max(sample.sigma * sample.sigma, 1e-6)
+        total = we + ws
+        deduped[match] = BoundarySample(
+            (we * existing.s + ws * sample.s) / total,
+            (we * existing.mean + ws * sample.mean) / total,
+            max(existing.sigma, sample.sigma))
+    deduped.sort(key=lambda sample: sample.s)
+    forward = [sample for sample in deduped if sample.s >= -0.5]
     if not forward:
         return []
-
-    start = min(forward, key=lambda sample: abs(sample.s))
-    remaining = [sample for sample in forward if sample is not start]
-    ordered = [start]
-
+    start_sample = min(forward, key=lambda sample: abs(sample.s))
+    remaining = [sample for sample in forward if sample is not start_sample]
+    ordered = [start_sample]
     max_forward_gap = 8.0
     max_lateral_change = 3.0
-
     while remaining:
         previous = ordered[-1]
         candidates = []
@@ -248,16 +247,12 @@ def local_boundary_samples(
             if dy > max_lateral_change:
                 continue
             candidates.append((dy + 0.25 * ds, ds, sample))
-
         if not candidates:
             break
-
         _, _, next_sample = min(candidates, key=lambda item: (item[0], item[1]))
         ordered.append(next_sample)
         remaining.remove(next_sample)
-
     return ordered
-
 
 def interpolate_boundary(samples: Sequence[BoundarySample], s: float) -> Optional[BoundarySample]:
     """Piecewise-linear boundary mean and first-order propagated variance."""

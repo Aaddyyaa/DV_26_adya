@@ -40,6 +40,8 @@ class CentrelinePlanner(Node):
         self._max_segment = self.declare_parameter('max_segment_length_m', 12.0).value
         self._allow_pair_reuse_fallback = self.declare_parameter(
             'allow_pair_reuse_fallback', True).value
+        self._cone_dedup_distance = self.declare_parameter(
+            'cone_dedup_distance_m', 0.75).value
         self._cones: Optional[ConeArray] = None
         self._position: Point2 = (0.0, 0.0)
         self._yaw = 0.0
@@ -66,12 +68,22 @@ class CentrelinePlanner(Node):
             1.0 - 2.0 * (q.y * q.y + q.z * q.z))
         self._have_odom = True
 
+    def _deduplicate_points(self, points: Sequence[Point2]) -> List[Point2]:
+        """Remove repeated estimates of the same physical boundary cone."""
+        unique: List[Point2] = []
+        threshold = max(0.10, float(self._cone_dedup_distance))
+        for point in sorted(points, key=lambda p: distance(p, self._position)):
+            if any(distance(point, existing) <= threshold for existing in unique):
+                continue
+            unique.append(point)
+        return unique
+
     def _matched_midpoints(self, cones: ConeArray) -> List[Point2]:
         # Match only forward-facing cone pairs. The previous global
         # nearest-width matching could pair cones from different sections of
         # a bend because width alone contains no longitudinal information.
-        blue = [(cone.x, cone.y) for cone in cones.blue_cones]
-        yellow = [(cone.x, cone.y) for cone in cones.yellow_cones]
+        blue = self._deduplicate_points([(cone.x, cone.y) for cone in cones.blue_cones])
+        yellow = self._deduplicate_points([(cone.x, cone.y) for cone in cones.yellow_cones])
         heading = (math.cos(self._yaw), math.sin(self._yaw))
 
         candidates: List[Tuple[float, float, int, int]] = []

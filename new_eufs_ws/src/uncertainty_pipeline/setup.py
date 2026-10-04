@@ -27,6 +27,7 @@ setup(
             'corridor_node = uncertainty_pipeline.corridor_node:main',
             'noise_injector = uncertainty_pipeline.noise_injector:main',
             'experiment_logger = uncertainty_pipeline.experiment_logger:main',
+            'run_metrics_logger = uncertainty_pipeline.run_metrics_logger:main',
         ],
     },
 )

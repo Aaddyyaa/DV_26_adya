@@ -45,6 +45,7 @@ def generate_launch_description():
                 'cones_topic': '/camera_0/cones',
                 'cones_topic_secondary': '/camera_1/cones',
                 'cone_merge_distance': 0.45,
+                'landmark_consolidation_distance': 0.65,
                 'odom_topic': '/custom_odom',
                 'min_landmark_hits': 1,
                 'num_particles': 30,
@@ -67,6 +68,7 @@ def generate_launch_description():
                 'max_track_width_m': 6.0,
                 'max_segment_length_m': 12.0,
                 'allow_pair_reuse_fallback': True,
+                'cone_dedup_distance_m': 0.75,
                 'max_speed_mps': 1.5,
                 'min_speed_mps': 0.6,
             }],
@@ -83,6 +85,7 @@ def generate_launch_description():
                 'odom_topic': '/slam/odom',
                 'safety_k': 2.0,
                 'grid_step_m': 0.5,
+                'dedup_distance_m': 0.75,
             }],
         ),
 
@@ -98,6 +101,17 @@ def generate_launch_description():
                 'L_base': 1.53,
                 'L_min': 1.5,
                 'k_pure': 0.2,
+            }],
+        ),
+
+        Node(
+            package='uncertainty_pipeline',
+            executable='run_metrics_logger',
+            name='run_metrics_logger',
+            output='screen',
+            parameters=[{
+                'use_sim_time': True,
+                'output_csv': 'experiments/raw/run_metrics.csv',
             }],
         ),
 

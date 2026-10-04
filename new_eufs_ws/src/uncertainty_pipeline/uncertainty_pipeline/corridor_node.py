@@ -33,6 +33,7 @@ class CorridorNode(Node):
         super().__init__('uncertainty_corridor')
         self._safety_k = float(self.declare_parameter('safety_k', 2.0).value)
         self._grid_step_m = float(self.declare_parameter('grid_step_m', 0.5).value)
+        self._dedup_distance_m = float(self.declare_parameter('dedup_distance_m', 0.75).value)
         self._landmarks_topic = self.declare_parameter(
             'landmarks_topic', '/slam/landmarks').value
         self._odom_topic = self.declare_parameter('odom_topic', '/slam/odom').value
@@ -103,9 +104,9 @@ class CorridorNode(Node):
         if self._pose is None or self._pose_covariance is None or not self._landmarks:
             return
         blue = local_boundary_samples(
-            self._landmarks, self._pose, self._pose_covariance, BLUE)
+            self._landmarks, self._pose, self._pose_covariance, BLUE, self._dedup_distance_m)
         yellow = local_boundary_samples(
-            self._landmarks, self._pose, self._pose_covariance, YELLOW)
+            self._landmarks, self._pose, self._pose_covariance, YELLOW, self._dedup_distance_m)
         corridor = build_corridor(blue, yellow, self._safety_k, self._grid_step_m)
         if not corridor:
             # Keep raw boundary means visible even when there is no positive

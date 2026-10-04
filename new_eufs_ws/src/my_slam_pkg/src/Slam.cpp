@@ -83,6 +83,7 @@ public:
             "cones_topic_secondary", "/camera_1/cones");
         declare_parameter<std::string>("odom_topic", "/odometry/filtered");
         declare_parameter<double>("cone_merge_distance", 0.45);
+        declare_parameter<double>("landmark_consolidation_distance", 0.65);
 
         num_particles_ = static_cast<int>(std::max<int64_t>(5, get_parameter("num_particles").as_int()));
         process_noise_xy_ =
@@ -101,6 +102,8 @@ public:
             get_parameter("cones_topic_secondary").as_string();
         cone_merge_distance_ =
             std::clamp(get_parameter("cone_merge_distance").as_double(), 0.05, 1.0);
+        landmark_consolidation_distance_ =
+            std::clamp(get_parameter("landmark_consolidation_distance").as_double(), 0.10, 1.50);
         odom_topic_ = get_parameter("odom_topic").as_string();
 
         Q_control_ << 0.2 * 0.2, 0.0,
@@ -181,6 +184,7 @@ private:
     std::string cones_topic_secondary_;
     std::string odom_topic_;
     double cone_merge_distance_{0.45};
+    double landmark_consolidation_distance_{0.65};
 
     std::vector<Particle> particles_;
     Eigen::Matrix2d Q_control_{Eigen::Matrix2d::Zero()};
@@ -740,6 +744,56 @@ private:
                 updateOneMeasurement(particle, measurement);
             }
         }
+    }
+
+    void consolidateParticleMap(Particle &particle)
+    {
+        if (particle.map.size() < 2)
+            return;
+
+        std::vector<Landmark> consolidated;
+        consolidated.reserve(particle.map.size());
+
+        for (const auto &candidate : particle.map)
+        {
+            int match = -1;
+            double best_distance = std::numeric_limits<double>::max();
+            for (std::size_t i = 0; i < consolidated.size(); ++i)
+            {
+                if (consolidated[i].color != candidate.color)
+                    continue;
+                const double d = (consolidated[i].mu - candidate.mu).norm();
+                if (d <= landmark_consolidation_distance_ && d < best_distance)
+                {
+                    best_distance = d;
+                    match = static_cast<int>(i);
+                }
+            }
+            if (match < 0)
+            {
+                consolidated.push_back(candidate);
+                continue;
+            }
+
+            Landmark &merged = consolidated[static_cast<std::size_t>(match)];
+            const double w_old = std::max(1, merged.hits);
+            const double w_new = std::max(1, candidate.hits);
+            const double total = w_old + w_new;
+            const Eigen::Vector2d old_mu = merged.mu;
+            const Eigen::Vector2d new_mu = candidate.mu;
+            const Eigen::Vector2d fused_mu =
+                (w_old * old_mu + w_new * new_mu) / total;
+            Eigen::Matrix2d fused_sigma =
+                (w_old * (merged.sigma + (old_mu - fused_mu) * (old_mu - fused_mu).transpose()) +
+                 w_new * (candidate.sigma + (new_mu - fused_mu) * (new_mu - fused_mu).transpose())) /
+                total;
+            fused_sigma = 0.5 * (fused_sigma + fused_sigma.transpose());
+            fused_sigma += Eigen::Matrix2d::Identity() * 1e-9;
+            merged.mu = fused_mu;
+            merged.sigma = fused_sigma;
+            merged.hits += candidate.hits;
+        }
+        particle.map = std::move(consolidated);
     }
 
     void resampleParticles()
@@ -1396,6 +1450,8 @@ private:
         if (!local_measurements.empty())
         {
             updateParticles(local_measurements);
+            for (auto &particle : particles_)
+                consolidateParticleMap(particle);
             resampleParticles();
         }
 
