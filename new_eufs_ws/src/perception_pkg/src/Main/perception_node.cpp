@@ -1,4 +1,5 @@
 #include <eufs_msgs/msg/cone_array.hpp>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include <geometry_msgs/msg/point.hpp>
 #include "perception_node.h"
 
@@ -13,12 +14,26 @@ PerceptionNode::PerceptionNode()
     // Load stereo rectification configuration
     // --------------------------------------------------
 
+    // Prefer an explicit parameter when supplied; otherwise resolve the
+    // installed package share directory. The calibration file is installed
+    // from perception_pkg/config, so runtime no longer depends on /tmp.
+    const std::string calibration_file = this->declare_parameter<std::string>(
+        "calibration_file",
+        ament_index_cpp::get_package_share_directory("perception_pkg") +
+            "/config/extrinsics.yml");
+
+    RCLCPP_INFO(
+        this->get_logger(),
+        "Loading stereo calibration from: %s",
+        calibration_file.c_str());
+
     if (!rectifier_.init_from_file(
-        "/tmp/extrinsics.yml"))
+        calibration_file))
     {
         RCLCPP_FATAL(
             this->get_logger(),
-            "Failed to load extrinsics.yml");
+            "Failed to load calibration file: %s",
+            calibration_file.c_str());
 
         rclcpp::shutdown();
 
@@ -30,11 +45,12 @@ PerceptionNode::PerceptionNode()
     // --------------------------------------------------
 
     if (!cam_.load_from_file(
-        "/tmp/extrinsics.yml"))
+        calibration_file))
     {
         RCLCPP_FATAL(
             this->get_logger(),
-            "Failed to load camera config");
+            "Failed to load camera config from: %s",
+            calibration_file.c_str());
 
         rclcpp::shutdown();
 
