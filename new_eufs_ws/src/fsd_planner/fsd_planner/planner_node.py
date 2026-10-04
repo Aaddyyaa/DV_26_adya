@@ -34,8 +34,8 @@ class CentrelinePlanner(Node):
         self._min_track_width = self.declare_parameter('min_track_width_m', 1.5).value
         self._max_track_width = self.declare_parameter('max_track_width_m', 6.0).value
         self._min_points = self.declare_parameter('min_centerline_points', 2).value
-        self._max_speed = self.declare_parameter('max_speed_mps', 3.0).value
-        self._min_speed = self.declare_parameter('min_speed_mps', 1.0).value
+        self._max_speed = self.declare_parameter('max_speed_mps', 2.0).value
+        self._min_speed = self.declare_parameter('min_speed_mps', 0.6).value
         self._max_lateral_accel = self.declare_parameter('max_lateral_accel', 3.0).value
         self._max_segment = self.declare_parameter('max_segment_length_m', 12.0).value
         self._allow_pair_reuse_fallback = self.declare_parameter(
