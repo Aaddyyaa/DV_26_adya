@@ -15,6 +15,7 @@
 #include <rclcpp/qos.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <std_msgs/msg/u_int32_multi_array.hpp>
+#include <std_msgs/msg/bool.hpp>
 
 #include "eufs_msgs/msg/cone_array.hpp"
 #include "eufs_msgs/msg/cone_array_with_covariance.hpp"
@@ -163,6 +164,21 @@ public:
             create_publisher<std_msgs::msg::UInt32MultiArray>(
                 "/slam/cone_counts", 10);
 
+        mission_completed_sub_ =
+            create_subscription<std_msgs::msg::Bool>(
+                "/ros_can/mission_completed",
+                rclcpp::QoS(1).reliable(),
+                [this](const std_msgs::msg::Bool::SharedPtr msg)
+                {
+                    if (msg->data)
+                    {
+                        mission_completed_ = true;
+                        RCLCPP_WARN(
+                            get_logger(),
+                            "Mission completed: freezing SLAM updates and downstream cone publication.");
+                    }
+                });
+
         tf_broadcaster_ =
             std::make_unique<tf2_ros::TransformBroadcaster>(*this);
 
@@ -269,6 +285,9 @@ private:
         native_marker_pub_;
     rclcpp::Publisher<std_msgs::msg::UInt32MultiArray>::SharedPtr
         cone_count_pub_;
+    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr
+        mission_completed_sub_;
+    bool mission_completed_{false};
 
     std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
     rclcpp::TimerBase::SharedPtr timer_;
