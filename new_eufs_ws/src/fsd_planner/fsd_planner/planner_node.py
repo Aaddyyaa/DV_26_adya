@@ -52,6 +52,13 @@ class CentrelinePlanner(Node):
         self._last_speeds: List[float] = []
         self._last_valid_plan_time: Optional[float] = None
 
+        # Short-term route memory. This is NOT a persistent cone map. It only
+        # keeps the last accepted local path so a noisy frame cannot make the
+        # green line jump to another branch of the circuit.
+        self._start_position: Optional[Point2] = None
+        self._previous_position: Optional[Point2] = None
+        self._travelled_distance_m = 0.0
+
         self._cones_sub = self.create_subscription(
             ConeArray, cones_topic, self._cones_callback, 10)
         self._odom_sub = self.create_subscription(
@@ -66,12 +73,37 @@ class CentrelinePlanner(Node):
         self._cones = msg
 
     def _odom_callback(self, msg: Odometry) -> None:
-        self._position = (msg.pose.pose.position.x, msg.pose.pose.position.y)
+        new_position = (msg.pose.pose.position.x, msg.pose.pose.position.y)
+
+        if self._start_position is None:
+            self._start_position = new_position
+
+        if self._previous_position is not None:
+            step = distance(new_position, self._previous_position)
+            if 0.0 < step < 2.0:
+                self._travelled_distance_m += step
+
+        self._previous_position = new_position
+        self._position = new_position
+
         q = msg.pose.pose.orientation
         self._yaw = math.atan2(
             2.0 * (q.w * q.z + q.x * q.y),
             1.0 - 2.0 * (q.y * q.y + q.z * q.z))
         self._have_odom = True
+
+    def _finish_approach_active(self) -> bool:
+        if self._start_position is None:
+            return False
+
+        distance_to_start = distance(
+            self._position,
+            self._start_position)
+
+        return (
+            self._travelled_distance_m >= 40.0
+            and distance_to_start <= 18.0
+        )
 
     def _deduplicate_points(self, points: Sequence[Point2]) -> List[Point2]:
         """Remove repeated estimates of the same physical boundary cone."""
@@ -149,6 +181,16 @@ class CentrelinePlanner(Node):
                 if not (self._min_track_width <= width <= self._max_track_width):
                     continue
 
+                # EUFS track convention is blue-left / yellow-right. Reject
+                # cross-pairings where the colours are reversed in the current
+                # vehicle frame. This is important when the local sensor sees
+                # several nearby sections of a closed track.
+                if blue_l >= yellow_l:
+                    continue
+
+                if abs(midpoint_l) > 6.0:
+                    continue
+
                 # Pair by cross-track geometry first.  Forward distance is
                 # deliberately weak here; route ordering below decides which
                 # gate is the next gate.  This prevents a straight-ahead gate
@@ -213,9 +255,44 @@ class CentrelinePlanner(Node):
         if not forward_gates:
             return []
 
-        first = min(
-            forward_gates,
-            key=lambda point: distance(point, self._position))
+        finish_approach = self._finish_approach_active()
+
+        continuity_reference: Optional[Point2] = None
+        if self._last_path is not None and self._last_path.poses:
+            old_points = [
+                (pose.pose.position.x, pose.pose.position.y)
+                for pose in self._last_path.poses
+            ]
+            old_index = min(
+                range(len(old_points)),
+                key=lambda index: distance(
+                    old_points[index],
+                    self._position))
+            continuity_reference = old_points[
+                min(old_index + 2, len(old_points) - 1)]
+
+        def first_gate_score(point: Point2) -> float:
+            score = distance(point, self._position)
+
+            if continuity_reference is not None:
+                score += 1.25 * distance(
+                    point,
+                    continuity_reference)
+
+            if finish_approach and self._start_position is not None:
+                current_finish_distance = distance(
+                    self._position,
+                    self._start_position)
+                candidate_finish_distance = distance(
+                    point,
+                    self._start_position)
+                score += 3.0 * max(
+                    0.0,
+                    candidate_finish_distance - current_finish_distance)
+
+            return score
+
+        first = min(forward_gates, key=first_gate_score)
         ordered = [first]
         unused.remove(first)
 
@@ -259,6 +336,17 @@ class CentrelinePlanner(Node):
                     + 0.75 * turn_angle
                     + 2.0 * max(0.0, -alignment)
                 )
+
+                if finish_approach and self._start_position is not None:
+                    previous_finish_distance = distance(
+                        previous,
+                        self._start_position)
+                    candidate_finish_distance = distance(
+                        point,
+                        self._start_position)
+                    score += 4.0 * max(
+                        0.0,
+                        candidate_finish_distance - previous_finish_distance)
 
                 if score < best_score:
                     best_score = score
@@ -377,6 +465,80 @@ class CentrelinePlanner(Node):
             ) >= -3.0
         ]
 
+    def _candidate_path_is_safe(
+        self,
+        centreline: Sequence[Point2]) -> bool:
+        if len(centreline) < self._min_points:
+            return False
+
+        if distance(centreline[0], self._position) > 10.0:
+            return False
+
+        if len(centreline) >= 2:
+            dx = centreline[1][0] - centreline[0][0]
+            dy = centreline[1][1] - centreline[0][1]
+            heading = math.atan2(dy, dx)
+            if abs(wrap_to_pi(heading - self._yaw)) > math.radians(120.0):
+                return False
+
+        if self._last_path is not None and self._last_path.poses:
+            old_points = [
+                (pose.pose.position.x, pose.pose.position.y)
+                for pose in self._last_path.poses
+            ]
+            old_index = min(
+                range(len(old_points)),
+                key=lambda index: distance(
+                    old_points[index],
+                    self._position))
+            reference = old_points[
+                min(old_index + 2, len(old_points) - 1)]
+
+            if distance(centreline[0], reference) > 8.0:
+                return False
+
+        if self._finish_approach_active() and self._start_position is not None:
+            current_finish_distance = distance(
+                self._position,
+                self._start_position)
+            next_points = centreline[:min(4, len(centreline))]
+            closest_finish_distance = min(
+                distance(point, self._start_position)
+                for point in next_points)
+
+            if closest_finish_distance > current_finish_distance + 0.75:
+                return False
+
+        return True
+
+    def _finish_homing_path(self) -> Optional[Tuple[List[Point2], List[float]]]:
+        if (
+            self._start_position is None
+            or self._travelled_distance_m < 45.0
+            or distance(self._position, self._start_position) > 12.0
+        ):
+            return None
+
+        current = self._position
+        start = self._start_position
+        remaining = distance(current, start)
+        if remaining < 2.0:
+            return None
+
+        ux = (start[0] - current[0]) / remaining
+        uy = (start[1] - current[1]) / remaining
+
+        first_distance = min(4.0, remaining * 0.5)
+        first_point = (
+            current[0] + ux * first_distance,
+            current[1] + uy * first_distance,
+        )
+
+        return (
+            [first_point, start],
+            [1.0, 0.8],
+        )
+
     def _speed_profile(self, centreline: Sequence[Point2]) -> List[float]:
         speeds = [self._max_speed] * len(centreline)
         for index in range(1, len(centreline) - 1):
@@ -415,8 +577,17 @@ class CentrelinePlanner(Node):
             centreline = self._order_midpoints(
                 self._matched_midpoints(self._cones))
 
-            if len(centreline) >= self._min_points:
+            if not self._candidate_path_is_safe(centreline):
+                homing = self._finish_homing_path()
+                if homing is not None:
+                    centreline, profile = homing
+                else:
+                    centreline = []
+                    profile = []
+            else:
                 profile = self._speed_profile(centreline)
+
+            if len(centreline) >= self._min_points:
 
                 for index, point in enumerate(centreline):
                     pose = PoseStamped()
