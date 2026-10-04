@@ -53,6 +53,7 @@ struct Landmark
     Eigen::Matrix2d sigma{Eigen::Matrix2d::Identity() * 0.01};
     int color{3};
     int hits{0};
+    int missed_updates{0};
 };
 
 struct Particle
@@ -84,6 +85,8 @@ public:
         declare_parameter<std::string>("odom_topic", "/odometry/filtered");
         declare_parameter<double>("cone_merge_distance", 0.45);
         declare_parameter<double>("landmark_consolidation_distance", 0.65);
+        declare_parameter<int>("landmark_confirmation_hits", 3);
+        declare_parameter<int>("max_landmark_missed_updates", 8);
 
         num_particles_ = static_cast<int>(std::max<int64_t>(5, get_parameter("num_particles").as_int()));
         process_noise_xy_ =
@@ -104,6 +107,10 @@ public:
             std::clamp(get_parameter("cone_merge_distance").as_double(), 0.05, 1.0);
         landmark_consolidation_distance_ =
             std::clamp(get_parameter("landmark_consolidation_distance").as_double(), 0.10, 1.50);
+        landmark_confirmation_hits_ =
+            static_cast<int>(std::clamp<int64_t>(get_parameter("landmark_confirmation_hits").as_int(), 2, 10));
+        max_landmark_missed_updates_ =
+            static_cast<int>(std::clamp<int64_t>(get_parameter("max_landmark_missed_updates").as_int(), 2, 30));
         odom_topic_ = get_parameter("odom_topic").as_string();
 
         Q_control_ << 0.2 * 0.2, 0.0,
@@ -185,6 +192,8 @@ private:
     std::string odom_topic_;
     double cone_merge_distance_{0.45};
     double landmark_consolidation_distance_{0.65};
+    int landmark_confirmation_hits_{3};
+    int max_landmark_missed_updates_{8};
 
     std::vector<Particle> particles_;
     Eigen::Matrix2d Q_control_{Eigen::Matrix2d::Zero()};
@@ -633,6 +642,7 @@ private:
 
             landmark.color = z.color;
             landmark.hits = 1;
+            landmark.missed_updates = 0;
             particle.map.push_back(landmark);
 
             return true;
@@ -687,6 +697,7 @@ private:
 
         landmark.sigma += Eigen::Matrix2d::Identity() * 1e-9;
         landmark.hits++;
+        landmark.missed_updates = 0;
 
         // FastSLAM 2.0 pose proposal.
         Eigen::Matrix3d prior_information =
@@ -739,10 +750,27 @@ private:
     {
         for (auto &particle : particles_)
         {
+            // Temporal feature management: require repeated observations for
+            // new landmarks and remove features that repeatedly disappear.
+            for (auto &landmark : particle.map)
+                landmark.missed_updates++;
+
             for (const auto &measurement : measurements)
-            {
                 updateOneMeasurement(particle, measurement);
-            }
+
+            particle.map.erase(
+                std::remove_if(
+                    particle.map.begin(),
+                    particle.map.end(),
+                    [this](const Landmark &landmark)
+                    {
+                        const bool unconfirmed =
+                            landmark.hits < landmark_confirmation_hits_;
+                        const int allowed_misses =
+                            unconfirmed ? 2 : max_landmark_missed_updates_;
+                        return landmark.missed_updates > allowed_misses;
+                    }),
+                particle.map.end());
         }
     }
 
@@ -1519,8 +1547,10 @@ private:
                     ++orange;
             }
 
-            RCLCPP_INFO(
+            RCLCPP_INFO_THROTTLE(
                 get_logger(),
+                *get_clock(),
+                2000,
                 "FastSLAM update: measurements=%zu landmarks=%zu blue=%zu yellow=%zu orange=%zu",
                 local_measurements.size(),
                 best_particle.map.size(),
