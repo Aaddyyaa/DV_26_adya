@@ -14,6 +14,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/qos.hpp>
 #include <nav_msgs/msg/odometry.hpp>
+#include <std_msgs/msg/u_int32_multi_array.hpp>
 
 #include "eufs_msgs/msg/cone_array.hpp"
 #include "eufs_msgs/msg/cone_array_with_covariance.hpp"
@@ -90,6 +91,10 @@ public:
         declare_parameter<double>("negative_evidence_range_m", 15.0);
         declare_parameter<double>("negative_evidence_fov_deg", 120.0);
         declare_parameter<int>("landmark_publish_stride", 2);
+        declare_parameter<double>("visible_landmark_range_m", 15.0);
+        declare_parameter<double>("visible_landmark_fov_deg", 120.0);
+        declare_parameter<double>("visible_landmark_lateral_limit_m", 8.0);
+        declare_parameter<double>("counted_cone_merge_distance_m", 1.0);
 
         num_particles_ = static_cast<int>(std::max<int64_t>(5, get_parameter("num_particles").as_int()));
         process_noise_xy_ =
@@ -121,6 +126,15 @@ public:
             PI / 180.0;
         landmark_publish_stride_ =
             static_cast<int>(std::clamp<int64_t>(get_parameter("landmark_publish_stride").as_int(), 1, 10));
+        visible_landmark_range_m_ =
+            std::clamp(get_parameter("visible_landmark_range_m").as_double(), 3.0, 30.0);
+        visible_landmark_fov_rad_ =
+            std::clamp(get_parameter("visible_landmark_fov_deg").as_double(), 60.0, 180.0) *
+            PI / 180.0;
+        visible_landmark_lateral_limit_m_ =
+            std::clamp(get_parameter("visible_landmark_lateral_limit_m").as_double(), 2.0, 15.0);
+        counted_cone_merge_distance_m_ =
+            std::clamp(get_parameter("counted_cone_merge_distance_m").as_double(), 0.25, 2.0);
         odom_topic_ = get_parameter("odom_topic").as_string();
 
         Q_control_ << 0.2 * 0.2, 0.0,
@@ -145,6 +159,9 @@ public:
         native_marker_pub_ =
             create_publisher<visualization_msgs::msg::MarkerArray>(
                 "/slam/native_cones", 10);
+        cone_count_pub_ =
+            create_publisher<std_msgs::msg::UInt32MultiArray>(
+                "/slam/cone_counts", 10);
 
         tf_broadcaster_ =
             std::make_unique<tf2_ros::TransformBroadcaster>(*this);
@@ -209,6 +226,19 @@ private:
     int landmark_publish_stride_{2};
     int slam_update_count_{0};
 
+    double visible_landmark_range_m_{15.0};
+    double visible_landmark_fov_rad_{2.09439510239};
+    double visible_landmark_lateral_limit_m_{8.0};
+    double counted_cone_merge_distance_m_{1.0};
+
+    struct CountedCone
+    {
+        Eigen::Vector2d mu{Eigen::Vector2d::Zero()};
+        int color{3};
+    };
+
+    std::vector<CountedCone> counted_cones_;
+
     std::vector<Particle> particles_;
     Eigen::Matrix2d Q_control_{Eigen::Matrix2d::Zero()};
 
@@ -237,6 +267,8 @@ private:
     rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr slam_odom_pub_;
     rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
         native_marker_pub_;
+    rclcpp::Publisher<std_msgs::msg::UInt32MultiArray>::SharedPtr
+        cone_count_pub_;
 
     std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
     rclcpp::TimerBase::SharedPtr timer_;
@@ -1045,6 +1077,88 @@ private:
             std::max(covariance(2, 2), 1e-8);
     }
 
+    bool isLandmarkVisibleFromPose(
+        const Particle &particle,
+        const Landmark &landmark) const
+    {
+        const double dx = landmark.mu(0) - particle.x;
+        const double dy = landmark.mu(1) - particle.y;
+
+        const double forward =
+            dx * std::cos(particle.yaw) +
+            dy * std::sin(particle.yaw);
+
+        const double lateral =
+            -dx * std::sin(particle.yaw) +
+            dy * std::cos(particle.yaw);
+
+        if (forward <= 0.0 || forward > visible_landmark_range_m_)
+            return false;
+
+        if (std::abs(lateral) > visible_landmark_lateral_limit_m_)
+            return false;
+
+        const double bearing = std::atan2(lateral, forward);
+        return std::abs(bearing) <= 0.5 * visible_landmark_fov_rad_;
+    }
+
+    void updateCountedCones(const Particle &reference)
+    {
+        for (const auto &landmark : reference.map)
+        {
+            if (landmark.hits < landmark_confirmation_hits_ ||
+                !validCovariance(landmark.sigma))
+            {
+                continue;
+            }
+
+            bool already_counted = false;
+            for (const auto &counted : counted_cones_)
+            {
+                if (counted.color == landmark.color &&
+                    (counted.mu - landmark.mu).norm() <=
+                        counted_cone_merge_distance_m_)
+                {
+                    already_counted = true;
+                    break;
+                }
+            }
+
+            if (!already_counted)
+            {
+                counted_cones_.push_back(
+                    CountedCone{landmark.mu, landmark.color});
+            }
+        }
+    }
+
+    void publishConeCounts()
+    {
+        std_msgs::msg::UInt32MultiArray message;
+
+        std::uint32_t blue = 0;
+        std::uint32_t yellow = 0;
+        std::uint32_t orange = 0;
+
+        for (const auto &counted : counted_cones_)
+        {
+            if (counted.color == 0)
+                ++blue;
+            else if (counted.color == 1)
+                ++yellow;
+            else if (counted.color == 2)
+                ++orange;
+        }
+
+        message.data = {
+            blue + yellow + orange,
+            blue,
+            yellow,
+            orange};
+
+        cone_count_pub_->publish(message);
+    }
+
     eufs_msgs::msg::ConeArrayWithCovariance
     aggregateLandmarks(
         const Particle &reference,
@@ -1093,10 +1207,11 @@ private:
                  ++reference_index)
             {
                 const auto &reference_landmark =
-                    reference.map[reference_index];
+                reference.map[reference_index];
 
-                if (reference_landmark.hits < min_landmark_hits_)
-                    continue;
+            if (reference_landmark.hits < min_landmark_hits_ ||
+                !isLandmarkVisibleFromPose(reference, reference_landmark))
+                continue;
 
                 for (std::size_t candidate_index = 0;
                      candidate_index < particle.map.size();
@@ -1286,7 +1401,8 @@ private:
         for (const auto &landmark : particle.map)
         {
             if (landmark.hits < min_landmark_hits_ ||
-                !validCovariance(landmark.sigma))
+                !validCovariance(landmark.sigma) ||
+                !isLandmarkVisibleFromPose(particle, landmark))
             {
                 continue;
             }
@@ -1548,9 +1664,14 @@ private:
         // aggregate is intentionally published less often because its
         // cross-particle landmark matching is the most expensive part of this
         // implementation. The planner does not depend on this aggregate.
+        // Keep complete persistent particle maps internal. Expose only the
+        // forward local cone window downstream.
         const auto best_particle_landmarks =
             particleLandmarks(best_particle, stamp);
         publishPlanningCones(best_particle_landmarks);
+
+        updateCountedCones(best_particle);
+        publishConeCounts();
 
         ++slam_update_count_;
         if (slam_update_count_ == 1 ||
