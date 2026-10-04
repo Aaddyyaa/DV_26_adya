@@ -44,7 +44,7 @@ public:
             [this](const std_msgs::msg::Bool::SharedPtr msg) {
                 if (msg->data) {
                     mission_completed_ = true;
-                    RCLCPP_INFO(this->get_logger(), "Lap complete signal received.");
+                    RCLCPP_INFO(this->get_logger(), "Lap completion received; stopping controller.");
                 }
             });
             
@@ -106,14 +106,12 @@ private:
     }
 
     void publishStopCommand() {
-        ackermann_msgs::msg::AckermannDriveStamped stop_msg;
-        stop_msg.header.stamp = this->now();
-        stop_msg.drive.speed = 0.0;
-        stop_msg.drive.acceleration =
-            -get_parameter("max_decel").as_double();
-        stop_msg.drive.steering_angle = last_steering_;
-        stop_msg.drive.jerk = 0.0;
-        drive_pub_->publish(stop_msg);
+        ackermann_msgs::msg::AckermannDriveStamped msg;
+        msg.header.stamp = this->now();
+        msg.drive.speed = 0.0;
+        msg.drive.acceleration = -get_parameter("max_decel").as_double();
+        msg.drive.steering_angle = last_steering_;
+        drive_pub_->publish(msg);
     }
 
     void controlLoop() {
@@ -123,7 +121,7 @@ private:
         }
 
         if (!has_odom_ || !has_path_) return;
-        size_t N = path_.poses.size();
+        size_t N = path_.poses.size(); 
         if (N < 2) return;
 
         // 1. Find the closest point to the car
@@ -134,13 +132,7 @@ private:
         }
 
         double L_base = get_parameter("L_base").as_double();
-        // Keep the controller behaviour of the known-good 15:45 run.
-        // Only speed/acceleration are changed; the proven pure-pursuit law
-        // remains otherwise untouched.
-        double Ld = std::max(
-            1.2,
-            get_parameter("L_min").as_double() +
-            get_parameter("k_pure").as_double() * std::abs(vx_));
+        double Ld = std::max(1.2, get_parameter("L_min").as_double() + get_parameter("k_pure").as_double() * std::abs(vx_));
         
         // 2. Find the Lookahead Point
         size_t idx_ld = last_closest_idx_;
@@ -191,7 +183,7 @@ private:
         // --- LONGITUDINAL CONTROL (PREDICTIVE BRAKING) ---
         double max_speed_limit = get_parameter("max_speed_limit").as_double();
         double deceleration_limit = get_parameter("max_decel").as_double(); 
-        double target_velocity = std::min(max_speed_limit, 2.0); 
+        double target_velocity = max_speed_limit; 
         
         int velocity_scan_limit = std::min(static_cast<int>(last_closest_idx_) + 80, static_cast<int>(N) - 1);
         
