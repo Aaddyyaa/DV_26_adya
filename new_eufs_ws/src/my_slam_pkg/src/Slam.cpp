@@ -84,6 +84,7 @@ public:
         declare_parameter<std::string>("odom_topic", "/odometry/filtered");
         declare_parameter<double>("cone_merge_distance", 0.45);
         declare_parameter<double>("landmark_consolidation_distance", 0.65);
+        declare_parameter<double>("camera_sync_tolerance_sec", 0.10);
 
         num_particles_ = static_cast<int>(std::max<int64_t>(5, get_parameter("num_particles").as_int()));
         process_noise_xy_ =
@@ -104,6 +105,8 @@ public:
             std::clamp(get_parameter("cone_merge_distance").as_double(), 0.05, 1.0);
         landmark_consolidation_distance_ =
             std::clamp(get_parameter("landmark_consolidation_distance").as_double(), 0.10, 1.50);
+        camera_sync_tolerance_sec_ =
+            std::clamp(get_parameter("camera_sync_tolerance_sec").as_double(), 0.0, 0.5);
         odom_topic_ = get_parameter("odom_topic").as_string();
 
         Q_control_ << 0.2 * 0.2, 0.0,
@@ -185,6 +188,7 @@ private:
     std::string odom_topic_;
     double cone_merge_distance_{0.45};
     double landmark_consolidation_distance_{0.65};
+    double camera_sync_tolerance_sec_{0.10};
 
     std::vector<Particle> particles_;
     Eigen::Matrix2d Q_control_{Eigen::Matrix2d::Zero()};
@@ -200,6 +204,8 @@ private:
     double yaw_rate_{0.0};
     double pending_dt_{0.0};
     double last_cone_time_sec_{0.0};
+    double primary_cone_stamp_sec_{0.0};
+    double secondary_cone_stamp_sec_{0.0};
     double last_odom_time_sec_{0.0};
 
     rclcpp::Subscription<eufs_msgs::msg::ConeArrayWithCovariance>::SharedPtr
@@ -321,7 +327,8 @@ private:
     {
         std::lock_guard<std::mutex> lock(slam_mutex_);
         appendConesToBuffer(msg, primary_z_buffer_);
-        last_cone_time_sec_ = stampToSec(msg->header.stamp);
+        primary_cone_stamp_sec_ = stampToSec(msg->header.stamp);
+        last_cone_time_sec_ = primary_cone_stamp_sec_;
     }
 
     void secondaryConesCallback(
@@ -331,6 +338,7 @@ private:
         appendConesToBuffer(msg, secondary_z_buffer_);
 
         const double current_time = stampToSec(msg->header.stamp);
+        secondary_cone_stamp_sec_ = current_time;
         if (last_cone_time_sec_ <= 0.0)
             last_cone_time_sec_ = current_time;
     }
@@ -339,14 +347,39 @@ private:
         std::vector<ConeDetection> &measurements)
     {
         measurements.clear();
-        measurements.insert(
-            measurements.end(),
-            primary_z_buffer_.begin(),
-            primary_z_buffer_.end());
-        measurements.insert(
-            measurements.end(),
-            secondary_z_buffer_.begin(),
-            secondary_z_buffer_.end());
+
+        const bool have_primary = !primary_z_buffer_.empty();
+        const bool have_secondary = !secondary_z_buffer_.empty();
+        const bool cameras_synchronized =
+            have_primary && have_secondary &&
+            std::abs(primary_cone_stamp_sec_ - secondary_cone_stamp_sec_) <=
+                camera_sync_tolerance_sec_;
+
+        // Never combine stale observations from different simulation frames.
+        // When both cameras are synchronized, use both. When only one camera
+        // is available, use that camera. If timestamps disagree, keep the
+        // newest camera frame instead of creating a mixed-time map update.
+        if (have_primary &&
+            (!have_secondary ||
+             cameras_synchronized ||
+             primary_cone_stamp_sec_ >= secondary_cone_stamp_sec_))
+        {
+            measurements.insert(
+                measurements.end(),
+                primary_z_buffer_.begin(),
+                primary_z_buffer_.end());
+        }
+
+        if (have_secondary &&
+            (!have_primary ||
+             cameras_synchronized ||
+             secondary_cone_stamp_sec_ > primary_cone_stamp_sec_))
+        {
+            measurements.insert(
+                measurements.end(),
+                secondary_z_buffer_.begin(),
+                secondary_z_buffer_.end());
+        }
 
         // Both simulator camera plugins can observe the same physical cone.
         // Merge close same-color detections so the extra camera increases
@@ -1413,6 +1446,8 @@ private:
                 mergeConeBuffers(local_measurements);
                 primary_z_buffer_.clear();
                 secondary_z_buffer_.clear();
+                primary_cone_stamp_sec_ = 0.0;
+                secondary_cone_stamp_sec_ = 0.0;
             }
 
             local_dt = pending_dt_;
