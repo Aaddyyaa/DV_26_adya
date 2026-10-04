@@ -33,11 +33,16 @@ private:
     {
         const double x = msg->pose.pose.position.x;
         const double y = msg->pose.pose.position.y;
+        const auto &q = msg->pose.pose.orientation;
+        const double yaw = std::atan2(
+            2.0 * (q.w * q.z + q.x * q.y),
+            1.0 - 2.0 * (q.y * q.y + q.z * q.z));
 
         if (!have_start_)
         {
             start_x_ = x;
             start_y_ = y;
+            start_yaw_ = yaw;
             previous_x_ = x;
             previous_y_ = y;
             have_start_ = true;
@@ -57,7 +62,12 @@ private:
         const double distance_to_start =
             std::hypot(x - start_x_, y - start_y_);
 
-        if (distance_to_start <= finish_radius_)
+        const double heading_error = std::atan2(
+            std::sin(yaw - start_yaw_),
+            std::cos(yaw - start_yaw_));
+
+        if (distance_to_start <= finish_radius_ &&
+            std::abs(heading_error) <= 0.9)
         {
             std_msgs::msg::Bool msg_out;
             msg_out.data = true;
@@ -79,6 +89,7 @@ private:
     double finish_radius_{2.0};
     double start_x_{0.0};
     double start_y_{0.0};
+    double start_yaw_{0.0};
     double previous_x_{0.0};
     double previous_y_{0.0};
     double total_distance_{0.0};
