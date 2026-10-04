@@ -3,6 +3,8 @@
 #include <eufs_msgs/msg/can_state.hpp>
 #include <chrono>
 #include <string>
+#include <functional>
+#include <cstdint>
 
 using namespace std::chrono_literals;
 
