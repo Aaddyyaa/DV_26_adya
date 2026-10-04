@@ -182,8 +182,8 @@ private:
         
         // --- LONGITUDINAL CONTROL (PREDICTIVE BRAKING) ---
         double max_speed_limit = get_parameter("max_speed_limit").as_double();
-        double deceleration_limit = get_parameter("max_decel").as_double();
-        double target_velocity = max_speed_limit;
+        double deceleration_limit = get_parameter("max_decel").as_double(); 
+        double target_velocity = max_speed_limit; 
         
         int velocity_scan_limit = std::min(static_cast<int>(last_closest_idx_) + 80, static_cast<int>(N) - 1);
         
@@ -205,14 +205,9 @@ private:
             }
         }
 
-        // Final safety bounds.
-        const double min_speed =
-            std::max(0.0, get_parameter("min_speed_mps").as_double());
-
-        target_velocity = std::clamp(
-            target_velocity,
-            std::min(min_speed, max_speed_limit),
-            max_speed_limit);
+        // Final safety bounds (lower bound reduced to 1.5 for sharper hairpins)
+        const double min_speed = std::max(0.0, get_parameter("min_speed_mps").as_double());
+        target_velocity = std::clamp(target_velocity, std::min(min_speed, max_speed_limit), max_speed_limit);
 
         drive_msg.drive.speed = target_velocity;
         drive_msg.drive.jerk = 0.0;
