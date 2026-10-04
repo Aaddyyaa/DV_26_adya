@@ -26,6 +26,7 @@ public:
         this->declare_parameter("max_speed_limit", 2.0); // Absolute max speed (m/s)
         this->declare_parameter("max_accel", 1.5);        // Max positive acceleration (m/s^2)
         this->declare_parameter("max_decel", 4.0);
+        this->declare_parameter("command_mode", std::string("acceleration"));
         this->declare_parameter("max_steering", 0.5);        // Max braking capability (m/s^2)
         this->declare_parameter("min_speed_mps", 0.6);
 
@@ -182,8 +183,10 @@ private:
         
         // --- LONGITUDINAL CONTROL (PREDICTIVE BRAKING) ---
         double max_speed_limit = get_parameter("max_speed_limit").as_double();
-        double deceleration_limit = get_parameter("max_decel").as_double(); 
-        double target_velocity = max_speed_limit; 
+        double deceleration_limit = get_parameter("max_decel").as_double();
+        double target_velocity = max_speed_limit;
+        const std::string command_mode =
+            get_parameter("command_mode").as_string();
         
         int velocity_scan_limit = std::min(static_cast<int>(last_closest_idx_) + 80, static_cast<int>(N) - 1);
         
@@ -205,23 +208,42 @@ private:
             }
         }
 
-        // Final safety bounds (lower bound reduced to 1.5 for sharper hairpins)
-        const double min_speed = std::max(0.0, get_parameter("min_speed_mps").as_double());
-        target_velocity = std::clamp(target_velocity, std::min(min_speed, max_speed_limit), max_speed_limit);
+        // Final safety bounds.
+        const double min_speed =
+            std::max(0.0, get_parameter("min_speed_mps").as_double());
 
-        drive_msg.drive.speed = target_velocity;
+        target_velocity = std::clamp(
+            target_velocity,
+            std::min(min_speed, max_speed_limit),
+            max_speed_limit);
+
+        // Match the EUFS launcher command mode. In acceleration mode the
+        // simulator expects speed=0 and a signed acceleration command. In
+        // velocity mode it expects the desired speed and acceleration=0.
+        const bool acceleration_mode = (command_mode != "velocity");
+
         drive_msg.drive.jerk = 0.0;
-        
-        if (target_velocity < vx_) {
-            drive_msg.drive.acceleration = -deceleration_limit; 
+
+        if (acceleration_mode) {
+            drive_msg.drive.speed = 0.0;
+
+            if (target_velocity < vx_) {
+                drive_msg.drive.acceleration = -deceleration_limit;
+            } else {
+                drive_msg.drive.acceleration =
+                    get_parameter("max_accel").as_double();
+            }
         } else {
-            drive_msg.drive.acceleration = get_parameter("max_accel").as_double(); 
+            drive_msg.drive.speed = target_velocity;
+            drive_msg.drive.acceleration = 0.0;
         }
-        
+
         RCLCPP_INFO_THROTTLE(
             this->get_logger(), *this->get_clock(), 2000,
-            "CMD speed=%.2f steer=%.3f path_points=%zu",
+            "CMD mode=%s speed=%.2f accel=%.2f steer=%.3f path_points=%zu",
+            command_mode.c_str(),
             drive_msg.drive.speed,
+            drive_msg.drive.acceleration,
             drive_msg.drive.steering_angle,
             N);
         drive_pub_->publish(drive_msg);
