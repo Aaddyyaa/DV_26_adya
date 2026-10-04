@@ -38,8 +38,8 @@ class CentrelinePlanner(Node):
         self._min_speed = self.declare_parameter('min_speed_mps', 0.6).value
         self._max_lateral_accel = self.declare_parameter('max_lateral_accel', 3.0).value
         self._max_segment = self.declare_parameter('max_segment_length_m', 12.0).value
-        self._allow_pair_reuse_fallback = self.declare_parameter(
-            'allow_pair_reuse_fallback', True).value
+        self._path_hold_sec = self.declare_parameter(
+            'path_hold_time_sec', 1.5).value
         self._cone_dedup_distance = self.declare_parameter(
             'cone_dedup_distance_m', 0.75).value
         self._cones: Optional[ConeArray] = None
@@ -79,131 +79,186 @@ class CentrelinePlanner(Node):
         return unique
 
     def _matched_midpoints(self, cones: ConeArray) -> List[Point2]:
-        # Match only forward-facing cone pairs. The previous global
-        # nearest-width matching could pair cones from different sections of
-        # a bend because width alone contains no longitudinal information.
-        blue = self._deduplicate_points([(cone.x, cone.y) for cone in cones.blue_cones])
-        yellow = self._deduplicate_points([(cone.x, cone.y) for cone in cones.yellow_cones])
-        heading = (math.cos(self._yaw), math.sin(self._yaw))
+        """Generate local blue-left/yellow-right centreline gates.
 
-        candidates: List[Tuple[float, float, int, int]] = []
-        for blue_index, blue_point in enumerate(blue):
-            for yellow_index, yellow_point in enumerate(yellow):
-                midpoint = (
-                    0.5 * (blue_point[0] + yellow_point[0]),
-                    0.5 * (blue_point[1] + yellow_point[1]))
-                forward = (
-                    (midpoint[0] - self._position[0]) * heading[0] +
-                    (midpoint[1] - self._position[1]) * heading[1])
-                if forward < -0.5:
+        Pairing is performed in the vehicle frame so the planner only uses
+        gates that actually straddle the current vehicle corridor. Global
+        track sections behind/alongside the car cannot become the next gate.
+        """
+        blue_points = self._deduplicate_points(
+            [(cone.x, cone.y) for cone in cones.blue_cones])
+        yellow_points = self._deduplicate_points(
+            [(cone.x, cone.y) for cone in cones.yellow_cones])
+
+        c_yaw = math.cos(self._yaw)
+        s_yaw = math.sin(self._yaw)
+
+        def local(point: Point2) -> Tuple[float, float]:
+            dx = point[0] - self._position[0]
+            dy = point[1] - self._position[1]
+            return (
+                dx * c_yaw + dy * s_yaw,
+                -dx * s_yaw + dy * c_yaw,
+            )
+
+        blue = [
+            (point, *local(point))
+            for point in blue_points
+            if -1.0 <= local(point)[0] <= 20.0
+            and 0.25 <= local(point)[1] <= 8.0
+        ]
+        yellow = [
+            (point, *local(point))
+            for point in yellow_points
+            if -1.0 <= local(point)[0] <= 20.0
+            and -8.0 <= local(point)[1] <= -0.25
+        ]
+
+        candidates: List[Tuple[float, float, float, int, int]] = []
+
+        for blue_index, (_, blue_s, blue_l) in enumerate(blue):
+            for yellow_index, (_, yellow_s, yellow_l) in enumerate(yellow):
+                midpoint_s = 0.5 * (blue_s + yellow_s)
+                midpoint_l = 0.5 * (blue_l + yellow_l)
+                gap = abs(blue_s - yellow_s)
+
+                if midpoint_s < -0.5:
+                    continue
+                if gap > 1.5:
                     continue
 
-                width = distance(blue_point, yellow_point)
-                if self._min_track_width <= width <= self._max_track_width:
-                    # Prefer locally small width error, then shorter
-                    # longitudinal distance. This preserves the nearest
-                    # drivable corridor rather than crossing distant cones.
-                    longitudinal = abs(
-                        (midpoint[0] - self._position[0]) * heading[0] +
-                        (midpoint[1] - self._position[1]) * heading[1])
-                    candidates.append(
-                        (abs(width - 3.0), longitudinal,
-                         blue_index, yellow_index))
+                width = distance(
+                    blue[blue_index][0],
+                    yellow[yellow_index][0],
+                )
+                if not (self._min_track_width <= width <= self._max_track_width):
+                    continue
 
-        candidates.sort()
-        used_blue: Set[int] = set()
-        used_yellow: Set[int] = set()
-        midpoints: List[Point2] = []
-
-        for _, _, blue_index, yellow_index in candidates:
-            if blue_index in used_blue or yellow_index in used_yellow:
-                continue
-            used_blue.add(blue_index)
-            used_yellow.add(yellow_index)
-            blue_point = blue[blue_index]
-            yellow_point = yellow[yellow_index]
-            midpoints.append((
-                0.5 * (blue_point[0] + yellow_point[0]),
-                0.5 * (blue_point[1] + yellow_point[1])))
-
-        # Startup fallback: sparse/partially observed tracks can temporarily
-        # contain fewer unique opposite-boundary cones than the planner needs.
-        # If strict one-to-one matching cannot produce the minimum path,
-        # reuse only additional *valid* local pairs until that minimum is met.
-        # Normal operation still uses strict one-to-one matching.
-        if self._allow_pair_reuse_fallback and len(midpoints) < self._min_points:
-            fallback_candidates = sorted(
-                candidates,
-                key=lambda item: (
-                    item[1],
-                    item[0],
-                    item[2],
-                    item[3],
-                ),
-            )
-            existing = list(midpoints)
-            for _, _, blue_index, yellow_index in fallback_candidates:
-                if len(midpoints) >= self._min_points:
-                    break
-
-                blue_point = blue[blue_index]
-                yellow_point = yellow[yellow_index]
-                midpoint = (
-                    0.5 * (blue_point[0] + yellow_point[0]),
-                    0.5 * (blue_point[1] + yellow_point[1]),
+                # Prefer gates that are physically centered and close in
+                # longitudinal station.
+                score = (
+                    gap
+                    + 0.25 * abs(width - 4.5)
+                    + 0.30 * abs(midpoint_l)
+                    + 0.02 * max(0.0, midpoint_s)
                 )
 
-                # Do not add the same midpoint twice. Reuse is allowed only
-                # because strict matching could not provide enough points.
-                if any(distance(midpoint, point) < 0.25 for point in existing):
-                    continue
+                candidates.append((
+                    score,
+                    midpoint_s,
+                    midpoint_l,
+                    blue_index,
+                    yellow_index,
+                ))
 
-                midpoints.append(midpoint)
-                existing.append(midpoint)
+        candidates.sort()
 
-            if len(midpoints) >= self._min_points:
-                self.get_logger().warn(
-                    'Planner startup fallback reused a boundary cone because '
-                    'strict one-to-one matching produced too few centerline points.')
+        # Greedy one-to-one pairing using the local physical gates.
+        used_blue: Set[int] = set()
+        used_yellow: Set[int] = set()
+        gates: List[Tuple[Point2, float]] = []
 
-        return midpoints
+        for score, midpoint_s, midpoint_l, blue_index, yellow_index in candidates:
+            if blue_index in used_blue or yellow_index in used_yellow:
+                continue
 
-    def _order_midpoints(self, midpoints: Sequence[Point2]) -> List[Point2]:
-        if not midpoints:
+            blue_point = blue[blue_index][0]
+            yellow_point = yellow[yellow_index][0]
+            midpoint = (
+                0.5 * (blue_point[0] + yellow_point[0]),
+                0.5 * (blue_point[1] + yellow_point[1]),
+            )
+
+            used_blue.add(blue_index)
+            used_yellow.add(yellow_index)
+            gates.append((midpoint, midpoint_s))
+
+        # Follow the gates as a local track graph. This is the key fix for the
+        # right-hand turn: after the first gate, direction is allowed to rotate
+        # with the track instead of forcing every candidate to remain aligned
+        # with the original vehicle heading.
+        if not gates:
             return []
-        heading = (math.cos(self._yaw), math.sin(self._yaw))
-        forward = [point for point in midpoints
-                   if ((point[0] - self._position[0]) * heading[0] +
-                       (point[1] - self._position[1]) * heading[1]) > -0.5]
-        remaining = list(forward if forward else midpoints)
-        start = min(remaining, key=lambda point: distance(point, self._position))
-        ordered = [start]
-        remaining.remove(start)
-        direction = heading
-        while remaining:
+
+        unused = [point for point, _ in gates]
+        first = min(
+            unused,
+            key=lambda point: distance(point, self._position))
+        ordered = [first]
+        unused.remove(first)
+
+        direction = (c_yaw, s_yaw)
+
+        while unused and len(ordered) < 30:
             previous = ordered[-1]
-            best_point = None
+            best = None
             best_score = float('inf')
-            for point in remaining:
+
+            for point in unused:
                 dx = point[0] - previous[0]
                 dy = point[1] - previous[1]
                 segment = math.hypot(dx, dy)
-                if segment < 0.2 or segment > self._max_segment:
+
+                if segment < 0.75 or segment > 6.0:
                     continue
-                alignment = (dx * direction[0] + dy * direction[1]) / segment
-                score = segment + 4.0 * max(0.0, -alignment)
+
+                unit = (dx / segment, dy / segment)
+                alignment = (
+                    unit[0] * direction[0] +
+                    unit[1] * direction[1]
+                )
+                turn_angle = abs(
+                    math.atan2(
+                        direction[0] * unit[1] - direction[1] * unit[0],
+                        alignment,
+                    )
+                )
+
+                # Permit a real corner but reject a jump to another section
+                # of the track.
+                if turn_angle > math.radians(95.0):
+                    continue
+
+                score = (
+                    segment
+                    + 3.0 * turn_angle
+                    + 4.0 * max(0.0, -alignment)
+                )
+
                 if score < best_score:
                     best_score = score
-                    best_point = point
-            if best_point is None:
+                    best = point
+
+            if best is None:
                 break
-            dx = best_point[0] - previous[0]
-            dy = best_point[1] - previous[1]
+
+            dx = best[0] - previous[0]
+            dy = best[1] - previous[1]
             segment = math.hypot(dx, dy)
             direction = (dx / segment, dy / segment)
-            ordered.append(best_point)
-            remaining.remove(best_point)
+
+            ordered.append(best)
+            unused.remove(best)
+
         return ordered
+
+    def _order_midpoints(self, midpoints: Sequence[Point2]) -> List[Point2]:
+        # Pairing already produces a locally ordered track graph. Keep only
+        # forward gates and preserve that graph order; do not run a second
+        # nearest-neighbour reorder which can jump across a hairpin.
+        if not midpoints:
+            return []
+
+        c_yaw = math.cos(self._yaw)
+        s_yaw = math.sin(self._yaw)
+
+        return [
+            point for point in midpoints
+            if (
+                (point[0] - self._position[0]) * c_yaw
+                + (point[1] - self._position[1]) * s_yaw
+            ) >= -1.0
+        ]
 
     def _speed_profile(self, centreline: Sequence[Point2]) -> List[float]:
         speeds = [self._max_speed] * len(centreline)
@@ -227,27 +282,56 @@ class CentrelinePlanner(Node):
         path.header.stamp = self.get_clock().now().to_msg()
         path.header.frame_id = 'map'
         speeds = Float64MultiArray()
+
         if self._cones is not None and self._have_odom:
-            centreline = self._order_midpoints(self._matched_midpoints(self._cones))
+            centreline = self._order_midpoints(
+                self._matched_midpoints(self._cones))
+
             if len(centreline) >= self._min_points:
                 profile = self._speed_profile(centreline)
+
                 for index, point in enumerate(centreline):
                     pose = PoseStamped()
                     pose.header = path.header
                     pose.pose.position.x = point[0]
                     pose.pose.position.y = point[1]
+
                     if index + 1 < len(centreline):
                         next_point = centreline[index + 1]
-                        yaw = math.atan2(next_point[1] - point[1], next_point[0] - point[0])
+                        yaw = math.atan2(
+                            next_point[1] - point[1],
+                            next_point[0] - point[0])
                     else:
                         previous_point = centreline[index - 1]
-                        yaw = math.atan2(point[1] - previous_point[1], point[0] - previous_point[0])
+                        yaw = math.atan2(
+                            point[1] - previous_point[1],
+                            point[0] - previous_point[0])
+
                     pose.pose.orientation.z = math.sin(yaw * 0.5)
                     pose.pose.orientation.w = math.cos(yaw * 0.5)
                     path.poses.append(pose)
+
                 speeds.data = profile
+                self._last_path = path
+                self._last_speeds = list(profile)
+                self._last_valid_plan_time = (
+                    self.get_clock().now().nanoseconds * 1e-9
+                )
+
+        if not path.poses:
+            now_sec = self.get_clock().now().nanoseconds * 1e-9
+            if (
+                self._last_path is not None
+                and self._last_valid_plan_time is not None
+                and now_sec - self._last_valid_plan_time <= self._path_hold_sec
+            ):
+                path = self._restamp_path(self._last_path)
+                speeds.data = list(self._last_speeds)
+
         self._path_pub.publish(path)
         self._speeds_pub.publish(speeds)
+
+
 
 
 def main(args=None) -> None:
