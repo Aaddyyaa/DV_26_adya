@@ -35,6 +35,10 @@ class RunMetricsLogger(Node):
         "distance_travelled_m",
         "target_speed_mps",
         "steering_angle_rad",
+        "command_speed_mps",
+        "command_acceleration_mps2",
+        "target_path_points",
+        "target_path_length_m",
         "blue_landmarks",
         "yellow_landmarks",
         "total_landmarks",
@@ -61,7 +65,11 @@ class RunMetricsLogger(Node):
         self._ground_truth_speed = 0.0
         self._target_speed: Optional[float] = None
         self._steering = 0.0
+        self._command_speed = 0.0
+        self._command_acceleration = 0.0
         self._blue = self._yellow = 0
+        self._target_path_length = 0.0
+        self._reference_history: list[Point2] = []
 
         self._target_path: List[Point2] = []
         self._corridor_samples = 0
@@ -181,8 +189,27 @@ class RunMetricsLogger(Node):
             for pose in message.poses
         ]
 
+        self._target_path_length = 0.0
+        for index in range(1, len(self._target_path)):
+            self._target_path_length += math.hypot(
+                self._target_path[index][0] - self._target_path[index - 1][0],
+                self._target_path[index][1] - self._target_path[index - 1][1],
+            )
+
+        # Keep a global union of generated reference points for a complete
+        # planned-vs-travelled plot after the local path moves with the car.
+        for point in self._target_path:
+            if not self._reference_history or math.hypot(
+                point[0] - self._reference_history[-1][0],
+                point[1] - self._reference_history[-1][1],
+            ) > 0.25:
+                self._reference_history.append(point)  
+
+
     def _cmd_callback(self, message: AckermannDriveStamped) -> None:
         self._steering = message.drive.steering_angle
+        self._command_speed = message.drive.speed
+        self._command_acceleration = message.drive.acceleration
 
     def _speed_callback(self, message: Float64MultiArray) -> None:
         self._target_speed = (
@@ -288,6 +315,10 @@ class RunMetricsLogger(Node):
                     "distance_travelled_m": self._distance_travelled,
                     "target_speed_mps": target,
                     "steering_angle_rad": self._steering,
+                    "command_speed_mps": self._command_speed,
+                    "command_acceleration_mps2": self._command_acceleration,
+                    "target_path_points": len(self._target_path),
+                    "target_path_length_m": self._target_path_length,
                     "blue_landmarks": self._blue,
                     "yellow_landmarks": self._yellow,
                     "total_landmarks": self._blue + self._yellow,
@@ -307,5 +338,11 @@ def main(args=None) -> None:
     try:
         rclpy.spin(node)
     finally:
+        reference_path = node._path.parent / "generated_reference_history.csv"
+        with reference_path.open("w", newline="", encoding="utf-8") as output_file:
+            writer = csv.writer(output_file)
+            writer.writerow(["x", "y"])
+            writer.writerows(node._reference_history)
+
         node.destroy_node()
         rclpy.shutdown()
