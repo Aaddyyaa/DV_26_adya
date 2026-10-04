@@ -1571,7 +1571,7 @@ private:
             }
 
             const double theta =
-                wrapToPi(particle.yaw + measurement.bearing);
+                wrapToPi(pose_yaw + measurement.bearing);
 
             const double c = std::cos(theta);
             const double s = std::sin(theta);
