@@ -6,6 +6,7 @@
 #include <nav_msgs/msg/odometry.hpp>
 #include <nav_msgs/msg/path.hpp>
 #include <std_msgs/msg/float64_multi_array.hpp>
+#include <std_msgs/msg/bool.hpp>
 #include <ackermann_msgs/msg/ackermann_drive_stamped.hpp>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
@@ -23,7 +24,7 @@ public:
 
         // Longitudinal Control (Acceleration/Braking) Parameters
         this->declare_parameter("max_speed_limit", 2.0); // Absolute max speed (m/s)
-        this->declare_parameter("max_accel", 1.0);        // Max positive acceleration (m/s^2)
+        this->declare_parameter("max_accel", 1.5);        // Max positive acceleration (m/s^2)
         this->declare_parameter("max_decel", 4.0);
         this->declare_parameter("max_steering", 0.5);        // Max braking capability (m/s^2)
         this->declare_parameter("min_speed_mps", 0.6);
@@ -37,6 +38,15 @@ public:
         // NEW: Separate Speed Signal Subscriber
         speed_profile_sub_ = this->create_subscription<std_msgs::msg::Float64MultiArray>(
             "/target_speeds", 10, std::bind(&HybridControllerNode::speedProfileCallback, this, _1));
+
+        mission_completed_sub_ = this->create_subscription<std_msgs::msg::Bool>(
+            "/ros_can/mission_completed", 10,
+            [this](const std_msgs::msg::Bool::SharedPtr msg) {
+                if (msg->data) {
+                    mission_completed_ = true;
+                    RCLCPP_INFO(this->get_logger(), "Lap complete signal received.");
+                }
+            });
             
         // Publishers
         drive_pub_ = this->create_publisher<ackermann_msgs::msg::AckermannDriveStamped>("/cmd", 10);
@@ -52,12 +62,14 @@ private:
     nav_msgs::msg::Path path_;
     std::vector<double> speed_profile_; // Stores data from /target_speeds
     bool has_odom_ = false, has_path_ = false;
+    bool mission_completed_ = false;
     double last_steering_ = 0.0;
     size_t last_closest_idx_ = 0;
 
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
     rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr path_sub_;
     rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr speed_profile_sub_;
+    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr mission_completed_sub_;
 
     rclcpp::Publisher<ackermann_msgs::msg::AckermannDriveStamped>::SharedPtr drive_pub_;
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr vis_pub_;
@@ -93,9 +105,25 @@ private:
         speed_profile_ = msg->data;
     }
 
+    void publishStopCommand() {
+        ackermann_msgs::msg::AckermannDriveStamped stop_msg;
+        stop_msg.header.stamp = this->now();
+        stop_msg.drive.speed = 0.0;
+        stop_msg.drive.acceleration =
+            -get_parameter("max_decel").as_double();
+        stop_msg.drive.steering_angle = last_steering_;
+        stop_msg.drive.jerk = 0.0;
+        drive_pub_->publish(stop_msg);
+    }
+
     void controlLoop() {
+        if (mission_completed_) {
+            publishStopCommand();
+            return;
+        }
+
         if (!has_odom_ || !has_path_) return;
-        size_t N = path_.poses.size(); 
+        size_t N = path_.poses.size();
         if (N < 2) return;
 
         // 1. Find the closest point to the car
@@ -106,7 +134,13 @@ private:
         }
 
         double L_base = get_parameter("L_base").as_double();
-        double Ld = std::max(1.2, get_parameter("L_min").as_double() + get_parameter("k_pure").as_double() * std::abs(vx_));
+        // Keep the controller behaviour of the known-good 15:45 run.
+        // Only speed/acceleration are changed; the proven pure-pursuit law
+        // remains otherwise untouched.
+        double Ld = std::max(
+            1.2,
+            get_parameter("L_min").as_double() +
+            get_parameter("k_pure").as_double() * std::abs(vx_));
         
         // 2. Find the Lookahead Point
         size_t idx_ld = last_closest_idx_;
@@ -157,7 +191,7 @@ private:
         // --- LONGITUDINAL CONTROL (PREDICTIVE BRAKING) ---
         double max_speed_limit = get_parameter("max_speed_limit").as_double();
         double deceleration_limit = get_parameter("max_decel").as_double(); 
-        double target_velocity = std::min(max_speed_limit, 1.5); 
+        double target_velocity = std::min(max_speed_limit, 2.0); 
         
         int velocity_scan_limit = std::min(static_cast<int>(last_closest_idx_) + 80, static_cast<int>(N) - 1);
         
@@ -189,7 +223,7 @@ private:
         if (target_velocity < vx_) {
             drive_msg.drive.acceleration = -deceleration_limit; 
         } else {
-            drive_msg.drive.acceleration = std::min(get_parameter("max_accel").as_double(), 1.0); 
+            drive_msg.drive.acceleration = get_parameter("max_accel").as_double(); 
         }
         
         RCLCPP_INFO_THROTTLE(
