@@ -62,7 +62,7 @@ private:
         // The official ros_can_sim GUI owns mission selection and Manual Drive
         // transitions; sending competing /ros_can/set_mission requests from a
         // second node was a source of state conflicts.
-        if (!get_parameter("enable").get<bool>())
+        if (!get_parameter("enable").as_bool())
             return;
 
         if (!have_state_)
