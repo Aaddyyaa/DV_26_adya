@@ -128,10 +128,9 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'use_sim_time': True,
-                'leave_start_radius_m': 5.0,
-                'finish_radius_m': 3.0,
-                'minimum_distance_before_finish_m': 15.0,
-                'finish_heading_tolerance_rad': 1.2,
+                'leave_start_radius_m': 6.0,
+                'finish_radius_m': 6.0,
+                'minimum_distance_before_finish_m': 50.0,
             }],
         ),
 
