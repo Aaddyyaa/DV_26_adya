@@ -857,7 +857,7 @@ private:
                         continue;
 
                     const double theta =
-                        wrapToPi(pose_yaw + measurement.bearing);
+                        wrapToPi(particle.yaw + measurement.bearing);
                     const double mx =
                         particle.x + measurement.range * std::cos(theta);
                     const double my =
