@@ -6,6 +6,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
@@ -38,6 +39,7 @@ add_executable(perception_node
 
 ament_target_dependencies(
   perception_node
+  ament_index_cpp
   rclcpp
   sensor_msgs
   std_msgs
@@ -55,6 +57,11 @@ target_link_libraries(
 install(
   TARGETS perception_node
   DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+  DIRECTORY config
+  DESTINATION share/${PROJECT_NAME}
 )
 
 ament_package()
