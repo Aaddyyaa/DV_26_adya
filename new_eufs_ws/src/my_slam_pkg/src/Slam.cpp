@@ -86,7 +86,9 @@ public:
         declare_parameter<double>("cone_merge_distance", 0.45);
         declare_parameter<double>("landmark_consolidation_distance", 0.65);
         declare_parameter<int>("landmark_confirmation_hits", 3);
-        declare_parameter<int>("max_landmark_missed_updates", 8);
+        declare_parameter<int>("max_landmark_missed_updates", 20);
+        declare_parameter<double>("negative_evidence_range_m", 15.0);
+        declare_parameter<double>("negative_evidence_fov_deg", 120.0);
         declare_parameter<int>("landmark_publish_stride", 2);
 
         num_particles_ = static_cast<int>(std::max<int64_t>(5, get_parameter("num_particles").as_int()));
@@ -111,7 +113,12 @@ public:
         landmark_confirmation_hits_ =
             static_cast<int>(std::clamp<int64_t>(get_parameter("landmark_confirmation_hits").as_int(), 2, 10));
         max_landmark_missed_updates_ =
-            static_cast<int>(std::clamp<int64_t>(get_parameter("max_landmark_missed_updates").as_int(), 2, 30));
+            static_cast<int>(std::clamp<int64_t>(get_parameter("max_landmark_missed_updates").as_int(), 4, 60));
+        negative_evidence_range_m_ =
+            std::clamp(get_parameter("negative_evidence_range_m").as_double(), 3.0, 20.0);
+        negative_evidence_fov_rad_ =
+            std::clamp(get_parameter("negative_evidence_fov_deg").as_double(), 60.0, 180.0) *
+            PI / 180.0;
         landmark_publish_stride_ =
             static_cast<int>(std::clamp<int64_t>(get_parameter("landmark_publish_stride").as_int(), 1, 10));
         odom_topic_ = get_parameter("odom_topic").as_string();
@@ -196,7 +203,9 @@ private:
     double cone_merge_distance_{0.45};
     double landmark_consolidation_distance_{0.65};
     int landmark_confirmation_hits_{3};
-    int max_landmark_missed_updates_{8};
+    int max_landmark_missed_updates_{20};
+    double negative_evidence_range_m_{15.0};
+    double negative_evidence_fov_rad_{2.09439510239};
     int landmark_publish_stride_{2};
     int slam_update_count_{0};
 
@@ -755,10 +764,49 @@ private:
     {
         for (auto &particle : particles_)
         {
-            // Temporal feature management: require repeated observations for
-            // new landmarks and remove features that repeatedly disappear.
+            // Apply negative evidence only when a mapped cone should
+            // reasonably be visible to the forward cone sensor. A cone
+            // behind/aside the vehicle must not age simply because the
+            // camera cannot see it.
             for (auto &landmark : particle.map)
-                landmark.missed_updates++;
+            {
+                const double dx = landmark.mu(0) - particle.x;
+                const double dy = landmark.mu(1) - particle.y;
+                const double range = std::hypot(dx, dy);
+                const double bearing =
+                    wrapToPi(std::atan2(dy, dx) - particle.yaw);
+
+                const bool expected_visible =
+                    range <= negative_evidence_range_m_ &&
+                    std::abs(bearing) <= 0.5 * negative_evidence_fov_rad_;
+
+                if (!expected_visible)
+                    continue;
+
+                bool geometrically_observed = false;
+                for (const auto &measurement : measurements)
+                {
+                    if (measurement.color != landmark.color)
+                        continue;
+
+                    const double theta =
+                        wrapToPi(particle.yaw + measurement.bearing);
+                    const double mx =
+                        particle.x + measurement.range * std::cos(theta);
+                    const double my =
+                        particle.y + measurement.range * std::sin(theta);
+
+                    if (std::hypot(mx - landmark.mu(0), my - landmark.mu(1)) <=
+                        landmark_match_distance_)
+                    {
+                        geometrically_observed = true;
+                        break;
+                    }
+                }
+
+                if (!geometrically_observed)
+                    landmark.missed_updates++;
+            }
 
             for (const auto &measurement : measurements)
                 updateOneMeasurement(particle, measurement);
