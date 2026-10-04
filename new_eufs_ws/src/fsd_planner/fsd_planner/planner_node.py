@@ -208,7 +208,7 @@ class CentrelinePlanner(Node):
             if (
                 (point[0] - self._position[0]) * c_yaw
                 + (point[1] - self._position[1]) * s_yaw
-            ) >= -1.0
+            ) >= -3.0
         ]
         if not forward_gates:
             return []
@@ -374,7 +374,7 @@ class CentrelinePlanner(Node):
             if (
                 (point[0] - self._position[0]) * c_yaw
                 + (point[1] - self._position[1]) * s_yaw
-            ) >= -1.0
+            ) >= -3.0
         ]
 
     def _speed_profile(self, centreline: Sequence[Point2]) -> List[float]:
