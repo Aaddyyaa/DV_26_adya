@@ -4,7 +4,7 @@ from pathlib import Path
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, OpaqueFunction
+from launch.actions import IncludeLaunchDescription, OpaqueFunction, SetEnvironmentVariable
 from launch.launch_description_sources import AnyLaunchDescriptionSource, PythonLaunchDescriptionSource
 
 
@@ -47,8 +47,16 @@ def patch_eufs_before_start(context, *args, **kwargs):
 
 
 def generate_launch_description():
+    eufs_tracks_share = Path(
+        get_package_share_directory("eufs_tracks")
+    )
+    # EUFS small_track.launch uses $(env EUFS_MASTER) to locate the simulator
+    # plugins. Set it here so the launch works from a fresh terminal and does
+    # not depend on a manually exported shell variable.
+    eufs_master = str(eufs_tracks_share.parents[3])
+
     eufs_sim = os.path.join(
-        get_package_share_directory("eufs_tracks"),
+        str(eufs_tracks_share),
         "launch",
         "small_track.launch",
     )
@@ -59,6 +67,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        SetEnvironmentVariable("EUFS_MASTER", eufs_master),
         OpaqueFunction(function=patch_eufs_before_start),
 
         IncludeLaunchDescription(
