@@ -53,6 +53,7 @@ def generate_launch_description():
                 'min_track_width_m': 1.5,
                 'max_track_width_m': 6.0,
                 'max_segment_length_m': 12.0,
+                'allow_pair_reuse_fallback': True,
                 'max_speed_mps': 1.5,
                 'min_speed_mps': 0.6,
             }],
