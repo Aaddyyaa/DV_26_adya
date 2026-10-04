@@ -87,6 +87,7 @@ public:
         declare_parameter<double>("landmark_consolidation_distance", 0.65);
         declare_parameter<int>("landmark_confirmation_hits", 3);
         declare_parameter<int>("max_landmark_missed_updates", 8);
+        declare_parameter<int>("landmark_publish_stride", 2);
 
         num_particles_ = static_cast<int>(std::max<int64_t>(5, get_parameter("num_particles").as_int()));
         process_noise_xy_ =
@@ -111,6 +112,8 @@ public:
             static_cast<int>(std::clamp<int64_t>(get_parameter("landmark_confirmation_hits").as_int(), 2, 10));
         max_landmark_missed_updates_ =
             static_cast<int>(std::clamp<int64_t>(get_parameter("max_landmark_missed_updates").as_int(), 2, 30));
+        landmark_publish_stride_ =
+            static_cast<int>(std::clamp<int64_t>(get_parameter("landmark_publish_stride").as_int(), 1, 10));
         odom_topic_ = get_parameter("odom_topic").as_string();
 
         Q_control_ << 0.2 * 0.2, 0.0,
@@ -164,7 +167,7 @@ public:
             std::bind(&FastSLAM2::odomCallback, this, _1));
 
         timer_ = create_wall_timer(
-            std::chrono::milliseconds(50),
+            std::chrono::milliseconds(100),
             std::bind(&FastSLAM2::runSLAM, this));
 
         RCLCPP_INFO(
@@ -194,6 +197,8 @@ private:
     double landmark_consolidation_distance_{0.65};
     int landmark_confirmation_hits_{3};
     int max_landmark_missed_updates_{8};
+    int landmark_publish_stride_{2};
+    int slam_update_count_{0};
 
     std::vector<Particle> particles_;
     Eigen::Matrix2d Q_control_{Eigen::Matrix2d::Zero()};
@@ -1491,18 +1496,22 @@ private:
         // Use one covariance-aware aggregated map for planning, uncertainty,
         // and visualization so particle resampling cannot move the visible
         // boundary between frames.
-        const auto aggregated_landmarks =
-            aggregateLandmarks(
-                best_particle,
-                stamp);
-
         // Keep the planner on the proven best-particle map. The covariance
-        // aggregate remains the uncertainty output, but an aggregate with
-        // sparse particle matches must never make the drive path disappear.
+        // aggregate is intentionally published less often because its
+        // cross-particle landmark matching is the most expensive part of this
+        // implementation. The planner does not depend on this aggregate.
         const auto best_particle_landmarks =
             particleLandmarks(best_particle, stamp);
         publishPlanningCones(best_particle_landmarks);
-        landmark_cov_pub_->publish(aggregated_landmarks);
+
+        ++slam_update_count_;
+        if (slam_update_count_ == 1 ||
+            (slam_update_count_ % landmark_publish_stride_) == 0)
+        {
+            const auto aggregated_landmarks =
+                aggregateLandmarks(best_particle, stamp);
+            landmark_cov_pub_->publish(aggregated_landmarks);
+        }
 
         Eigen::Vector3d pose_mean;
         Eigen::Matrix3d pose_covariance;
