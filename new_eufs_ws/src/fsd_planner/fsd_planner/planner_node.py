@@ -106,17 +106,25 @@ class CentrelinePlanner(Node):
                 -dx * s_yaw + dy * c_yaw,
             )
 
+        # Keep the complete local mapped cone set.  The old planner
+        # discarded every cone with local x < -1 m, which is exactly what
+        # happens to the next gate when the car enters a tight right turn.
+        # We still limit the working set spatially so distant/old map sections
+        # cannot become the next gate.
+        local_radius = 35.0
+        local_half_width = 18.0
+
         blue = [
             (point, *local(point))
             for point in blue_points
-            if -1.0 <= local(point)[0] <= 20.0
-            and 0.25 <= local(point)[1] <= 8.0
+            if math.hypot(*local(point)) <= local_radius
+            and abs(local(point)[1]) <= local_half_width
         ]
         yellow = [
             (point, *local(point))
             for point in yellow_points
-            if -1.0 <= local(point)[0] <= 20.0
-            and -8.0 <= local(point)[1] <= -0.25
+            if math.hypot(*local(point)) <= local_radius
+            and abs(local(point)[1]) <= local_half_width
         ]
 
         candidates: List[Tuple[float, float, float, int, int]] = []
@@ -127,9 +135,11 @@ class CentrelinePlanner(Node):
                 midpoint_l = 0.5 * (blue_l + yellow_l)
                 gap = abs(blue_s - yellow_s)
 
-                if midpoint_s < -0.5:
-                    continue
-                if gap > 1.5:
+                # A real corner can put the two cones at noticeably
+                # different longitudinal stations.  Do not reject that
+                # pairing merely because it is no longer "in front" of the
+                # original vehicle heading.
+                if gap > 3.5:
                     continue
 
                 width = distance(
@@ -139,13 +149,15 @@ class CentrelinePlanner(Node):
                 if not (self._min_track_width <= width <= self._max_track_width):
                     continue
 
-                # Prefer gates that are physically centered and close in
-                # longitudinal station.
+                # Pair by cross-track geometry first.  Forward distance is
+                # deliberately weak here; route ordering below decides which
+                # gate is the next gate.  This prevents a straight-ahead gate
+                # from winning simply because a genuine right-hand gate has
+                # a large heading change.
                 score = (
-                    gap
-                    + 0.25 * abs(width - 4.5)
-                    + 0.30 * abs(midpoint_l)
-                    + 0.02 * max(0.0, midpoint_s)
+                    1.0 * gap
+                    + 0.40 * abs(width - 3.5)
+                    + 0.15 * abs(midpoint_l)
                 )
 
                 candidates.append((
@@ -186,8 +198,23 @@ class CentrelinePlanner(Node):
             return []
 
         unused = [point for point, _ in gates]
+
+        # Start from the nearest gate that is still in the current forward
+        # neighbourhood.  After that first gate, the route is allowed to
+        # rotate with the track; this is what lets the planner enter a right
+        # hand corner instead of repeatedly selecting a straight continuation.
+        forward_gates = [
+            point for point in unused
+            if (
+                (point[0] - self._position[0]) * c_yaw
+                + (point[1] - self._position[1]) * s_yaw
+            ) >= -1.0
+        ]
+        if not forward_gates:
+            return []
+
         first = min(
-            unused,
+            forward_gates,
             key=lambda point: distance(point, self._position))
         ordered = [first]
         unused.remove(first)
@@ -219,15 +246,18 @@ class CentrelinePlanner(Node):
                     )
                 )
 
-                # Permit a real corner but reject a jump to another section
-                # of the track.
-                if turn_angle > math.radians(95.0):
+                # Permit genuine Formula Student corners.  The previous
+                # cost made heading change three times more expensive than
+                # distance, so a straight-looking branch won over the actual
+                # right-hand continuation.  Use heading only as a continuity
+                # term and allow up to 135 degrees for a tight corner.
+                if turn_angle > math.radians(135.0):
                     continue
 
                 score = (
-                    segment
-                    + 3.0 * turn_angle
-                    + 4.0 * max(0.0, -alignment)
+                    1.0 * segment
+                    + 0.75 * turn_angle
+                    + 2.0 * max(0.0, -alignment)
                 )
 
                 if score < best_score:
@@ -283,14 +313,14 @@ class CentrelinePlanner(Node):
                             unit_x * direction[0]
                             + unit_y * direction[1]
                         )
-                        if alignment < 0.05:
+                        if alignment < -0.35:
                             continue
 
                         turn_angle = abs(math.atan2(
                             direction[0] * unit_y - direction[1] * unit_x,
                             alignment,
                         ))
-                        if turn_angle > math.radians(125.0):
+                        if turn_angle > math.radians(145.0):
                             continue
 
                         if any(
@@ -300,10 +330,10 @@ class CentrelinePlanner(Node):
                             continue
 
                         score = (
-                            segment
-                            + 2.5 * turn_angle
-                            + 0.8 * abs(width - 4.5)
-                            + 1.5 * station_gap
+                            1.0 * segment
+                            + 0.8 * turn_angle
+                            + 0.8 * abs(width - 3.5)
+                            + 0.8 * station_gap
                         )
                         if score < continuation_score:
                             continuation_score = score
