@@ -181,16 +181,6 @@ class CentrelinePlanner(Node):
                 if not (self._min_track_width <= width <= self._max_track_width):
                     continue
 
-                # EUFS track convention is blue-left / yellow-right. Reject
-                # cross-pairings where the colours are reversed in the current
-                # vehicle frame. This is important when the local sensor sees
-                # several nearby sections of a closed track.
-                if blue_l >= yellow_l:
-                    continue
-
-                if abs(midpoint_l) > 6.0:
-                    continue
-
                 # Pair by cross-track geometry first.  Forward distance is
                 # deliberately weak here; route ordering below decides which
                 # gate is the next gate.  This prevents a straight-ahead gate
@@ -471,7 +461,12 @@ class CentrelinePlanner(Node):
         if len(centreline) < self._min_points:
             return False
 
-        if distance(centreline[0], self._position) > 10.0:
+        # Never block the very first valid plan. The continuity guard only
+        # becomes meaningful after a path has already been accepted.
+        if self._last_path is None:
+            return True
+
+        if distance(centreline[0], self._position) > 12.0:
             return False
 
         if len(centreline) >= 2:
@@ -582,6 +577,9 @@ class CentrelinePlanner(Node):
                 if homing is not None:
                     centreline, profile = homing
                 else:
+                    # A rejected update must never command an empty path.
+                    # Keep the previously accepted path and let the normal
+                    # path-hold timer bridge a transient bad cone frame.
                     centreline = []
                     profile = []
             else:
