@@ -1140,6 +1140,45 @@ private:
         return output;
     }
 
+    eufs_msgs::msg::ConeArrayWithCovariance particleLandmarks(
+        const Particle &particle,
+        const rclcpp::Time &stamp) const
+    {
+        eufs_msgs::msg::ConeArrayWithCovariance output;
+        output.header.stamp = stamp;
+        output.header.frame_id = "map";
+
+        for (const auto &landmark : particle.map)
+        {
+            if (landmark.hits < min_landmark_hits_ ||
+                !validCovariance(landmark.sigma))
+            {
+                continue;
+            }
+
+            eufs_msgs::msg::ConeWithCovariance cone;
+            cone.point.x = landmark.mu(0);
+            cone.point.y = landmark.mu(1);
+            cone.point.z = 0.0;
+            cone.covariance = {
+                landmark.sigma(0, 0),
+                landmark.sigma(0, 1),
+                landmark.sigma(1, 0),
+                landmark.sigma(1, 1)};
+
+            if (landmark.color == 0)
+                output.blue_cones.push_back(cone);
+            else if (landmark.color == 1)
+                output.yellow_cones.push_back(cone);
+            else if (landmark.color == 2)
+                output.orange_cones.push_back(cone);
+            else
+                output.unknown_color_cones.push_back(cone);
+        }
+
+        return output;
+    }
+
     void publishPlanningCones(
         const eufs_msgs::msg::ConeArrayWithCovariance &landmarks)
     {
@@ -1376,7 +1415,9 @@ private:
         // Keep the planner on the proven best-particle map. The covariance
         // aggregate remains the uncertainty output, but an aggregate with
         // sparse particle matches must never make the drive path disappear.
-        publishPlanningCones(best_particle);
+        const auto best_particle_landmarks =
+            particleLandmarks(best_particle, stamp);
+        publishPlanningCones(best_particle_landmarks);
         landmark_cov_pub_->publish(aggregated_landmarks);
 
         Eigen::Vector3d pose_mean;
@@ -1401,7 +1442,7 @@ private:
             local_yaw_rate,
             stamp);
 
-        publishNativeMarkers(best_particle);
+        publishNativeMarkers(best_particle_landmarks);
 
         if (!local_measurements.empty())
         {
