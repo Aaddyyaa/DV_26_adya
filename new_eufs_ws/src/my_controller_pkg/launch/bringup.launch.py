@@ -107,7 +107,6 @@ def generate_launch_description():
                 'L_base': 1.53,
                 'L_min': 1.9,
                 'k_pure': 0.25,
-                'command_mode': 'acceleration',
             }],
         ),
 
