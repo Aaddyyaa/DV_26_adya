@@ -1,65 +1,193 @@
-"""ROS 2 experiment logger for reproducible autonomous-lap results."""
+"""ROS 2 logger for trajectory and lap-completion results."""
 
 import csv
 import math
 from pathlib import Path as FilePath
-from typing import Optional
+from typing import Optional, List, Tuple
 
 import rclpy
 from ackermann_msgs.msg import AckermannDriveStamped
-from eufs_msgs.msg import ConeArrayWithCovariance
-from nav_msgs.msg import Odometry
+from eufs_msgs.msg import CarState, ConeArrayWithCovariance
+from nav_msgs.msg import Odometry, Path
 from rclpy.node import Node
-from std_msgs.msg import Float64MultiArray, String
+from std_msgs.msg import Bool, Float64MultiArray, String
+
+
+Point2 = Tuple[float, float]
 
 
 class RunMetricsLogger(Node):
-    """Records measured runtime metrics; it never synthesizes experiment data."""
+    """Record measured vehicle/reference trajectories without synthesizing data."""
 
     _FIELDS = (
-        'timestamp_ns', 'x', 'y', 'yaw', 'actual_speed_mps',
-        'target_speed_mps', 'steering_angle_rad',
-        'blue_landmarks', 'yellow_landmarks', 'total_landmarks',
-        'corridor_samples', 'corridor_valid_samples', 'corridor_valid_fraction',
-        'mean_corridor_width_m', 'corridor_status',
+        "timestamp_ns",
+        "x",
+        "y",
+        "yaw",
+        "actual_speed_mps",
+        "ground_truth_x",
+        "ground_truth_y",
+        "ground_truth_speed_mps",
+        "slam_gt_error_m",
+        "target_x",
+        "target_y",
+        "cross_track_error_m",
+        "distance_travelled_m",
+        "target_speed_mps",
+        "steering_angle_rad",
+        "blue_landmarks",
+        "yellow_landmarks",
+        "total_landmarks",
+        "corridor_samples",
+        "corridor_valid_samples",
+        "corridor_valid_fraction",
+        "mean_corridor_width_m",
+        "corridor_status",
+        "lap_completed",
     )
 
     def __init__(self) -> None:
-        super().__init__('run_metrics_logger')
+        super().__init__("run_metrics_logger")
+
         output_csv = self.declare_parameter(
-            'output_csv', 'experiments/raw/run_metrics.csv').value
+            "output_csv", "experiments/raw/run_metrics.csv"
+        ).value
         self._path = FilePath(output_csv).expanduser()
         self._path.parent.mkdir(parents=True, exist_ok=True)
+
         self._x = self._y = self._yaw = 0.0
+        self._ground_truth_x = self._ground_truth_y = 0.0
         self._actual_speed = 0.0
+        self._ground_truth_speed = 0.0
         self._target_speed: Optional[float] = None
         self._steering = 0.0
         self._blue = self._yellow = 0
+
+        self._target_path: List[Point2] = []
         self._corridor_samples = 0
         self._corridor_valid = 0
         self._corridor_width = 0.0
-        self._corridor_status = 'no data'
-        self.create_subscription(Odometry, '/slam/odom', self._odom_callback, 20)
-        self.create_subscription(AckermannDriveStamped, '/cmd', self._cmd_callback, 20)
-        self.create_subscription(Float64MultiArray, '/target_speeds', self._speed_callback, 10)
-        self.create_subscription(ConeArrayWithCovariance, '/slam/landmarks', self._landmark_callback, 10)
-        self.create_subscription(String, '/uncertainty/status', self._status_callback, 10)
-        self.create_subscription(Float64MultiArray, '/uncertainty/corridor', self._corridor_callback, 10)
+        self._corridor_status = "no data"
+        self._lap_completed = False
+
+        self._distance_travelled = 0.0
+        self._previous_gt: Optional[Point2] = None
+
+        self.create_subscription(
+            Odometry, "/slam/odom", self._odom_callback, 20
+        )
+        self.create_subscription(
+            CarState, "/ground_truth/state", self._ground_truth_callback, 20
+        )
+        self.create_subscription(
+            Path, "/target_path", self._target_path_callback, 10
+        )
+        self.create_subscription(
+            AckermannDriveStamped, "/cmd", self._cmd_callback, 20
+        )
+        self.create_subscription(
+            Float64MultiArray, "/target_speeds", self._speed_callback, 10
+        )
+        self.create_subscription(
+            ConeArrayWithCovariance,
+            "/slam/landmarks",
+            self._landmark_callback,
+            10,
+        )
+        self.create_subscription(
+            String, "/uncertainty/status", self._status_callback, 10
+        )
+        self.create_subscription(
+            Float64MultiArray,
+            "/uncertainty/corridor",
+            self._corridor_callback,
+            10,
+        )
+        self.create_subscription(
+            Bool,
+            "/ros_can/mission_completed",
+            self._mission_callback,
+            10,
+        )
+
         self._timer = self.create_timer(0.1, self._write_row)
-        self.get_logger().info(f'Logging run metrics to {self._path}')
+        self.get_logger().info(f"Logging run metrics to {self._path}")
+
+    @staticmethod
+    def _point_segment_distance(
+        point: Point2,
+        a: Point2,
+        b: Point2,
+    ) -> Tuple[float, Point2]:
+        sx = b[0] - a[0]
+        sy = b[1] - a[1]
+        segment_sq = sx * sx + sy * sy
+
+        if segment_sq <= 1e-12:
+            return math.hypot(point[0] - a[0], point[1] - a[1]), a
+
+        t = (
+            (point[0] - a[0]) * sx
+            + (point[1] - a[1]) * sy
+        ) / segment_sq
+        t = max(0.0, min(1.0, t))
+
+        projection = (
+            a[0] + t * sx,
+            a[1] + t * sy,
+        )
+        return (
+            math.hypot(
+                point[0] - projection[0],
+                point[1] - projection[1],
+            ),
+            projection,
+        )
 
     def _odom_callback(self, message: Odometry) -> None:
         self._x = message.pose.pose.position.x
         self._y = message.pose.pose.position.y
+
         q = message.pose.pose.orientation
-        self._yaw = math.atan2(2.0 * (q.w * q.z + q.x * q.y), 1.0 - 2.0 * (q.y * q.y + q.z * q.z))
+        self._yaw = math.atan2(
+            2.0 * (q.w * q.z + q.x * q.w),
+            1.0 - 2.0 * (q.y * q.y + q.z * q.z),
+        )
+
         self._actual_speed = message.twist.twist.linear.x
+
+    def _ground_truth_callback(self, message: CarState) -> None:
+        x = message.pose.pose.position.x
+        y = message.pose.pose.position.y
+
+        self._ground_truth_x = x
+        self._ground_truth_y = y
+        self._ground_truth_speed = message.twist.twist.linear.x
+
+        current = (x, y)
+        if self._previous_gt is not None:
+            self._distance_travelled += math.hypot(
+                x - self._previous_gt[0],
+                y - self._previous_gt[1],
+            )
+        self._previous_gt = current
+
+    def _target_path_callback(self, message: Path) -> None:
+        self._target_path = [
+            (
+                pose.pose.position.x,
+                pose.pose.position.y,
+            )
+            for pose in message.poses
+        ]
 
     def _cmd_callback(self, message: AckermannDriveStamped) -> None:
         self._steering = message.drive.steering_angle
 
     def _speed_callback(self, message: Float64MultiArray) -> None:
-        self._target_speed = float(message.data[0]) if message.data else None
+        self._target_speed = (
+            float(message.data[0]) if message.data else None
+        )
 
     def _landmark_callback(self, message: ConeArrayWithCovariance) -> None:
         self._blue = len(message.blue_cones)
@@ -71,39 +199,106 @@ class RunMetricsLogger(Node):
     def _corridor_callback(self, message: Float64MultiArray) -> None:
         if len(message.data) % 8 != 0:
             return
+
         self._corridor_samples = len(message.data) // 8
         self._corridor_valid = 0
         widths = []
+
         for index in range(0, len(message.data), 8):
             y_min = message.data[index + 5]
             y_max = message.data[index + 6]
+
             if message.data[index + 7] > 0.5:
                 self._corridor_valid += 1
                 widths.append(y_max - y_min)
-        self._corridor_width = sum(widths) / len(widths) if widths else 0.0
+
+        self._corridor_width = (
+            sum(widths) / len(widths) if widths else 0.0
+        )
+
+    def _mission_callback(self, message: Bool) -> None:
+        if message.data:
+            self._lap_completed = True
+
+    def _reference_error(self) -> Tuple[float, float, float]:
+        if len(self._target_path) < 2:
+            return 0.0, 0.0, 0.0
+
+        point = (self._ground_truth_x, self._ground_truth_y)
+        best_error = float("inf")
+        best_projection = self._target_path[0]
+
+        for index in range(len(self._target_path) - 1):
+            error, projection = self._point_segment_distance(
+                point,
+                self._target_path[index],
+                self._target_path[index + 1],
+            )
+            if error < best_error:
+                best_error = error
+                best_projection = projection
+
+        return best_projection[0], best_projection[1], best_error
 
     def _write_row(self) -> None:
-        target = '' if self._target_speed is None else self._target_speed
-        fraction = self._corridor_valid / self._corridor_samples if self._corridor_samples else 0.0
-        with self._path.open('a', newline='', encoding='utf-8') as output_file:
-            writer = csv.DictWriter(output_file, fieldnames=self._FIELDS)
+        target = (
+            ""
+            if self._target_speed is None
+            else self._target_speed
+        )
+
+        target_x, target_y, cte = self._reference_error()
+
+        valid_fraction = (
+            self._corridor_valid / self._corridor_samples
+            if self._corridor_samples
+            else 0.0
+        )
+
+        slam_gt_error = math.hypot(
+            self._x - self._ground_truth_x,
+            self._y - self._ground_truth_y,
+        )
+
+        with self._path.open(
+            "a", newline="", encoding="utf-8"
+        ) as output_file:
+            writer = csv.DictWriter(
+                output_file,
+                fieldnames=self._FIELDS,
+            )
+
             if self._path.stat().st_size == 0:
                 writer.writeheader()
-            writer.writerow({
-                'timestamp_ns': self.get_clock().now().nanoseconds,
-                'x': self._x, 'y': self._y, 'yaw': self._yaw,
-                'actual_speed_mps': self._actual_speed,
-                'target_speed_mps': target,
-                'steering_angle_rad': self._steering,
-                'blue_landmarks': self._blue,
-                'yellow_landmarks': self._yellow,
-                'total_landmarks': self._blue + self._yellow,
-                'corridor_samples': self._corridor_samples,
-                'corridor_valid_samples': self._corridor_valid,
-                'corridor_valid_fraction': fraction,
-                'mean_corridor_width_m': self._corridor_width,
-                'corridor_status': self._corridor_status,
-            })
+
+            writer.writerow(
+                {
+                    "timestamp_ns": self.get_clock().now().nanoseconds,
+                    "x": self._x,
+                    "y": self._y,
+                    "yaw": self._yaw,
+                    "actual_speed_mps": self._actual_speed,
+                    "ground_truth_x": self._ground_truth_x,
+                    "ground_truth_y": self._ground_truth_y,
+                    "ground_truth_speed_mps": self._ground_truth_speed,
+                    "slam_gt_error_m": slam_gt_error,
+                    "target_x": target_x,
+                    "target_y": target_y,
+                    "cross_track_error_m": cte,
+                    "distance_travelled_m": self._distance_travelled,
+                    "target_speed_mps": target,
+                    "steering_angle_rad": self._steering,
+                    "blue_landmarks": self._blue,
+                    "yellow_landmarks": self._yellow,
+                    "total_landmarks": self._blue + self._yellow,
+                    "corridor_samples": self._corridor_samples,
+                    "corridor_valid_samples": self._corridor_valid,
+                    "corridor_valid_fraction": valid_fraction,
+                    "mean_corridor_width_m": self._corridor_width,
+                    "corridor_status": self._corridor_status,
+                    "lap_completed": int(self._lap_completed),
+                }
+            )
 
 
 def main(args=None) -> None:
