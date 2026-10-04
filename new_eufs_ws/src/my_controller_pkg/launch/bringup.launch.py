@@ -48,6 +48,7 @@ def generate_launch_description():
                 'landmark_consolidation_distance': 0.65,
                 'landmark_confirmation_hits': 3,
                 'max_landmark_missed_updates': 8,
+                'landmark_publish_stride': 2,
                 'odom_topic': '/custom_odom',
                 'min_landmark_hits': 3,
                 'num_particles': 15,
