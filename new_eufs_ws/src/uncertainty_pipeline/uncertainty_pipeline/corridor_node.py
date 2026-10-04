@@ -34,12 +34,6 @@ class CorridorNode(Node):
         self._safety_k = float(self.declare_parameter('safety_k', 2.0).value)
         self._grid_step_m = float(self.declare_parameter('grid_step_m', 0.5).value)
         self._dedup_distance_m = float(self.declare_parameter('dedup_distance_m', 0.75).value)
-        self._min_track_width_m = float(
-            self.declare_parameter('min_track_width_m', 1.5).value)
-        self._max_track_width_m = float(
-            self.declare_parameter('max_track_width_m', 6.0).value)
-        self._max_boundary_pair_gap_m = float(
-            self.declare_parameter('max_boundary_pair_gap_m', 3.0).value)
         self._landmarks_topic = self.declare_parameter(
             'landmarks_topic', '/slam/landmarks').value
         self._odom_topic = self.declare_parameter('odom_topic', '/slam/odom').value
@@ -106,37 +100,6 @@ class CorridorNode(Node):
         self._pose_covariance = planar_covariance
         self._publish_if_ready()
 
-    def _filter_boundary_support(
-        self,
-        boundary: Sequence[BoundarySample],
-        opposite: Sequence[BoundarySample],
-    ) -> List[BoundarySample]:
-        """Keep only cones that can form a physically plausible track pair.
-
-        A covariance/map glitch can create an isolated same-colour landmark far
-        from the actual lap.  Such a point must never become a corridor by
-        itself.  Require an opposite boundary within a reasonable longitudinal
-        gap and EUFS track-width range before allowing the sample downstream.
-        """
-        supported: List[BoundarySample] = []
-        min_width = max(0.5, self._min_track_width_m)
-        max_width = max(min_width, self._max_track_width_m)
-        max_gap = max(0.5, self._max_boundary_pair_gap_m)
-
-        for sample in boundary:
-            valid_partner = False
-            for other in opposite:
-                ds = abs(sample.s - other.s)
-                if ds > max_gap:
-                    continue
-                width = math.hypot(sample.s - other.s, sample.mean - other.mean)
-                if min_width <= width <= max_width:
-                    valid_partner = True
-                    break
-            if valid_partner:
-                supported.append(sample)
-        return supported
-
     def _publish_if_ready(self) -> None:
         if self._pose is None or self._pose_covariance is None or not self._landmarks:
             return
@@ -144,13 +107,6 @@ class CorridorNode(Node):
             self._landmarks, self._pose, self._pose_covariance, BLUE, self._dedup_distance_m)
         yellow = local_boundary_samples(
             self._landmarks, self._pose, self._pose_covariance, YELLOW, self._dedup_distance_m)
-
-        # Do not let an isolated/incorrectly mapped cone generate a corridor
-        # outside the physical lap. Each accepted boundary sample must have a
-        # plausible opposite-colour partner.
-        blue = self._filter_boundary_support(blue, yellow)
-        yellow = self._filter_boundary_support(yellow, blue)
-
         corridor = build_corridor(blue, yellow, self._safety_k, self._grid_step_m)
         if not corridor:
             # Keep raw boundary means visible even when there is no positive

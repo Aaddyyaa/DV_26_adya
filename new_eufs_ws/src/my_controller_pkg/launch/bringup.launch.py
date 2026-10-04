@@ -16,11 +16,11 @@ def generate_launch_description():
         # Relay them to the standard /joint_states topic consumed by
         # robot_state_publisher and the state estimator.
         Node(
-            package='topic_tools',
-            executable='relay',
-            name='eufs_joint_states_relay',
+            package='my_controller_pkg',
+            executable='joint_state_relay',
+            name='eufs_joint_state_relay',
             output='screen',
-            arguments=['/eufs/joint_states', '/joint_states'],
+            parameters=[sim_time],
         ),
 
         Node(

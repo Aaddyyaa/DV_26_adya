@@ -13,6 +13,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(nav_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(ackermann_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
@@ -22,6 +23,12 @@ find_package(tf2_geometry_msgs REQUIRED)
 # Mission Manager packages
 find_package(eufs_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
+
+add_executable(joint_state_relay src/joint_state_relay.cpp)
+ament_target_dependencies(joint_state_relay
+  rclcpp
+  sensor_msgs
+)
 
 # 1. Build the Pure Pursuit Controller
 add_executable(pure_pursuit_node src/pure_pursuit_controller.cpp)
@@ -45,6 +52,7 @@ ament_target_dependencies(mission_manager
 
 # Install BOTH nodes
 install(TARGETS 
+  joint_state_relay
   pure_pursuit_node
   mission_manager
   DESTINATION lib/${PROJECT_NAME}
