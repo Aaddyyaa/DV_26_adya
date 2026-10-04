@@ -69,7 +69,7 @@ def generate_launch_description():
                 'max_segment_length_m': 12.0,
                 'allow_pair_reuse_fallback': True,
                 'cone_dedup_distance_m': 0.75,
-                'max_speed_mps': 1.5,
+                'max_speed_mps': 2.0,
                 'min_speed_mps': 0.6,
             }],
         ),
@@ -96,7 +96,7 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'use_sim_time': True,
-                'max_speed_limit': 1.5,
+                'max_speed_limit': 2.0,
                 'min_speed_mps': 0.6,
                 'L_base': 1.53,
                 'L_min': 1.5,
@@ -124,7 +124,7 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'use_sim_time': True,
-                'enable': True,
+                'enable': False,
                 'mission': 'trackdrive',
             }],
         ),
