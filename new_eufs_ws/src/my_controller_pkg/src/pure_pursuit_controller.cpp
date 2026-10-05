@@ -28,7 +28,7 @@ constexpr double CONTROL_DT = 0.05;
 class HybridControllerNode : public rclcpp::Node {
 public:
     HybridControllerNode() : Node("pure_pursuit_node") {
-        this->declare_parameter("odom_topic", std::string("/custom_odom"));
+        this->declare_parameter("odom_topic", std::string("/slam/odom"));
 
         this->declare_parameter("L_base", 1.53);
         this->declare_parameter("L_min", 1.8);
@@ -110,7 +110,7 @@ public:
 
         RCLCPP_INFO(
             this->get_logger(),
-            "Controller using %s in the same map frame as /target_path.",
+            "Controller using %s so pose and /target_path share the SLAM map frame.",
             odom_topic.c_str());
     }
 
