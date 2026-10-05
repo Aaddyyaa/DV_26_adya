@@ -99,7 +99,6 @@ public:
         declare_parameter<double>("local_cone_smoothing_alpha", 0.55);
         declare_parameter<double>("local_cone_match_distance_m", 1.0);
         declare_parameter<double>("local_cone_hold_sec", 0.8);
-        declare_parameter<double>("sensor_offset_x_m", -0.37);
         declare_parameter<int>("planning_landmark_max_missed_updates", 5);
 
         num_particles_ = static_cast<int>(std::max<int64_t>(5, get_parameter("num_particles").as_int()));
@@ -147,7 +146,6 @@ public:
             std::clamp(get_parameter("local_cone_match_distance_m").as_double(), 0.25, 2.0);
         local_cone_hold_sec_ =
             std::clamp(get_parameter("local_cone_hold_sec").as_double(), 0.1, 2.0);
-        sensor_offset_x_m_ = get_parameter("sensor_offset_x_m").as_double();
         planning_landmark_max_missed_updates_ =
             static_cast<int>(std::clamp<int64_t>(
                 get_parameter("planning_landmark_max_missed_updates").as_int(),
@@ -270,11 +268,6 @@ private:
     double local_cone_smoothing_alpha_{0.55};
     double local_cone_match_distance_m_{1.0};
     double local_cone_hold_sec_{0.8};
-    // EUFS simulated camera detections are expressed in the camera frame.
-    // The camera is 0.37 m behind the car reference point in the official
-    // DryTrack configuration, so convert detections back to the car frame
-    // before FastSLAM uses their range/bearing.
-    double sensor_offset_x_m_{-0.37};
     int planning_landmark_max_missed_updates_{5};
 
     eufs_msgs::msg::ConeArrayWithCovariance last_local_cones_;
@@ -375,10 +368,10 @@ private:
     {
         ConeDetection detection;
 
-        // Convert camera-frame measurements to the vehicle base frame.
-        // sensor_offset_x_m_ is the sensor position relative to the car:
-        // base_x = sensor_x + sensor_offset_x_m_.
-        const double base_x = cone.point.x + sensor_offset_x_m_;
+        // /camera_0/cones and the recorded simulator messages are already
+        // expressed in base_footprint. Do not apply the EUFS camera offset a
+        // second time; doing so shifts every observation and corrupts SLAM.
+        const double base_x = cone.point.x;
         const double base_y = cone.point.y;
 
         detection.range = std::hypot(base_x, base_y);
