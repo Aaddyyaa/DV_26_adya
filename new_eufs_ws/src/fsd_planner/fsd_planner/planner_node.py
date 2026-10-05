@@ -728,7 +728,10 @@ class CentrelinePlanner(Node):
 
     def _restamp_path(self, source: Path) -> Path:
         path = Path()
-        path.header.stamp = self.get_clock().now().to_msg()
+        # Preserve the original generation timestamp. Re-stamping a held path
+        # would make downstream controllers believe it is fresh on every timer
+        # tick and defeat path-loss recovery logic.
+        path.header.stamp = source.header.stamp
         path.header.frame_id = source.header.frame_id or 'map'
 
         for source_pose in source.poses:
