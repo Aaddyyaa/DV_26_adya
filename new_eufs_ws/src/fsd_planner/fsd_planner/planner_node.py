@@ -136,18 +136,20 @@ class CentrelinePlanner(Node):
             and abs(local(point)[1]) <= local_half_width
         ]
 
+        # Pair only physically consistent blue-left / yellow-right cones.
+        # The SLAM node already supplies a strict local sensor window, so
+        # there is no reason to reintroduce an unrestricted cross-pair fallback.
         candidates: List[Tuple[float, float, float, int, int]] = []
 
         for blue_index, (_, blue_s, blue_l) in enumerate(blue):
             for yellow_index, (_, yellow_s, yellow_l) in enumerate(yellow):
+                if blue_l < 0.10 or yellow_l > -0.10:
+                    continue
+
                 midpoint_s = 0.5 * (blue_s + yellow_s)
                 midpoint_l = 0.5 * (blue_l + yellow_l)
                 gap = abs(blue_s - yellow_s)
 
-                # A real corner can put the two cones at noticeably
-                # different longitudinal stations.  Do not reject that
-                # pairing merely because it is no longer "in front" of the
-                # original vehicle heading.
                 if gap > 3.5:
                     continue
 
@@ -158,35 +160,6 @@ class CentrelinePlanner(Node):
                 if not (self._min_track_width <= width <= self._max_track_width):
                     continue
 
-                # Reject false gates formed by cones belonging to a neighbouring
-                # section of the persistent lap map. A real gate crosses the
-                # vehicle's travel direction rather than running along it.
-                gate_dx = blue[blue_index][0][0] - yellow[yellow_index][0][0]
-                gate_dy = blue[blue_index][0][1] - yellow[yellow_index][0][1]
-                gate_len = math.hypot(gate_dx, gate_dy)
-                if gate_len < 1e-6:
-                    continue
-
-                gate_parallel = abs(
-                    (gate_dx / gate_len) * c_yaw
-                    + (gate_dy / gate_len) * s_yaw
-                )
-                if gate_parallel > float(self._max_gate_parallel):
-                    continue
-
-                # Keep the generated gates inside the actual forward driving
-                # corridor. The complete persistent loop may contain nearby
-                # cones from the next/previous section.
-                if midpoint_s < -2.0 or midpoint_s > 18.0:
-                    continue
-                if abs(midpoint_l) > 8.0:
-                    continue
-
-                # Pair by cross-track geometry first.  Forward distance is
-                # deliberately weak here; route ordering below decides which
-                # gate is the next gate.  This prevents a straight-ahead gate
-                # from winning simply because a genuine right-hand gate has
-                # a large heading change.
                 score = (
                     1.0 * gap
                     + 0.40 * abs(width - 3.5)
@@ -246,6 +219,35 @@ class CentrelinePlanner(Node):
                 + (point[1] - self._position[1]) * s_yaw
             ) >= -3.0
         ]
+
+        # Prefer the continuation of the last accepted local path.
+        # This is especially important where two sections of the closed track
+        # are simultaneously inside the local cone window.
+        continuity_target: Optional[Point2] = None
+        old_points: List[Point2] = []
+
+        if self._last_path is not None and self._last_path.poses:
+            old_points = [
+                (pose.pose.position.x, pose.pose.position.y)
+                for pose in self._last_path.poses
+            ]
+
+            old_index = min(
+                range(len(old_points)),
+                key=lambda index: distance(old_points[index], self._position))
+
+            continuity_target = old_points[
+                min(old_index + 2, len(old_points) - 1)]
+
+        def first_gate_score(point: Point2) -> float:
+            score = distance(point, self._position)
+
+            if continuity_target is not None:
+                score += 1.75 * distance(point, continuity_target)
+
+            return score
+
+        first = min(forward_gates, key=first_gate_score)
         if not forward_gates:
             return []
 
@@ -354,18 +356,27 @@ class CentrelinePlanner(Node):
                     + 2.0 * max(0.0, -alignment)
                 )
 
+                if continuity_target is not None and old_points:
+                    ref_index = min(
+                        len(ordered),
+                        len(old_points) - 1)
+                    continuity_distance = distance(
+                        point,
+                        old_points[ref_index])
+
+                    if continuity_distance > 5.0:
+                        continue
+
+                    score += 1.25 * continuity_distance
+
                 if score < best_score:
                     best_score = score
                     best = point
 
             if best is None:
-                # Never jump globally to another section of the persistent
-                # lap map just because the local graph has ended. The previous
-                # implementation could select a perfectly valid-looking gate
-                # from another nearby part of the circuit here, sending the car
-                # out of bounds near lap closure. Hold the last valid path
-                # instead; the next planning cycle can recover when the local
-                # gate graph is visible again.
+                # Do not use a global fallback on a closed track. Once the local
+                # graph ends, hold the current route instead of jumping to a
+                # different section of the circuit.
                 break
 
             dx = best[0] - previous[0]
