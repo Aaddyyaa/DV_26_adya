@@ -262,8 +262,37 @@ private:
         // --- LONGITUDINAL CONTROL (PREDICTIVE BRAKING) ---
         double max_speed_limit = get_parameter("max_speed_limit").as_double();
         double deceleration_limit = get_parameter("max_decel").as_double(); 
-        double target_velocity = max_speed_limit; 
-        
+        double target_velocity = max_speed_limit;
+
+        // If the currently published local path is about to run out, do not
+        // drive past its endpoint while waiting for the next planner update.
+        // This is especially important at the end of a cone-visible corner:
+        // overshooting the final waypoint can put the car outside the corridor
+        // before the next valid path is available.
+        double remaining_path_distance = 0.0;
+        for (size_t i = last_closest_idx_ + 1; i < N; ++i) {
+            remaining_path_distance += std::hypot(
+                path_.poses[i].pose.position.x -
+                    path_.poses[i - 1].pose.position.x,
+                path_.poses[i].pose.position.y -
+                    path_.poses[i - 1].pose.position.y);
+        }
+
+        if (remaining_path_distance < 4.0) {
+            const double emergency_margin = 0.5;
+            const double available_distance =
+                std::max(0.0, remaining_path_distance - emergency_margin);
+            const double endpoint_speed =
+                std::sqrt(
+                    std::max(
+                        0.0,
+                        2.0 *
+                            get_parameter("max_accel").as_double() *
+                            available_distance));
+            target_velocity =
+                std::min(target_velocity, endpoint_speed);
+        }
+
         int velocity_scan_limit = std::min(static_cast<int>(last_closest_idx_) + 80, static_cast<int>(N) - 1);
         
         for (int i = last_closest_idx_; i <= velocity_scan_limit; ++i) {
@@ -285,8 +314,16 @@ private:
         }
 
         // Final safety bounds (lower bound reduced to 1.5 for sharper hairpins)
-        const double min_speed = std::max(0.0, get_parameter("min_speed_mps").as_double());
-        target_velocity = std::clamp(target_velocity, std::min(min_speed, max_speed_limit), max_speed_limit);
+        const double min_speed =
+            std::max(0.0, get_parameter("min_speed_mps").as_double());
+
+        // Never force the endpoint guard below the configured crawl speed;
+        // this keeps the vehicle moving through a transient short path while
+        // still preventing a high-speed overshoot.
+        target_velocity = std::clamp(
+            target_velocity,
+            std::min(min_speed, max_speed_limit),
+            max_speed_limit);
 
         drive_msg.drive.speed = target_velocity;
         drive_msg.drive.jerk = 0.0;
