@@ -229,22 +229,19 @@ private:
             return;
         }
 
-        if (!has_path_) {
-            bool bootstrap_active = false;
-
-            if (as_driving_) {
-                if (startup_time_.nanoseconds() == 0) {
-                    startup_time_ = this->now();
-                }
-
-                const double elapsed =
-                    (this->now() - startup_time_).seconds();
-
-                bootstrap_active =
-                    elapsed < get_parameter("startup_duration_sec").as_double();
+        // Give the simulator a short, straight launch while the perception
+        // and planner pipeline establishes its first stable path. This runs
+        // only in AS_DRIVING and happens before path/tracking safety gates.
+        if (as_driving_) {
+            if (startup_time_.nanoseconds() == 0) {
+                startup_time_ = this->now();
             }
 
-            if (bootstrap_active) {
+            const double elapsed =
+                (this->now() - startup_time_).seconds();
+
+            if (elapsed <
+                get_parameter("startup_duration_sec").as_double()) {
                 ackermann_msgs::msg::AckermannDriveStamped bootstrap;
                 bootstrap.header.stamp = this->now();
                 bootstrap.drive.speed = std::max(
@@ -262,13 +259,15 @@ private:
                     this->get_logger(),
                     *this->get_clock(),
                     1000,
-                    "AS_DRIVING bootstrap: speed=%.2f accel=%.2f waiting for first planner path.",
+                    "AS_DRIVING bootstrap: speed=%.2f accel=%.2f",
                     bootstrap.drive.speed,
                     bootstrap.drive.acceleration);
-            } else {
-                publishStopCommand();
+                return;
             }
+        }
 
+        if (!has_path_) {
+            publishStopCommand();
             return;
         }
 
