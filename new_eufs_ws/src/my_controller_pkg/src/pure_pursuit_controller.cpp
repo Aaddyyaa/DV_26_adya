@@ -45,6 +45,9 @@ public:
         this->declare_parameter("startup_accel_mps2", 1.5);
         this->declare_parameter("startup_speed_mps", 0.8);
         this->declare_parameter("startup_max_steering_rad", 0.12);
+        this->declare_parameter("path_loss_grace_sec", 3.0);
+        this->declare_parameter("recovery_speed_mps", 0.55);
+        this->declare_parameter("recovery_accel_mps2", 0.8);
 
         const std::string odom_topic =
             get_parameter("odom_topic").as_string();
@@ -132,6 +135,7 @@ private:
     double last_steering_ = 0.0;
     size_t last_closest_idx_ = 0;
     rclcpp::Time startup_time_{0, 0, RCL_ROS_TIME};
+    rclcpp::Time last_valid_path_time_{0, 0, RCL_ROS_TIME};
 
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
     rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr path_sub_;
@@ -178,10 +182,11 @@ private:
 
         if (!has_path_) {
             last_closest_idx_ = 0;
-            last_steering_ = 0.0;
             startup_active_ = false;
             return;
         }
+
+        last_valid_path_time_ = this->now();
 
         if (!had_path) {
             startup_active_ = true;
@@ -213,6 +218,29 @@ private:
         msg.drive.steering_angle =
             std::abs(vx_) > 0.15 ? last_steering_ : 0.0;
         drive_pub_->publish(msg);
+    }
+
+    void publishRecoveryCrawl()
+    {
+        ackermann_msgs::msg::AckermannDriveStamped msg;
+        msg.header.stamp = this->now();
+        msg.drive.steering_angle = last_steering_;
+        msg.drive.speed = std::max(
+            0.35,
+            std::min(
+                get_parameter("max_speed_limit").as_double(),
+                get_parameter("recovery_speed_mps").as_double()));
+        msg.drive.acceleration = get_parameter("recovery_accel_mps2").as_double();
+        msg.drive.jerk = 0.0;
+        drive_pub_->publish(msg);
+
+        RCLCPP_WARN_THROTTLE(
+            this->get_logger(),
+            *this->get_clock(),
+            2000,
+            "Temporary path loss; recovery crawl speed=%.2f steer=%.3f",
+            msg.drive.speed,
+            msg.drive.steering_angle);
     }
 
     void controlLoop()
@@ -263,14 +291,30 @@ private:
             }
         }
 
+        const double path_age =
+            last_valid_path_time_.nanoseconds() == 0
+                ? std::numeric_limits<double>::infinity()
+                : (this->now() - last_valid_path_time_).seconds();
+
         if (!has_path_) {
-            publishStopCommand();
+            if (as_driving_ &&
+                path_age >= 0.0 &&
+                path_age <= get_parameter("path_loss_grace_sec").as_double()) {
+                publishRecoveryCrawl();
+            } else {
+                publishStopCommand();
+            }
             return;
         }
 
         const size_t N = path_.poses.size();
         if (N < 3) {
-            publishStopCommand();
+            if (as_driving_ &&
+                path_age <= get_parameter("path_loss_grace_sec").as_double()) {
+                publishRecoveryCrawl();
+            } else {
+                publishStopCommand();
+            }
             return;
         }
 
