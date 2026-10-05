@@ -37,11 +37,11 @@ public:
         this->declare_parameter("max_speed_limit", 1.5);
         this->declare_parameter("max_accel", 1.0);
         this->declare_parameter("max_decel", 4.0);
-        this->declare_parameter("max_steering", 0.5);
-        this->declare_parameter("min_speed_mps", 0.6);
+        this->declare_parameter("max_steering", 0.28);
+        this->declare_parameter("min_speed_mps", 0.55);
         this->declare_parameter("max_steering_rate_rad_s", 1.5);
-        this->declare_parameter("max_tracking_error_m", 0.75);
-        this->declare_parameter("startup_duration_sec", 1.0);
+        this->declare_parameter("max_tracking_error_m", 1.50);
+        this->declare_parameter("startup_duration_sec", 1.5);
         this->declare_parameter("startup_accel_mps2", 1.5);
         this->declare_parameter("startup_speed_mps", 0.8);
         this->declare_parameter("startup_max_steering_rad", 0.12);
@@ -366,7 +366,7 @@ private:
 
         bool geometry_valid = true;
         const size_t geometry_end =
-            std::min(N - 1, last_closest_idx_ + 12);
+            std::min(N - 1, last_closest_idx_ + 16);
 
         for (size_t i = last_closest_idx_ + 1;
              i <= geometry_end;
@@ -377,30 +377,12 @@ private:
                 path_.poses[i].pose.position.y -
                     path_.poses[i - 1].pose.position.y);
 
-            if (!std::isfinite(segment) || segment > 1.25) {
+            // Densified planner paths should never contain a large geometric
+            // jump. Do not reject a legitimate tight corner merely because
+            // its heading changes rapidly.
+            if (!std::isfinite(segment) || segment > 1.5) {
                 geometry_valid = false;
                 break;
-            }
-
-            if (i >= last_closest_idx_ + 2) {
-                const double h1 = std::atan2(
-                    path_.poses[i - 1].pose.position.y -
-                        path_.poses[i - 2].pose.position.y,
-                    path_.poses[i - 1].pose.position.x -
-                        path_.poses[i - 2].pose.position.x);
-                const double h2 = std::atan2(
-                    path_.poses[i].pose.position.y -
-                        path_.poses[i - 1].pose.position.y,
-                    path_.poses[i].pose.position.x -
-                        path_.poses[i - 1].pose.position.x);
-
-                if (std::abs(std::atan2(
-                        std::sin(h2 - h1),
-                        std::cos(h2 - h1)))
-                    > (100.0 * 3.141592653589793 / 180.0)) {
-                    geometry_valid = false;
-                    break;
-                }
             }
         }
 
@@ -409,7 +391,7 @@ private:
                 this->get_logger(),
                 *this->get_clock(),
                 2000,
-                "Invalid path geometry; holding vehicle stopped.");
+                "Invalid path segment; holding vehicle stopped.");
             publishStopCommand();
             return;
         }
@@ -468,45 +450,39 @@ private:
                     max_speed_limit,
                     get_parameter("startup_speed_mps").as_double())
                 : max_speed_limit;
-        double path_distance = 0.0;
 
-        const size_t velocity_scan_limit =
-            std::min(N - 1, last_closest_idx_ + 80);
+        // The previous braking-distance formula only reacted to a slow
+        // corner when that corner was a few tenths of a metre away. On a
+        // tight Formula Student turn that is too late for a vehicle whose
+        // steering is limited to +/-0.28 rad. Use the upcoming speed profile
+        // directly over a short horizon so the car enters corners slowly.
+        if (!startup && !speed_profile_.empty()) {
+            const size_t speed_end =
+                std::min(
+                    speed_profile_.size(),
+                    last_closest_idx_ + 14);
 
-        for (size_t i = last_closest_idx_;
-             i <= velocity_scan_limit;
-             ++i) {
-            if (i > last_closest_idx_) {
-                path_distance += std::hypot(
-                    path_.poses[i].pose.position.x -
-                        path_.poses[i - 1].pose.position.x,
-                    path_.poses[i].pose.position.y -
-                        path_.poses[i - 1].pose.position.y);
+            for (size_t i = last_closest_idx_; i < speed_end; ++i) {
+                target_velocity =
+                    std::min(
+                        target_velocity,
+                        std::clamp(
+                            speed_profile_[i],
+                            0.0,
+                            max_speed_limit));
             }
-
-            double node_speed = max_speed_limit;
-            if (i < speed_profile_.size()) {
-                node_speed = std::clamp(
-                    speed_profile_[i],
-                    0.0,
-                    max_speed_limit);
-            }
-
-            const double required_current_speed =
-                std::sqrt(std::max(
-                    0.0,
-                    node_speed * node_speed
-                    + 2.0 * decel * path_distance));
-
-            target_velocity =
-                std::min(target_velocity, required_current_speed);
         }
 
+        // Extra curvature protection tied to the REAL simulator steering
+        // limit. These thresholds are intentionally below 0.28 rad because
+        // tyre/model saturation starts before the hard limit.
         const double steering_abs = std::abs(raw_steering);
-        if (steering_abs > 0.45) {
-            target_velocity = std::min(target_velocity, 0.8);
-        } else if (steering_abs > 0.35) {
-            target_velocity = std::min(target_velocity, 1.0);
+        if (steering_abs > 0.24) {
+            target_velocity = std::min(target_velocity, 0.65);
+        } else if (steering_abs > 0.18) {
+            target_velocity = std::min(target_velocity, 0.85);
+        } else if (steering_abs > 0.12) {
+            target_velocity = std::min(target_velocity, 1.10);
         }
 
         const double min_speed =
