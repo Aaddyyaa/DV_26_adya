@@ -2,7 +2,6 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
-#include <limits>
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <nav_msgs/msg/path.hpp>
@@ -51,6 +50,9 @@ public:
             
         // Publishers
         drive_pub_ = this->create_publisher<ackermann_msgs::msg::AckermannDriveStamped>("/cmd", 10);
+        eufs_drive_pub_ =
+            this->create_publisher<ackermann_msgs::msg::AckermannDriveStamped>(
+                "/control/driving_command", 10);
         vis_pub_ = this->create_publisher<visualization_msgs::msg::Marker>("lookahead_marker", 10);
 
         timer_ = this->create_wall_timer(std::chrono::milliseconds(50), std::bind(&HybridControllerNode::controlLoop, this));
@@ -64,10 +66,8 @@ private:
     std::vector<double> speed_profile_; // Stores data from /target_speeds
     bool has_odom_ = false, has_path_ = false;
     bool mission_completed_ = false;
-    bool has_target_ = false;
+    std::chrono::steady_clock::time_point startup_time_ = std::chrono::steady_clock::now();
     double last_steering_ = 0.0;
-    double last_target_x_ = 0.0;
-    double last_target_y_ = 0.0;
     size_t last_closest_idx_ = 0;
 
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
@@ -76,6 +76,7 @@ private:
     rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr mission_completed_sub_;
 
     rclcpp::Publisher<ackermann_msgs::msg::AckermannDriveStamped>::SharedPtr drive_pub_;
+    rclcpp::Publisher<ackermann_msgs::msg::AckermannDriveStamped>::SharedPtr eufs_drive_pub_;
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr vis_pub_;
     rclcpp::TimerBase::SharedPtr timer_;
 
@@ -98,37 +99,11 @@ private:
     void pathCallback(const nav_msgs::msg::Path::SharedPtr msg) {
         path_ = *msg;
         has_path_ = !path_.poses.empty();
-
+        last_closest_idx_ = 0;
         if (!has_path_) {
-            has_target_ = false;
-            last_closest_idx_ = 0;
             last_steering_ = 0.0;
-            return;
+            vx_ = 0.0;
         }
-
-        // Planner republishes the local path frequently. Re-anchoring to the
-        // previous lookahead target prevents this callback from resetting
-        // controller progress to index zero on every update.
-        const double anchor_x = has_target_ ? last_target_x_ : x_;
-        const double anchor_y = has_target_ ? last_target_y_ : y_;
-
-        double best_d = std::numeric_limits<double>::infinity();
-        size_t best_idx = 0;
-
-        for (size_t i = 0; i < path_.poses.size(); ++i) {
-            const double dx =
-                path_.poses[i].pose.position.x - anchor_x;
-            const double dy =
-                path_.poses[i].pose.position.y - anchor_y;
-            const double d = std::hypot(dx, dy);
-
-            if (d < best_d) {
-                best_d = d;
-                best_idx = i;
-            }
-        }
-
-        last_closest_idx_ = best_idx;
     }
 
     void speedProfileCallback(const std_msgs::msg::Float64MultiArray::SharedPtr msg) {
@@ -142,6 +117,7 @@ private:
         msg.drive.acceleration = -get_parameter("max_decel").as_double();
         msg.drive.steering_angle = last_steering_;
         drive_pub_->publish(msg);
+        eufs_drive_pub_->publish(msg);
     }
 
     void controlLoop() {
@@ -150,82 +126,54 @@ private:
             return;
         }
 
-        if (!has_odom_ || !has_path_) return;
+        if (!has_odom_) return;
+
+        if (!has_path_) {
+            // Simulator startup can briefly precede planner path publication.
+            // Give the vehicle a very small straight crawl for at most 1.5 s
+            // so the state estimator/SLAM can initialize, then fail closed.
+            const double startup_age =
+                std::chrono::duration<double>(
+                    std::chrono::steady_clock::now() - startup_time_).count();
+
+            if (startup_age <= 1.5) {
+                ackermann_msgs::msg::AckermannDriveStamped startup_msg;
+                startup_msg.header.stamp = this->now();
+                startup_msg.drive.speed = 0.8;
+                startup_msg.drive.acceleration = get_parameter("max_accel").as_double();
+                startup_msg.drive.steering_angle = 0.0;
+                drive_pub_->publish(startup_msg);
+                eufs_drive_pub_->publish(startup_msg);
+            }
+            return;
+        }
+
         size_t N = path_.poses.size(); 
         if (N < 2) return;
 
-        // 1. Find the closest point only near the previously tracked
-        // progress. On a closed loop, a global nearest-point search can jump
-        // to the return section of the lap when two pieces are spatially close.
-        const size_t backtrack = 3;
-        const size_t forward_window = 20;
-        const size_t search_begin =
-            (last_closest_idx_ > backtrack)
-                ? last_closest_idx_ - backtrack
-                : 0;
-        const size_t search_end =
-            std::min(N - 1, last_closest_idx_ + forward_window);
-
-        double min_d = std::numeric_limits<double>::infinity();
-        size_t best_closest_idx = last_closest_idx_;
-
-        for (size_t i = search_begin; i <= search_end; ++i) {
-            const double dx =
-                path_.poses[i].pose.position.x - x_;
-            const double dy =
-                path_.poses[i].pose.position.y - y_;
-            const double d = std::hypot(dx, dy);
-
-            if (d < min_d) {
-                min_d = d;
-                best_closest_idx = i;
-            }
+        // 1. Find the closest point to the car
+        double min_d = 1e9;
+        for (size_t i = 0; i < N; ++i) {
+            double d = std::hypot(path_.poses[i].pose.position.x - x_, path_.poses[i].pose.position.y - y_);
+            if (d < min_d) { min_d = d; last_closest_idx_ = i; }
         }
-
-        // Never fall back to a global search here. On a closed track that
-        // reintroduces the exact failure this controller is designed to avoid:
-        // a nearby point from another lap section can be closer than the
-        // physically correct point. When a regenerated local path no longer
-        // contains the old progress window, restart from its first point.
-        if (min_d > 3.0) {
-            best_closest_idx = 0;
-        }
-
-        last_closest_idx_ = best_closest_idx;
 
         double L_base = get_parameter("L_base").as_double();
         double Ld = std::max(1.2, get_parameter("L_min").as_double() + get_parameter("k_pure").as_double() * std::abs(vx_));
         
-        // 2. Find the lookahead point by distance accumulated along the
-        // ordered target path. This keeps the controller on the route through
-        // a turn instead of accepting a spatially nearby point from another
-        // section of the path.
+        // 2. Find the Lookahead Point
         size_t idx_ld = last_closest_idx_;
-        double accumulated_distance = 0.0;
-
-        for (size_t i = last_closest_idx_ + 1; i < N; ++i) {
-            const double dx =
-                path_.poses[i].pose.position.x -
-                path_.poses[i - 1].pose.position.x;
-            const double dy =
-                path_.poses[i].pose.position.y -
-                path_.poses[i - 1].pose.position.y;
-
-            accumulated_distance += std::hypot(dx, dy);
-
-            if (accumulated_distance >= Ld) {
-                idx_ld = i;
-                break;
+        for (size_t i = last_closest_idx_; i < N; ++i) {
+            double dx = path_.poses[i].pose.position.x - x_;
+            double dy = path_.poses[i].pose.position.y - y_;
+            if (std::hypot(dx, dy) >= Ld && (dx * std::cos(psi_) + dy * std::sin(psi_)) > 0.0) { 
+                idx_ld = i; break; 
             }
-
-            idx_ld = i;
+            if (i == N - 1) idx_ld = N - 1;
         }
         
         double tx = path_.poses[idx_ld].pose.position.x;
         double ty = path_.poses[idx_ld].pose.position.y;
-        last_target_x_ = tx;
-        last_target_y_ = ty;
-        has_target_ = true;
         
         // --- LATERAL CONTROL (PURE PURSUIT) ---
         double dx = tx - x_; 
@@ -262,37 +210,8 @@ private:
         // --- LONGITUDINAL CONTROL (PREDICTIVE BRAKING) ---
         double max_speed_limit = get_parameter("max_speed_limit").as_double();
         double deceleration_limit = get_parameter("max_decel").as_double(); 
-        double target_velocity = max_speed_limit;
-
-        // If the currently published local path is about to run out, do not
-        // drive past its endpoint while waiting for the next planner update.
-        // This is especially important at the end of a cone-visible corner:
-        // overshooting the final waypoint can put the car outside the corridor
-        // before the next valid path is available.
-        double remaining_path_distance = 0.0;
-        for (size_t i = last_closest_idx_ + 1; i < N; ++i) {
-            remaining_path_distance += std::hypot(
-                path_.poses[i].pose.position.x -
-                    path_.poses[i - 1].pose.position.x,
-                path_.poses[i].pose.position.y -
-                    path_.poses[i - 1].pose.position.y);
-        }
-
-        if (remaining_path_distance < 4.0) {
-            const double emergency_margin = 0.5;
-            const double available_distance =
-                std::max(0.0, remaining_path_distance - emergency_margin);
-            const double endpoint_speed =
-                std::sqrt(
-                    std::max(
-                        0.0,
-                        2.0 *
-                            get_parameter("max_accel").as_double() *
-                            available_distance));
-            target_velocity =
-                std::min(target_velocity, endpoint_speed);
-        }
-
+        double target_velocity = max_speed_limit; 
+        
         int velocity_scan_limit = std::min(static_cast<int>(last_closest_idx_) + 80, static_cast<int>(N) - 1);
         
         for (int i = last_closest_idx_; i <= velocity_scan_limit; ++i) {
@@ -314,16 +233,8 @@ private:
         }
 
         // Final safety bounds (lower bound reduced to 1.5 for sharper hairpins)
-        const double min_speed =
-            std::max(0.0, get_parameter("min_speed_mps").as_double());
-
-        // Never force the endpoint guard below the configured crawl speed;
-        // this keeps the vehicle moving through a transient short path while
-        // still preventing a high-speed overshoot.
-        target_velocity = std::clamp(
-            target_velocity,
-            std::min(min_speed, max_speed_limit),
-            max_speed_limit);
+        const double min_speed = std::max(0.0, get_parameter("min_speed_mps").as_double());
+        target_velocity = std::clamp(target_velocity, std::min(min_speed, max_speed_limit), max_speed_limit);
 
         drive_msg.drive.speed = target_velocity;
         drive_msg.drive.jerk = 0.0;
@@ -341,6 +252,7 @@ private:
             drive_msg.drive.steering_angle,
             N);
         drive_pub_->publish(drive_msg);
+        eufs_drive_pub_->publish(drive_msg);
     }
 };
 
