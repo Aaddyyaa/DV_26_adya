@@ -33,7 +33,7 @@ public:
         latest_vx_meas_ = 0.0;
         has_meas_ = false;
         
-        this->declare_parameter("wheel_radius", 0.2286);
+        this->declare_parameter("wheel_radius", 0.2032);
         this->declare_parameter("gear_ratio", 1.0);
 
         last_time_ = this->now();
@@ -93,10 +93,14 @@ private:
         
         const size_t count = std::min(msg->name.size(), msg->velocity.size());
         for (size_t i = 0; i < count; i++) {
-            if (msg->name[i] == "wheel_rl_joint" || msg->name[i] == "left_rear_axle") {
+            if (msg->name[i] == "rear_left_wheel_joint" ||
+                msg->name[i] == "wheel_rl_joint" ||
+                msg->name[i] == "left_rear_axle") {
                 v_rl = (msg->velocity[i] / gear_ratio) * r_wheel; 
                 wheels_found++;
-            } else if (msg->name[i] == "wheel_rr_joint" || msg->name[i] == "right_rear_axle") {
+            } else if (msg->name[i] == "rear_right_wheel_joint" ||
+                       msg->name[i] == "wheel_rr_joint" ||
+                       msg->name[i] == "right_rear_axle") {
                 v_rr = (msg->velocity[i] / gear_ratio) * r_wheel; 
                 wheels_found++;
             }
