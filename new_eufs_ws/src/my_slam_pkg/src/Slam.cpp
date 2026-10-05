@@ -1314,6 +1314,124 @@ private:
         return output;
     }
 
+    // Planner-facing cones are a LOCAL SENSOR WINDOW.
+    // The persistent FastSLAM map remains separate for /slam/landmarks,
+    // covariance, counts and RViz map visualization.
+    eufs_msgs::msg::ConeArrayWithCovariance
+    makeLocalMeasurementCones(
+        const Particle &particle,
+        const std::vector<ConeDetection> &measurements,
+        const rclcpp::Time &stamp) const
+    {
+        eufs_msgs::msg::ConeArrayWithCovariance output;
+        output.header.stamp = stamp;
+        output.header.frame_id = "map";
+
+        struct LocalCone
+        {
+            Eigen::Vector2d point;
+            Eigen::Matrix2d covariance;
+            int color;
+            double range;
+        };
+
+        std::vector<LocalCone> candidates;
+        candidates.reserve(measurements.size());
+
+        for (const auto &measurement : measurements)
+        {
+            if (measurement.color < 0 || measurement.color > 3)
+                continue;
+
+            const double theta =
+                wrapToPi(particle.yaw + measurement.bearing);
+
+            LocalCone cone;
+            cone.point <<
+                particle.x + measurement.range * std::cos(theta),
+                particle.y + measurement.range * std::sin(theta);
+            cone.covariance = measurement.covariance;
+            cone.color = measurement.color;
+            cone.range = measurement.range;
+
+            candidates.push_back(cone);
+        }
+
+        constexpr std::size_t MAX_BLUE = 5;
+        constexpr std::size_t MAX_YELLOW = 5;
+        constexpr std::size_t MAX_ORANGE = 4;
+
+        auto appendNearest = [&](int color, std::size_t limit)
+        {
+            std::vector<LocalCone> same_color;
+            for (const auto &candidate : candidates)
+            {
+                if (candidate.color == color)
+                    same_color.push_back(candidate);
+            }
+
+            std::sort(
+                same_color.begin(),
+                same_color.end(),
+                [](const LocalCone &a, const LocalCone &b)
+                {
+                    return a.range < b.range;
+                });
+
+            std::vector<LocalCone> selected;
+            selected.reserve(limit);
+
+            for (const auto &candidate : same_color)
+            {
+                bool duplicate = false;
+
+                for (const auto &existing : selected)
+                {
+                    if ((candidate.point - existing.point).norm() <=
+                        counted_cone_merge_distance_m_)
+                    {
+                        duplicate = true;
+                        break;
+                    }
+                }
+
+                if (duplicate)
+                    continue;
+
+                selected.push_back(candidate);
+
+                if (selected.size() >= limit)
+                    break;
+            }
+
+            for (const auto &candidate : selected)
+            {
+                eufs_msgs::msg::ConeWithCovariance cone;
+                cone.point.x = candidate.point.x();
+                cone.point.y = candidate.point.y();
+                cone.point.z = 0.0;
+                cone.covariance = {
+                    candidate.covariance(0, 0),
+                    candidate.covariance(0, 1),
+                    candidate.covariance(1, 0),
+                    candidate.covariance(1, 1)};
+
+                if (color == 0)
+                    output.blue_cones.push_back(cone);
+                else if (color == 1)
+                    output.yellow_cones.push_back(cone);
+                else if (color == 2)
+                    output.orange_cones.push_back(cone);
+            }
+        };
+
+        appendNearest(0, MAX_BLUE);
+        appendNearest(1, MAX_YELLOW);
+        appendNearest(2, MAX_ORANGE);
+
+        return output;
+    }
+
     void publishPlanningCones(
         const eufs_msgs::msg::ConeArrayWithCovariance &landmarks)
     {
@@ -1541,16 +1659,14 @@ private:
 
         const rclcpp::Time stamp = now();
 
-        // Use one covariance-aware aggregated map for planning, uncertainty,
-        // and visualization so particle resampling cannot move the visible
-        // boundary between frames.
-        // Keep the planner on the proven best-particle map. The covariance
-        // aggregate is intentionally published less often because its
-        // cross-particle landmark matching is the most expensive part of this
-        // implementation. The planner does not depend on this aggregate.
-        const auto best_particle_landmarks =
-            particleLandmarks(best_particle, stamp);
-        publishPlanningCones(best_particle_landmarks);
+        // IMPORTANT: planning uses only cones observed in this update.
+        // The persistent map stays on the separate /slam/landmarks path.
+        const auto local_measurement_cones =
+            makeLocalMeasurementCones(
+                best_particle,
+                local_measurements,
+                stamp);
+        publishPlanningCones(local_measurement_cones);
 
         ++slam_update_count_;
         if (slam_update_count_ == 1 ||
@@ -1583,7 +1699,8 @@ private:
             local_yaw_rate,
             stamp);
 
-        publishNativeMarkers(best_particle_landmarks);
+        // RViz keeps the persistent FastSLAM map, including orange cones.
+        publishNativeMarkers(particleLandmarks(best_particle, stamp));
 
         if (!local_measurements.empty())
         {
