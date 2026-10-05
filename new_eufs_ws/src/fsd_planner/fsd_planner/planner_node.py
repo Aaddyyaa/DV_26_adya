@@ -57,6 +57,10 @@ class CentrelinePlanner(Node):
         self._last_speeds: List[float] = []
         self._last_valid_plan_time: Optional[float] = None
 
+        # Persist the currently targeted gate so a growing lap map cannot
+        # suddenly select the physically nearby start/finish section.
+        self._active_gate: Optional[Point2] = None
+
         self._cones_sub = self.create_subscription(
             ConeArray, cones_topic, self._cones_callback, 10)
         self._odom_sub = self.create_subscription(
@@ -242,11 +246,33 @@ class CentrelinePlanner(Node):
         if not forward_gates:
             return []
 
-        first = min(
-            forward_gates,
-            key=lambda point: distance(point, self._position))
+        # Stay on the same physical gate until the vehicle reaches it. This
+        # prevents the persistent loop map from jumping to a nearby section
+        # that happens to be slightly closer in Euclidean distance.
+        first = None
+        if self._active_gate is not None:
+            active_index = min(
+                range(len(unused)),
+                key=lambda index: distance(unused[index], self._active_gate),
+            )
+            active_candidate = unused[active_index]
+            active_distance = distance(active_candidate, self._active_gate)
+            active_forward = (
+                (active_candidate[0] - self._position[0]) * c_yaw
+                + (active_candidate[1] - self._position[1]) * s_yaw
+            )
+
+            if active_distance <= 1.5 and active_forward >= -0.8:
+                first = active_candidate
+
+        if first is None:
+            first = min(
+                forward_gates,
+                key=lambda point: distance(point, self._position))
+
         ordered = [first]
         unused.remove(first)
+        self._active_gate = first
 
         direction = (c_yaw, s_yaw)
 
@@ -280,7 +306,12 @@ class CentrelinePlanner(Node):
                 # distance, so a straight-looking branch won over the actual
                 # right-hand continuation.  Use heading only as a continuity
                 # term and allow up to 135 degrees for a tight corner.
-                if turn_angle > math.radians(135.0):
+                if turn_angle > math.radians(105.0):
+                    continue
+                # Do not reverse along the selected track branch. A genuine
+                # corner may turn sharply, but its next gate should still have
+                # a forward component along the current route tangent.
+                if alignment < 0.0:
                     continue
 
                 score = (
@@ -294,87 +325,15 @@ class CentrelinePlanner(Node):
                     best = point
 
             if best is None:
-                # Final-bend fallback: keep the proven local planner and only
-                # look globally when the local gate graph has ended. The
-                # candidate is still constrained by the current endpoint,
-                # route direction, track width, and cone station, so this
-                # cannot create the cross-track pairing seen with a fully
-                # global planner.
-                continuation = None
-                continuation_score = float('inf')
+                # Never jump globally to another section of the persistent
+                # lap map just because the local graph has ended. The previous
+                # implementation could select a perfectly valid-looking gate
+                # from another nearby part of the circuit here, sending the car
+                # out of bounds near lap closure. Hold the last valid path
+                # instead; the next planning cycle can recover when the local
+                # gate graph is visible again.
+                break
 
-                for blue_point in blue_points:
-                    for yellow_point in yellow_points:
-                        blue_station = (
-                            (blue_point[0] - previous[0]) * direction[0]
-                            + (blue_point[1] - previous[1]) * direction[1]
-                        )
-                        yellow_station = (
-                            (yellow_point[0] - previous[0]) * direction[0]
-                            + (yellow_point[1] - previous[1]) * direction[1]
-                        )
-                        station_gap = abs(blue_station - yellow_station)
-                        if station_gap > 2.0:
-                            continue
-
-                        width = distance(blue_point, yellow_point)
-                        if not (
-                            self._min_track_width
-                            <= width
-                            <= self._max_track_width
-                        ):
-                            continue
-
-                        midpoint = (
-                            0.5 * (blue_point[0] + yellow_point[0]),
-                            0.5 * (blue_point[1] + yellow_point[1]),
-                        )
-                        dx = midpoint[0] - previous[0]
-                        dy = midpoint[1] - previous[1]
-                        segment = math.hypot(dx, dy)
-
-                        if segment < 0.9 or segment > 8.0:
-                            continue
-
-                        unit_x = dx / segment
-                        unit_y = dy / segment
-                        alignment = (
-                            unit_x * direction[0]
-                            + unit_y * direction[1]
-                        )
-                        if alignment < -0.35:
-                            continue
-
-                        turn_angle = abs(math.atan2(
-                            direction[0] * unit_y - direction[1] * unit_x,
-                            alignment,
-                        ))
-                        if turn_angle > math.radians(145.0):
-                            continue
-
-                        if any(
-                            distance(midpoint, existing) < 0.75
-                            for existing in ordered
-                        ):
-                            continue
-
-                        score = (
-                            1.0 * segment
-                            + 0.8 * turn_angle
-                            + 0.8 * abs(width - 3.5)
-                            + 0.8 * station_gap
-                        )
-                        if score < continuation_score:
-                            continuation_score = score
-                            continuation = midpoint
-
-                if continuation is None:
-                    break
-
-                dx = continuation[0] - previous[0]
-                dy = continuation[1] - previous[1]
-                segment = math.hypot(dx, dy)
-                direction = (dx / segment, dy / segment)
                 ordered.append(continuation)
                 continue
 
