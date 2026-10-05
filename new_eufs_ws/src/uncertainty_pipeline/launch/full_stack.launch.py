@@ -54,7 +54,6 @@ def generate_launch_description():
                 'path_hold_time_sec': 2.0,
                 'max_speed_mps': 1.5,
                 'min_speed_mps': 0.6,
-                'allow_pair_reuse_fallback': False,
             }],
         ),
         Node(

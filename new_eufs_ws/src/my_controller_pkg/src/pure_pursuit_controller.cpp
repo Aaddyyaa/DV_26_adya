@@ -39,7 +39,7 @@ public:
         this->declare_parameter("max_steering", 0.5);
         this->declare_parameter("min_speed_mps", 0.6);
         this->declare_parameter("max_steering_rate_rad_s", 1.5);
-        this->declare_parameter("max_tracking_error_m", 2.0);
+        this->declare_parameter("max_tracking_error_m", 0.75);
 
         const std::string odom_topic =
             get_parameter("odom_topic").as_string();
@@ -183,7 +183,12 @@ private:
             return;
         }
 
-        if (!has_odom_ || !has_path_) {
+        if (!has_odom_) {
+            return;
+        }
+
+        if (!has_path_) {
+            publishStopCommand();
             return;
         }
 
@@ -323,8 +328,18 @@ private:
             }
         }
 
+        if (!geometry_valid) {
+            RCLCPP_WARN_THROTTLE(
+                this->get_logger(),
+                *this->get_clock(),
+                2000,
+                "Invalid path geometry; holding vehicle stopped.");
+            publishStopCommand();
+            return;
+        }
+
         double raw_steering = std::clamp(
-            geometry_valid ? delta : last_steering_,
+            delta,
             -get_parameter("max_steering").as_double(),
             get_parameter("max_steering").as_double());
 
@@ -389,10 +404,6 @@ private:
             target_velocity = std::min(target_velocity, 0.8);
         } else if (steering_abs > 0.35) {
             target_velocity = std::min(target_velocity, 1.0);
-        }
-
-        if (!geometry_valid) {
-            target_velocity = std::min(target_velocity, 0.6);
         }
 
         const double min_speed =

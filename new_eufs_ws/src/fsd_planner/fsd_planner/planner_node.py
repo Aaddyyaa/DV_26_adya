@@ -51,7 +51,7 @@ class CentrelinePlanner(Node):
         self._nominal_track_width = float(
             self.declare_parameter('nominal_track_width_m', 4.5).value)
         self._min_points = int(
-            self.declare_parameter('min_centerline_points', 3).value)
+            self.declare_parameter('min_centerline_points', 2).value)
         self._max_speed = float(
             self.declare_parameter('max_speed_mps', 1.5).value)
         self._min_speed = float(
@@ -311,6 +311,14 @@ class CentrelinePlanner(Node):
 
         if len(ordered) < self._min_points:
             return []
+
+        route_length = sum(
+            distance(a, b)
+            for a, b in zip(ordered, ordered[1:])
+        )
+        if route_length < 4.0:
+            return []
+
         return ordered
 
     def _densify(self, points: Sequence[Point2]) -> List[Point2]:
@@ -368,10 +376,17 @@ class CentrelinePlanner(Node):
             key=lambda index: distance(old_points[index], self._position),
         )
 
-        new_reference = points[min(4, len(points) - 1)]
-        old_reference = old_points[min(old_index + 4, len(old_points) - 1)]
+        # Compare the candidate at both the near-term and medium-term
+        # horizons. A false branch can look identical for the first metre and
+        # then diverge sharply; the second check prevents that late shortcut.
+        near_new = points[min(4, len(points) - 1)]
+        near_old = old_points[min(old_index + 4, len(old_points) - 1)]
+        if distance(near_new, near_old) > self._max_path_jump:
+            return False
 
-        if distance(new_reference, old_reference) > self._max_path_jump:
+        far_new = points[min(10, len(points) - 1)]
+        far_old = old_points[min(old_index + 10, len(old_points) - 1)]
+        if distance(far_new, far_old) > 2.5:
             return False
 
         old_next = min(old_index + 1, len(old_points) - 1)
