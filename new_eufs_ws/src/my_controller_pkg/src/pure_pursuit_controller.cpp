@@ -16,6 +16,7 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <visualization_msgs/msg/marker.hpp>
+#include <eufs_msgs/msg/can_state.hpp>
 
 using std::placeholders::_1;
 
@@ -27,7 +28,10 @@ constexpr double CONTROL_DT = 0.05;
 class HybridControllerNode : public rclcpp::Node {
 public:
     HybridControllerNode() : Node("pure_pursuit_node") {
-        this->declare_parameter("odom_topic", std::string("/slam/odom"));
+        this->declare_parameter("odom_topic", std::string("/custom_odom"));
+        this->declare_parameter("startup_duration_sec", 1.5);
+        this->declare_parameter("startup_accel_mps2", 2.0);
+        this->declare_parameter("startup_speed_mps", 0.8);
 
         this->declare_parameter("L_base", 1.53);
         this->declare_parameter("L_min", 1.8);
@@ -63,6 +67,24 @@ public:
                     &HybridControllerNode::speedProfileCallback,
                     this,
                     _1));
+
+        can_state_sub_ =
+            this->create_subscription<eufs_msgs::msg::CanState>(
+                "/ros_can/state", 10,
+                [this](const eufs_msgs::msg::CanState::SharedPtr msg) {
+                    const bool driving =
+                        msg->as_state == eufs_msgs::msg::CanState::AS_DRIVING;
+
+                    if (driving && !as_driving_) {
+                        startup_time_ = this->now();
+                    }
+
+                    if (!driving) {
+                        startup_time_ = rclcpp::Time(0, 0, RCL_ROS_TIME);
+                    }
+
+                    as_driving_ = driving;
+                });
 
         mission_completed_sub_ =
             this->create_subscription<std_msgs::msg::Bool>(
@@ -108,6 +130,7 @@ private:
     bool has_path_ = false;
     bool mission_completed_ = false;
     bool startup_active_ = false;
+    bool as_driving_ = false;
 
     double last_steering_ = 0.0;
     size_t last_closest_idx_ = 0;
@@ -119,6 +142,8 @@ private:
         speed_profile_sub_;
     rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr
         mission_completed_sub_;
+    rclcpp::Subscription<eufs_msgs::msg::CanState>::SharedPtr
+        can_state_sub_;
 
     rclcpp::Publisher<ackermann_msgs::msg::AckermannDriveStamped>::SharedPtr
         drive_pub_;
@@ -205,7 +230,45 @@ private:
         }
 
         if (!has_path_) {
-            publishStopCommand();
+            bool bootstrap_active = false;
+
+            if (as_driving_) {
+                if (startup_time_.nanoseconds() == 0) {
+                    startup_time_ = this->now();
+                }
+
+                const double elapsed =
+                    (this->now() - startup_time_).seconds();
+
+                bootstrap_active =
+                    elapsed < get_parameter("startup_duration_sec").as_double();
+            }
+
+            if (bootstrap_active) {
+                ackermann_msgs::msg::AckermannDriveStamped bootstrap;
+                bootstrap.header.stamp = this->now();
+                bootstrap.drive.speed = std::max(
+                    0.2,
+                    std::min(
+                        get_parameter("max_speed_limit").as_double(),
+                        get_parameter("startup_speed_mps").as_double()));
+                bootstrap.drive.acceleration =
+                    get_parameter("startup_accel_mps2").as_double();
+                bootstrap.drive.steering_angle = 0.0;
+                bootstrap.drive.jerk = 0.0;
+                drive_pub_->publish(bootstrap);
+
+                RCLCPP_INFO_THROTTLE(
+                    this->get_logger(),
+                    *this->get_clock(),
+                    1000,
+                    "AS_DRIVING bootstrap: speed=%.2f accel=%.2f waiting for first planner path.",
+                    bootstrap.drive.speed,
+                    bootstrap.drive.acceleration);
+            } else {
+                publishStopCommand();
+            }
+
             return;
         }
 
@@ -355,12 +418,15 @@ private:
             return;
         }
 
-        bool startup = startup_active_;
+        bool startup = startup_active_ || as_driving_;
         if (startup) {
             const double elapsed =
-                (this->now() - startup_time_).seconds();
-            if (elapsed >=
-                    get_parameter("startup_duration_sec").as_double() ||
+                startup_time_.nanoseconds() == 0
+                    ? 0.0
+                    : (this->now() - startup_time_).seconds();
+
+            if (!as_driving_ ||
+                elapsed >= get_parameter("startup_duration_sec").as_double() ||
                 std::abs(vx_) >= 0.40) {
                 startup_active_ = false;
                 startup = false;
