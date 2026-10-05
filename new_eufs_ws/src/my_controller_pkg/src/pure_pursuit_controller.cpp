@@ -40,6 +40,10 @@ public:
         this->declare_parameter("min_speed_mps", 0.6);
         this->declare_parameter("max_steering_rate_rad_s", 1.5);
         this->declare_parameter("max_tracking_error_m", 0.75);
+        this->declare_parameter("startup_duration_sec", 1.0);
+        this->declare_parameter("startup_accel_mps2", 1.5);
+        this->declare_parameter("startup_speed_mps", 0.8);
+        this->declare_parameter("startup_max_steering_rad", 0.12);
 
         const std::string odom_topic =
             get_parameter("odom_topic").as_string();
@@ -103,9 +107,11 @@ private:
     bool has_odom_ = false;
     bool has_path_ = false;
     bool mission_completed_ = false;
+    bool startup_active_ = false;
 
     double last_steering_ = 0.0;
     size_t last_closest_idx_ = 0;
+    rclcpp::Time startup_time_{0, 0, RCL_ROS_TIME};
 
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
     rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr path_sub_;
@@ -144,13 +150,21 @@ private:
     void pathCallback(
         const nav_msgs::msg::Path::SharedPtr msg)
     {
+        const bool had_path = has_path_;
         path_ = *msg;
         has_path_ = !path_.poses.empty();
 
         if (!has_path_) {
             last_closest_idx_ = 0;
             last_steering_ = 0.0;
+            startup_active_ = false;
             return;
+        }
+
+        if (!had_path) {
+            startup_active_ = true;
+            startup_time_ = this->now();
+            last_closest_idx_ = 0;
         }
 
         // Every fresh planner path begins at the current SLAM pose, so index
@@ -171,8 +185,11 @@ private:
         msg.header.stamp = this->now();
         msg.drive.speed = 0.0;
         msg.drive.acceleration =
-            -get_parameter("max_decel").as_double();
-        msg.drive.steering_angle = last_steering_;
+            std::abs(vx_) > 0.15
+                ? -get_parameter("max_decel").as_double()
+                : 0.0;
+        msg.drive.steering_angle =
+            std::abs(vx_) > 0.15 ? last_steering_ : 0.0;
         drive_pub_->publish(msg);
     }
 
@@ -338,10 +355,29 @@ private:
             return;
         }
 
+        bool startup = startup_active_;
+        if (startup) {
+            const double elapsed =
+                (this->now() - startup_time_).seconds();
+            if (elapsed >=
+                    get_parameter("startup_duration_sec").as_double() ||
+                std::abs(vx_) >= 0.40) {
+                startup_active_ = false;
+                startup = false;
+            }
+        }
+
         double raw_steering = std::clamp(
             delta,
             -get_parameter("max_steering").as_double(),
             get_parameter("max_steering").as_double());
+
+        if (startup) {
+            raw_steering = std::clamp(
+                raw_steering,
+                -get_parameter("startup_max_steering_rad").as_double(),
+                get_parameter("startup_max_steering_rad").as_double());
+        }
 
         const double max_step =
             get_parameter("max_steering_rate_rad_s").as_double()
@@ -364,7 +400,12 @@ private:
         const double decel =
             get_parameter("max_decel").as_double();
 
-        double target_velocity = max_speed_limit;
+        double target_velocity =
+            startup
+                ? std::min(
+                    max_speed_limit,
+                    get_parameter("startup_speed_mps").as_double())
+                : max_speed_limit;
         double path_distance = 0.0;
 
         const size_t velocity_scan_limit =
@@ -417,7 +458,10 @@ private:
         drive_msg.drive.speed = target_velocity;
         drive_msg.drive.jerk = 0.0;
 
-        if (target_velocity < vx_) {
+        if (startup) {
+            drive_msg.drive.acceleration =
+                get_parameter("startup_accel_mps2").as_double();
+        } else if (target_velocity < vx_) {
             drive_msg.drive.acceleration = -decel;
         } else {
             drive_msg.drive.acceleration =
