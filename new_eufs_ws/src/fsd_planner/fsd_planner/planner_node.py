@@ -127,20 +127,18 @@ class CentrelinePlanner(Node):
             and abs(local(point)[1]) <= local_half_width
         ]
 
-        # Pair only physically consistent blue-left / yellow-right cones.
-        # The SLAM node already supplies a strict local sensor window, so
-        # there is no reason to reintroduce an unrestricted cross-pair fallback.
         candidates: List[Tuple[float, float, float, int, int]] = []
 
         for blue_index, (_, blue_s, blue_l) in enumerate(blue):
             for yellow_index, (_, yellow_s, yellow_l) in enumerate(yellow):
-                if blue_l < 0.10 or yellow_l > -0.10:
-                    continue
-
                 midpoint_s = 0.5 * (blue_s + yellow_s)
                 midpoint_l = 0.5 * (blue_l + yellow_l)
                 gap = abs(blue_s - yellow_s)
 
+                # A real corner can put the two cones at noticeably
+                # different longitudinal stations.  Do not reject that
+                # pairing merely because it is no longer "in front" of the
+                # original vehicle heading.
                 if gap > 3.5:
                     continue
 
@@ -151,6 +149,11 @@ class CentrelinePlanner(Node):
                 if not (self._min_track_width <= width <= self._max_track_width):
                     continue
 
+                # Pair by cross-track geometry first.  Forward distance is
+                # deliberately weak here; route ordering below decides which
+                # gate is the next gate.  This prevents a straight-ahead gate
+                # from winning simply because a genuine right-hand gate has
+                # a large heading change.
                 score = (
                     1.0 * gap
                     + 0.40 * abs(width - 3.5)
@@ -205,33 +208,14 @@ class CentrelinePlanner(Node):
             if (
                 (point[0] - self._position[0]) * c_yaw
                 + (point[1] - self._position[1]) * s_yaw
-            ) >= -3.0
+            ) >= -1.0
         ]
         if not forward_gates:
             return []
 
-        # Prefer the continuation of the last accepted local path. This is
-        # especially important where two sections of the closed track are
-        # simultaneously inside the local cone window.
-        continuity_target: Optional[Point2] = None
-        if self._last_path is not None and self._last_path.poses:
-            old_points = [
-                (pose.pose.position.x, pose.pose.position.y)
-                for pose in self._last_path.poses
-            ]
-            old_index = min(
-                range(len(old_points)),
-                key=lambda index: distance(old_points[index], self._position))
-            continuity_target = old_points[
-                min(old_index + 2, len(old_points) - 1)]
-
-        def first_gate_score(point: Point2) -> float:
-            score = distance(point, self._position)
-            if continuity_target is not None:
-                score += 1.75 * distance(point, continuity_target)
-            return score
-
-        first = min(forward_gates, key=first_gate_score)
+        first = min(
+            forward_gates,
+            key=lambda point: distance(point, self._position))
         ordered = [first]
         unused.remove(first)
 
@@ -275,17 +259,6 @@ class CentrelinePlanner(Node):
                     + 0.75 * turn_angle
                     + 2.0 * max(0.0, -alignment)
                 )
-
-                if continuity_target is not None:
-                    ref_index = min(len(ordered), len(old_points) - 1)
-                    continuity_distance = distance(
-                        point,
-                        old_points[ref_index])
-                    # A large jump from the previously accepted path is not a
-                    # new track branch; it is an unstable local pairing.
-                    if continuity_distance > 5.0:
-                        continue
-                    score += 1.25 * continuity_distance
 
                 if score < best_score:
                     best_score = score
@@ -401,7 +374,7 @@ class CentrelinePlanner(Node):
             if (
                 (point[0] - self._position[0]) * c_yaw
                 + (point[1] - self._position[1]) * s_yaw
-            ) >= -3.0
+            ) >= -1.0
         ]
 
     def _speed_profile(self, centreline: Sequence[Point2]) -> List[float]:
