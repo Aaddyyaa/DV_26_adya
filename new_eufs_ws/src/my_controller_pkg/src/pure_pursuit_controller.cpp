@@ -31,7 +31,7 @@ public:
 
         // Subscribers
         odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
-            "/slam/odom", 10, std::bind(&HybridControllerNode::odomCallback, this, _1));
+            "/custom_odom", 10, std::bind(&HybridControllerNode::odomCallback, this, _1));
         path_sub_ = this->create_subscription<nav_msgs::msg::Path>(
             "/target_path", 10, std::bind(&HybridControllerNode::pathCallback, this, _1));
 
