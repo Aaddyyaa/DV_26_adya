@@ -1827,7 +1827,51 @@ private:
                 local_measurements,
                 stamp);
 
-        publishPlanningCones(local_measurement_cones);
+        // Planning should not depend on a single camera frame. Start with
+        // persistent, covariance-aware SLAM landmarks, then add any fresh
+        // cone measurements that have not been mapped yet.
+        auto planning_landmarks =
+            aggregateLandmarks(best_particle, stamp);
+
+        auto appendFreshIfNew =
+            [](std::vector<eufs_msgs::msg::ConeWithCovariance> &target,
+               const std::vector<eufs_msgs::msg::ConeWithCovariance> &fresh)
+        {
+            for (const auto &candidate : fresh)
+            {
+                bool duplicate = false;
+                for (const auto &existing : target)
+                {
+                    if (std::hypot(
+                            candidate.point.x - existing.point.x,
+                            candidate.point.y - existing.point.y) <= 0.75)
+                    {
+                        duplicate = true;
+                        break;
+                    }
+                }
+
+                if (!duplicate)
+                    target.push_back(candidate);
+            }
+        };
+
+        appendFreshIfNew(
+            planning_landmarks.blue_cones,
+            local_measurement_cones.blue_cones);
+        appendFreshIfNew(
+            planning_landmarks.yellow_cones,
+            local_measurement_cones.yellow_cones);
+        appendFreshIfNew(
+            planning_landmarks.orange_cones,
+            local_measurement_cones.orange_cones);
+        appendFreshIfNew(
+            planning_landmarks.big_orange_cones,
+            local_measurement_cones.big_orange_cones);
+
+        planning_landmarks.header.stamp = stamp;
+        planning_landmarks.header.frame_id = "map";
+        publishPlanningCones(planning_landmarks);
 
         updateCountedCones(best_particle);
         publishConeCounts();
@@ -1836,8 +1880,7 @@ private:
         if (slam_update_count_ == 1 ||
             (slam_update_count_ % landmark_publish_stride_) == 0)
         {
-            landmark_cov_pub_->publish(
-                aggregateLandmarks(best_particle, stamp));
+            landmark_cov_pub_->publish(planning_landmarks);
         }
 
         publishPose(
