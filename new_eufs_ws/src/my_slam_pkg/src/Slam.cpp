@@ -221,6 +221,9 @@ private:
 
     double vx_{0.0};
     double yaw_rate_{0.0};
+    double odom_x_{0.0};
+    double odom_y_{0.0};
+    double odom_yaw_{0.0};
     double pending_dt_{0.0};
     double last_cone_time_sec_{0.0};
     double last_odom_time_sec_{0.0};
@@ -437,6 +440,14 @@ private:
 
         vx_ = msg->twist.twist.linear.x;
         yaw_rate_ = msg->twist.twist.angular.z;
+
+        odom_x_ = msg->pose.pose.position.x;
+        odom_y_ = msg->pose.pose.position.y;
+
+        const auto &q = msg->pose.pose.orientation;
+        odom_yaw_ = std::atan2(
+            2.0 * (q.w * q.z + q.x * q.y),
+            1.0 - 2.0 * (q.y * q.y + q.z * q.z));
 
         const double current_time = stampToSec(msg->header.stamp);
 
