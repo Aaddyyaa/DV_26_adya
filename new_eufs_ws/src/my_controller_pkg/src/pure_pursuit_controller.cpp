@@ -16,7 +16,7 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
 #include <visualization_msgs/msg/marker.hpp>
-#include <eufs_msgs/msg/can_state.hpp>
+#include <std_msgs/msg/string.hpp>
 
 using std::placeholders::_1;
 
@@ -29,9 +29,6 @@ class HybridControllerNode : public rclcpp::Node {
 public:
     HybridControllerNode() : Node("pure_pursuit_node") {
         this->declare_parameter("odom_topic", std::string("/custom_odom"));
-        this->declare_parameter("startup_duration_sec", 1.5);
-        this->declare_parameter("startup_accel_mps2", 2.0);
-        this->declare_parameter("startup_speed_mps", 0.8);
 
         this->declare_parameter("L_base", 1.53);
         this->declare_parameter("L_min", 1.8);
@@ -68,12 +65,12 @@ public:
                     this,
                     _1));
 
-        can_state_sub_ =
-            this->create_subscription<eufs_msgs::msg::CanState>(
-                "/ros_can/state", 10,
-                [this](const eufs_msgs::msg::CanState::SharedPtr msg) {
+        state_string_sub_ =
+            this->create_subscription<std_msgs::msg::String>(
+                "/ros_can/state_str", 10,
+                [this](const std_msgs::msg::String::SharedPtr msg) {
                     const bool driving =
-                        msg->as_state == eufs_msgs::msg::CanState::AS_DRIVING;
+                        msg->data.find("AS:DRIVING") != std::string::npos;
 
                     if (driving && !as_driving_) {
                         startup_time_ = this->now();
@@ -142,8 +139,8 @@ private:
         speed_profile_sub_;
     rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr
         mission_completed_sub_;
-    rclcpp::Subscription<eufs_msgs::msg::CanState>::SharedPtr
-        can_state_sub_;
+    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr
+        state_string_sub_;
 
     rclcpp::Publisher<ackermann_msgs::msg::AckermannDriveStamped>::SharedPtr
         drive_pub_;
