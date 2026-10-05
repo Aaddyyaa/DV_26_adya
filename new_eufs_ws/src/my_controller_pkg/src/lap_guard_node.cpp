@@ -57,9 +57,12 @@ private:
             return;
         }
 
+        const double segment_start_x = previous_x_;
+        const double segment_start_y = previous_y_;
+
         total_distance_ += std::hypot(
-            x - previous_x_,
-            y - previous_y_);
+            x - segment_start_x,
+            y - segment_start_y);
 
         previous_x_ = x;
         previous_y_ = y;
@@ -74,15 +77,33 @@ private:
             std::sin(yaw - start_yaw_),
             std::cos(yaw - start_yaw_));
 
-        // EUFS small_track finishes by crossing the start/finish gate near
-        // the recorded car_start pose. A pure radius check can be missed when
-        // the car is moving quickly and passes just beyond the 2 m circle
-        // between samples. Detect the forward crossing of that gate and keep
-        // the old radius/heading condition as a secondary fallback.
+        // Treat the start direction as the finish-line normal. A finish is
+        // detected when the vehicle crosses the line from the outside of the
+        // start gate toward the track side, while remaining close laterally.
+        const double heading_x = std::cos(start_yaw_);
+        const double heading_y = std::sin(start_yaw_);
+
+        const double signed_start =
+            (segment_start_x - start_x_) * heading_x +
+            (segment_start_y - start_y_) * heading_y;
+
+        const double signed_now =
+            (x - start_x_) * heading_x +
+            (y - start_y_) * heading_y;
+
+        const double lateral_start =
+            -(segment_start_x - start_x_) * heading_y +
+            (segment_start_y - start_y_) * heading_x;
+
+        const double lateral_now =
+            -(x - start_x_) * heading_y +
+            (y - start_y_) * heading_x;
+
         const bool crossed_start_gate =
-            previous_x_ < start_x_ &&
-            x >= start_x_ &&
-            std::abs(y - start_y_) <= std::max(2.0, finish_radius_);
+            signed_start < 0.0 &&
+            signed_now >= 0.0 &&
+            std::abs(0.5 * (lateral_start + lateral_now)) <=
+                std::max(2.0, finish_radius_);
 
         const bool inside_finish_circle =
             distance_to_start <= finish_radius_ &&
