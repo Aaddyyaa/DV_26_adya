@@ -4,6 +4,7 @@
 #include <functional>
 #include <limits>
 #include <memory>
+#include <string>
 #include <vector>
 
 #include <rclcpp/rclcpp.hpp>
@@ -339,6 +340,10 @@ private:
 
         last_steering_ = rate_limited;
 
+        ackermann_msgs::msg::AckermannDriveStamped drive_msg;
+        drive_msg.header.stamp = this->now();
+        drive_msg.drive.steering_angle = last_steering_;
+
         const double max_speed_limit =
             get_parameter("max_speed_limit").as_double();
         const double decel =
@@ -398,8 +403,6 @@ private:
             std::min(min_speed, max_speed_limit),
             max_speed_limit);
 
-        ackermann_msgs::msg::AckermannDriveStamped drive_msg;
-        drive_msg.header.stamp = this->now();
         drive_msg.drive.speed = target_velocity;
         drive_msg.drive.jerk = 0.0;
 

@@ -72,7 +72,6 @@ def generate_launch_description():
                 'min_track_width_m': 2.0,
                 'max_track_width_m': 5.5,
                 'max_segment_length_m': 6.0,
-                'allow_pair_reuse_fallback': False,
                 'cone_dedup_distance_m': 0.75,
                 'nominal_track_width_m': 4.5,
                 'max_pair_station_gap_m': 2.5,
