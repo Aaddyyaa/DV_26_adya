@@ -99,6 +99,7 @@ public:
         declare_parameter<double>("local_cone_smoothing_alpha", 0.55);
         declare_parameter<double>("local_cone_match_distance_m", 1.0);
         declare_parameter<double>("local_cone_hold_sec", 0.8);
+        declare_parameter<int>("planning_landmark_max_missed_updates", 5);
 
         num_particles_ = static_cast<int>(std::max<int64_t>(5, get_parameter("num_particles").as_int()));
         process_noise_xy_ =
@@ -145,6 +146,10 @@ public:
             std::clamp(get_parameter("local_cone_match_distance_m").as_double(), 0.25, 2.0);
         local_cone_hold_sec_ =
             std::clamp(get_parameter("local_cone_hold_sec").as_double(), 0.1, 2.0);
+        planning_landmark_max_missed_updates_ =
+            static_cast<int>(std::clamp<int64_t>(
+                get_parameter("planning_landmark_max_missed_updates").as_int(),
+                0, 10));
         odom_topic_ = get_parameter("odom_topic").as_string();
 
         // The simulator's wheel/IMU estimate is already low-noise. The old
@@ -263,6 +268,7 @@ private:
     double local_cone_smoothing_alpha_{0.55};
     double local_cone_match_distance_m_{1.0};
     double local_cone_hold_sec_{0.8};
+    int planning_landmark_max_missed_updates_{5};
 
     eufs_msgs::msg::ConeArrayWithCovariance last_local_cones_;
     rclcpp::Time last_local_cones_time_{0, 0, RCL_ROS_TIME};
@@ -1263,7 +1269,8 @@ private:
                 reference.map[reference_index];
 
             if (reference_landmark.hits < min_landmark_hits_ ||
-                reference_landmark.missed_updates != 0 ||
+                reference_landmark.missed_updates >
+                    planning_landmark_max_missed_updates_ ||
                 !isLandmarkVisibleFromPose(reference, reference_landmark))
                 continue;
 
