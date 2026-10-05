@@ -39,7 +39,7 @@ def generate_launch_description():
             parameters=[{
                 'use_sim_time': True,
                 'planning_cones_topic': '/planning/cones',
-                'odom_topic': '/custom_odom',
+                'odom_topic': '/slam/odom',
                 'min_centerline_points': 2,
                 'min_track_width_m': 2.0,
                 'max_track_width_m': 5.5,
@@ -76,7 +76,7 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'use_sim_time': True,
-                'odom_topic': '/slam/odom',
+                'odom_topic': '/custom_odom',
                 'max_speed_limit': 1.5,
                 'min_speed_mps': 0.6,
                 'L_base': 1.53,
