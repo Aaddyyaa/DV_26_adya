@@ -98,6 +98,7 @@ public:
         declare_parameter<double>("counted_cone_merge_distance_m", 1.0);
         declare_parameter<double>("local_cone_smoothing_alpha", 0.55);
         declare_parameter<double>("local_cone_match_distance_m", 1.0);
+        declare_parameter<double>("local_cone_hold_sec", 0.8);
 
         num_particles_ = static_cast<int>(std::max<int64_t>(5, get_parameter("num_particles").as_int()));
         process_noise_xy_ =
@@ -142,10 +143,17 @@ public:
             std::clamp(get_parameter("local_cone_smoothing_alpha").as_double(), 0.15, 0.95);
         local_cone_match_distance_m_ =
             std::clamp(get_parameter("local_cone_match_distance_m").as_double(), 0.25, 2.0);
+        local_cone_hold_sec_ =
+            std::clamp(get_parameter("local_cone_hold_sec").as_double(), 0.1, 2.0);
         odom_topic_ = get_parameter("odom_topic").as_string();
 
-        Q_control_ << 0.2 * 0.2, 0.0,
-                      0.0, 0.15 * 0.15;
+        // The simulator's wheel/IMU estimate is already low-noise. The old
+        // FastSLAM sampling noise (0.20 m/s, 0.15 rad/s) was large enough for
+        // the weighted pose and projected cones to wander between updates.
+        // Keep a small stochastic spread for FastSLAM, but remove the visible
+        // frame-to-frame shaking.
+        Q_control_ << 0.05 * 0.05, 0.0,
+                      0.0, 0.03 * 0.03;
 
         particles_.reserve(static_cast<std::size_t>(num_particles_));
         for (int i = 0; i < num_particles_; ++i)
@@ -254,6 +262,11 @@ private:
     double counted_cone_merge_distance_m_{1.0};
     double local_cone_smoothing_alpha_{0.55};
     double local_cone_match_distance_m_{1.0};
+    double local_cone_hold_sec_{0.8};
+
+    eufs_msgs::msg::ConeArrayWithCovariance last_local_cones_;
+    rclcpp::Time last_local_cones_time_{0, 0, RCL_ROS_TIME};
+    bool have_last_local_cones_{false};
 
     struct LocalConeTrack
     {
@@ -1927,13 +1940,39 @@ private:
         // Use the weighted pose estimate rather than the single best particle
         // so one particle winning a noisy update cannot make all visible cones
         // jump in RViz or in the planner input.
-        const auto local_measurement_cones =
+        auto local_measurement_cones =
             makeLocalMeasurementCones(
                 pose_mean(0),
                 pose_mean(1),
                 pose_mean(2),
                 local_measurements,
                 stamp);
+
+        const std::size_t current_boundary_count =
+            local_measurement_cones.blue_cones.size() +
+            local_measurement_cones.yellow_cones.size();
+
+        const bool current_pair_available =
+            !local_measurement_cones.blue_cones.empty() &&
+            !local_measurement_cones.yellow_cones.empty();
+
+        // Camera messages can disappear for a few cycles at a corner. Do not
+        // delete every cone and recreate it from the next frame; that is the
+        // flicker/shake visible in RViz and it also makes the planner see an
+        // artificially empty corridor. Keep the last usable local set briefly.
+        if (current_pair_available && current_boundary_count >= 2) {
+            last_local_cones_ = local_measurement_cones;
+            last_local_cones_time_ = stamp;
+            have_last_local_cones_ = true;
+        } else if (have_last_local_cones_) {
+            const double held_age =
+                (stamp - last_local_cones_time_).seconds();
+
+            if (held_age >= 0.0 && held_age <= local_cone_hold_sec_) {
+                local_measurement_cones = last_local_cones_;
+                local_measurement_cones.header.stamp = stamp;
+            }
+        }
 
         publishPlanningCones(local_measurement_cones);
 
