@@ -328,6 +328,23 @@ private:
             return;
         }
 
+        const double path_grace =
+            get_parameter("path_loss_grace_sec").as_double();
+
+        // Do not follow an obsolete held path indefinitely. The planner gets
+        // a short recovery window, after which the controller falls back to
+        // the hard safety stop.
+        if (path_age > path_grace) {
+            RCLCPP_WARN_THROTTLE(
+                this->get_logger(),
+                *this->get_clock(),
+                2000,
+                "Planner path is stale by %.2f s; stopping safely.",
+                path_age);
+            publishStopCommand();
+            return;
+        }
+
         const size_t N = path_.poses.size();
         if (N < 3) {
             if (as_driving_ &&
