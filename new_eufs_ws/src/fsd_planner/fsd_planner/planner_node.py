@@ -71,7 +71,7 @@ class CentrelinePlanner(Node):
         self._path_sample_step = float(
             self.declare_parameter('path_sample_step_m', 0.5).value)
         self._path_hold_sec = float(
-            self.declare_parameter('path_hold_time_sec', 2.0).value)
+            self.declare_parameter('path_hold_time_sec', 8.0).value)
         self._max_path_jump = float(
             self.declare_parameter('max_path_jump_m', 3.5).value)
         self._cone_dedup_distance = float(
