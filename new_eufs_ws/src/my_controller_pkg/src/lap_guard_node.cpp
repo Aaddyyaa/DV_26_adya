@@ -74,9 +74,24 @@ private:
             std::sin(yaw - start_yaw_),
             std::cos(yaw - start_yaw_));
 
-        if (distance_to_start <= finish_radius_ &&
-            std::abs(heading_error) <= 0.9)
+        // EUFS small_track finishes by crossing the start/finish gate near
+        // the recorded car_start pose. A pure radius check can be missed when
+        // the car is moving quickly and passes just beyond the 2 m circle
+        // between samples. Detect the forward crossing of that gate and keep
+        // the old radius/heading condition as a secondary fallback.
+        const bool crossed_start_gate =
+            previous_x_ < start_x_ &&
+            x >= start_x_ &&
+            std::abs(y - start_y_) <= std::max(2.0, finish_radius_);
+
+        const bool inside_finish_circle =
+            distance_to_start <= finish_radius_ &&
+            std::abs(heading_error) <= 1.2;
+
+        if (crossed_start_gate || inside_finish_circle)
         {
+            crossed_finish_line_ = crossed_start_gate;
+
             std_msgs::msg::Bool msg_out;
             msg_out.data = true;
             finish_pub_->publish(msg_out);
@@ -84,9 +99,10 @@ private:
 
             RCLCPP_INFO(
                 get_logger(),
-                "LAP COMPLETED: traveled %.2f m, finish distance %.2f m.",
+                "LAP COMPLETED: traveled %.2f m, finish distance %.2f m%s.",
                 total_distance_,
-                distance_to_start);
+                distance_to_start,
+                crossed_start_gate ? " (finish-line crossing)" : "");
         }
     }
 
@@ -101,6 +117,7 @@ private:
     double previous_x_{0.0};
     double previous_y_{0.0};
     double total_distance_{0.0};
+    bool crossed_finish_line_{false};
     bool have_start_{false};
     bool completed_{false};
 };
