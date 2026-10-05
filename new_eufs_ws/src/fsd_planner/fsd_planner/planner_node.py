@@ -360,22 +360,11 @@ class CentrelinePlanner(Node):
         return ordered
 
     def _order_midpoints(self, midpoints: Sequence[Point2]) -> List[Point2]:
-        # Pairing already produces a locally ordered track graph. Keep only
-        # forward gates and preserve that graph order; do not run a second
-        # nearest-neighbour reorder which can jump across a hairpin.
-        if not midpoints:
-            return []
-
-        c_yaw = math.cos(self._yaw)
-        s_yaw = math.sin(self._yaw)
-
-        return [
-            point for point in midpoints
-            if (
-                (point[0] - self._position[0]) * c_yaw
-                + (point[1] - self._position[1]) * s_yaw
-            ) >= -1.0
-        ]
+        # _matched_midpoints() already builds an ordered local track graph.
+        # Do not apply a second vehicle-heading filter here: after a tight
+        # corner, a valid route point can legitimately be lateral to or
+        # temporarily behind the current vehicle heading.
+        return list(midpoints) if midpoints else []
 
     def _speed_profile(self, centreline: Sequence[Point2]) -> List[float]:
         speeds = [self._max_speed] * len(centreline)
