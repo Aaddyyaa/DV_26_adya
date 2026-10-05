@@ -44,11 +44,6 @@ class CentrelinePlanner(Node):
             'allow_pair_reuse_fallback', False).value
         self._cone_dedup_distance = self.declare_parameter(
             'cone_dedup_distance_m', 0.75).value
-        self._max_gate_parallel = self.declare_parameter(
-            'max_gate_parallel_to_heading', 0.90).value
-        self._continuity_heading_limit = math.radians(
-            self.declare_parameter(
-                'continuity_heading_limit_deg', 75.0).value)
         self._cones: Optional[ConeArray] = None
         self._position: Point2 = (0.0, 0.0)
         self._yaw = 0.0
@@ -56,10 +51,6 @@ class CentrelinePlanner(Node):
         self._last_path: Optional[Path] = None
         self._last_speeds: List[float] = []
         self._last_valid_plan_time: Optional[float] = None
-
-        # Persist the currently targeted gate so a growing lap map cannot
-        # suddenly select the physically nearby start/finish section.
-        self._active_gate: Optional[Point2] = None
 
         self._cones_sub = self.create_subscription(
             ConeArray, cones_topic, self._cones_callback, 10)
@@ -209,9 +200,6 @@ class CentrelinePlanner(Node):
         # neighbourhood.  After that first gate, the route is allowed to
         # rotate with the track; this is what lets the planner enter a right
         # hand corner instead of repeatedly selecting a straight continuation.
-        # A tight corner can put the next valid gate temporarily lateral to
-        # or slightly behind the current vehicle heading. Keep a small
-        # backward allowance here so the correct turn is not discarded.
         forward_gates = [
             point for point in unused
             if (
@@ -219,96 +207,33 @@ class CentrelinePlanner(Node):
                 + (point[1] - self._position[1]) * s_yaw
             ) >= -3.0
         ]
+        if not forward_gates:
+            return []
 
-        # Prefer the continuation of the last accepted local path.
-        # This is especially important where two sections of the closed track
-        # are simultaneously inside the local cone window.
+        # Prefer the continuation of the last accepted local path. This is
+        # especially important where two sections of the closed track are
+        # simultaneously inside the local cone window.
         continuity_target: Optional[Point2] = None
-        old_points: List[Point2] = []
-
         if self._last_path is not None and self._last_path.poses:
             old_points = [
                 (pose.pose.position.x, pose.pose.position.y)
                 for pose in self._last_path.poses
             ]
-
             old_index = min(
                 range(len(old_points)),
                 key=lambda index: distance(old_points[index], self._position))
-
             continuity_target = old_points[
                 min(old_index + 2, len(old_points) - 1)]
 
         def first_gate_score(point: Point2) -> float:
             score = distance(point, self._position)
-
             if continuity_target is not None:
                 score += 1.75 * distance(point, continuity_target)
-
             return score
 
         first = min(forward_gates, key=first_gate_score)
-        if not forward_gates:
-            return []
-
-        # Stay on the same physical gate until the vehicle has reached it.
-        # If that gate temporarily disappears from the map, HOLD instead of
-        # selecting another nearby part of the circuit. This is the critical
-        # late-lap anti-branch-jump rule.
-        first = None
-        active_passed = False
-
-        if self._active_gate is not None:
-            active_index = min(
-                range(len(unused)),
-                key=lambda index: distance(unused[index], self._active_gate),
-            )
-            active_candidate = unused[active_index]
-            active_distance = distance(active_candidate, self._active_gate)
-            active_forward = (
-                (active_candidate[0] - self._position[0]) * c_yaw
-                + (active_candidate[1] - self._position[1]) * s_yaw
-            )
-
-            if active_distance <= 1.5 and active_forward >= -0.8:
-                first = active_candidate
-            elif active_forward < -0.8 or active_distance <= 1.0:
-                active_passed = True
-
-            if first is None and not active_passed:
-                # The previous active gate is still physically ahead, but its
-                # estimate disappeared. Never replace it with a different
-                # nearby gate from another section of the lap.
-                return []
-
-        if first is None:
-            if self._active_gate is not None and active_passed:
-                # After passing the active gate, only accept the next gate that
-                # is close to the vehicle and lies in front of its current
-                # heading. This prevents jumping back to the start/finish
-                # section when the circuit closes on itself.
-                next_gates = [
-                    point for point in forward_gates
-                    if 0.75 <= distance(point, self._position) <= 10.0
-                    and (
-                        ((point[0] - self._position[0]) * c_yaw
-                         + (point[1] - self._position[1]) * s_yaw)
-                        >= 0.5
-                    )
-                ]
-                if not next_gates:
-                    return []
-                first = min(
-                    next_gates,
-                    key=lambda point: distance(point, self._position))
-            else:
-                first = min(
-                    forward_gates,
-                    key=lambda point: distance(point, self._position))
-
         ordered = [first]
         unused.remove(first)
-        self._active_gate = first
 
         direction = (c_yaw, s_yaw)
 
@@ -342,12 +267,7 @@ class CentrelinePlanner(Node):
                 # distance, so a straight-looking branch won over the actual
                 # right-hand continuation.  Use heading only as a continuity
                 # term and allow up to 135 degrees for a tight corner.
-                if turn_angle > math.radians(105.0):
-                    continue
-                # Do not reverse along the selected track branch. A genuine
-                # corner may turn sharply, but its next gate should still have
-                # a forward component along the current route tangent.
-                if alignment < 0.0:
+                if turn_angle > math.radians(135.0):
                     continue
 
                 score = (
@@ -356,17 +276,15 @@ class CentrelinePlanner(Node):
                     + 2.0 * max(0.0, -alignment)
                 )
 
-                if continuity_target is not None and old_points:
-                    ref_index = min(
-                        len(ordered),
-                        len(old_points) - 1)
+                if continuity_target is not None:
+                    ref_index = min(len(ordered), len(old_points) - 1)
                     continuity_distance = distance(
                         point,
                         old_points[ref_index])
-
+                    # A large jump from the previously accepted path is not a
+                    # new track branch; it is an unstable local pairing.
                     if continuity_distance > 5.0:
                         continue
-
                     score += 1.25 * continuity_distance
 
                 if score < best_score:
@@ -374,9 +292,8 @@ class CentrelinePlanner(Node):
                     best = point
 
             if best is None:
-                # Do not use a global fallback on a closed track. Once the local
-                # graph ends, hold the current route instead of jumping to a
-                # different section of the circuit.
+                # Local route has ended. Do not jump to a different part of a
+                # closed loop; retain the last valid path for the next cycle.
                 break
 
             dx = best[0] - previous[0]
@@ -390,59 +307,9 @@ class CentrelinePlanner(Node):
         return ordered
 
     def _order_midpoints(self, midpoints: Sequence[Point2]) -> List[Point2]:
-        # _matched_midpoints() already builds the ordered local track graph.
-        # Do not apply a second vehicle-heading filter here: after a genuine
-        # corner, the next valid gate can be lateral to the old heading.
+        # _matched_midpoints() already orders gates along the local track.
+        # Do not apply another vehicle-heading filter after a corner.
         return list(midpoints) if midpoints else []
-
-    def _path_heading(self, points: Sequence[Point2]) -> Optional[float]:
-        if len(points) < 2:
-            return None
-
-        first = points[0]
-        accumulated = 0.0
-        previous = first
-        for current in points[1:]:
-            dx = current[0] - previous[0]
-            dy = current[1] - previous[1]
-            segment = math.hypot(dx, dy)
-            if segment < 1e-4:
-                continue
-
-            accumulated += segment
-            if accumulated >= 1.0:
-                return math.atan2(dy, dx)
-            previous = current
-
-        dx = points[-1][0] - first[0]
-        dy = points[-1][1] - first[1]
-        return math.atan2(dy, dx) if math.hypot(dx, dy) > 1e-4 else None
-
-    def _path_is_continuous(self, candidate: Sequence[Point2]) -> bool:
-        if self._last_path is None or len(self._last_path.poses) < 2:
-            return True
-
-        previous = [
-            (pose.pose.position.x, pose.pose.position.y)
-            for pose in self._last_path.poses
-        ]
-        old_heading = self._path_heading(previous)
-        new_heading = self._path_heading(candidate)
-
-        if old_heading is None or new_heading is None:
-            return True
-
-        heading_error = abs(wrap_to_pi(new_heading - old_heading))
-
-        # Allow a larger change only after the vehicle itself has rotated.
-        # Before that happens, an abrupt change is almost certainly a branch
-        # switch caused by the accumulated lap map.
-        vehicle_turn = abs(wrap_to_pi(self._yaw - old_heading))
-        allowed = float(self._continuity_heading_limit)
-        if vehicle_turn > math.radians(35.0):
-            allowed = math.radians(115.0)
-
-        return heading_error <= allowed
 
     def _speed_profile(self, centreline: Sequence[Point2]) -> List[float]:
         speeds = [self._max_speed] * len(centreline)
@@ -483,15 +350,7 @@ class CentrelinePlanner(Node):
                 self._matched_midpoints(self._cones))
 
             if len(centreline) >= self._min_points:
-                if not self._path_is_continuous(centreline):
-                    self.get_logger().warn(
-                        'Rejected branch-switching centreline; holding last valid path.',
-                        throttle_duration_sec=2.0,
-                    )
-                    centreline = []
-
-                if centreline:
-                    profile = self._speed_profile(centreline)
+                profile = self._speed_profile(centreline)
 
                 for index, point in enumerate(centreline):
                     pose = PoseStamped()
