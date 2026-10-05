@@ -100,10 +100,6 @@ public:
         declare_parameter<double>("local_cone_match_distance_m", 1.0);
         declare_parameter<double>("local_cone_hold_sec", 0.8);
         declare_parameter<int>("planning_landmark_max_missed_updates", 5);
-        declare_parameter<double>("planning_local_forward_m", 14.0);
-        declare_parameter<double>("planning_local_backward_m", 4.0);
-        declare_parameter<double>("planning_local_lateral_m", 8.0);
-        declare_parameter<double>("planning_local_hold_sec", 1.0);
 
         num_particles_ = static_cast<int>(std::max<int64_t>(5, get_parameter("num_particles").as_int()));
         process_noise_xy_ =
@@ -154,14 +150,6 @@ public:
             static_cast<int>(std::clamp<int64_t>(
                 get_parameter("planning_landmark_max_missed_updates").as_int(),
                 0, 10));
-        planning_local_forward_m_ =
-            std::clamp(get_parameter("planning_local_forward_m").as_double(), 8.0, 20.0);
-        planning_local_backward_m_ =
-            std::clamp(get_parameter("planning_local_backward_m").as_double(), 1.0, 8.0);
-        planning_local_lateral_m_ =
-            std::clamp(get_parameter("planning_local_lateral_m").as_double(), 4.0, 12.0);
-        planning_local_hold_sec_ =
-            std::clamp(get_parameter("planning_local_hold_sec").as_double(), 0.2, 2.0);
         odom_topic_ = get_parameter("odom_topic").as_string();
 
         // The simulator's wheel/IMU estimate is already low-noise. The old
@@ -281,20 +269,6 @@ private:
     double local_cone_match_distance_m_{1.0};
     double local_cone_hold_sec_{0.8};
     int planning_landmark_max_missed_updates_{5};
-    double planning_local_forward_m_{14.0};
-    double planning_local_backward_m_{4.0};
-    double planning_local_lateral_m_{8.0};
-    double planning_local_hold_sec_{1.0};
-
-    struct PlanningLocalCone
-    {
-        Eigen::Vector2d point{Eigen::Vector2d::Zero()};
-        Eigen::Matrix2d covariance{Eigen::Matrix2d::Identity() * 0.01};
-        int color{3};
-        int missed_updates{0};
-    };
-
-    std::vector<PlanningLocalCone> planning_local_map_;
 
     eufs_msgs::msg::ConeArrayWithCovariance last_local_cones_;
     rclcpp::Time last_local_cones_time_{0, 0, RCL_ROS_TIME};
@@ -1736,144 +1710,6 @@ private:
         return output;
     }
 
-    eufs_msgs::msg::ConeArrayWithCovariance
-    updatePlanningLocalMap(
-        const eufs_msgs::msg::ConeArrayWithCovariance &observed,
-        double pose_x,
-        double pose_y,
-        double pose_yaw,
-        const rclcpp::Time &stamp)
-    {
-        // This is a map-frame rolling local map. Unlike a camera-relative
-        // window it does not move with the car, and unlike the full SLAM map it
-        // never exposes distant/nearby sections of the closed loop to the
-        // planner.
-        for (auto &entry : planning_local_map_)
-            ++entry.missed_updates;
-
-        auto update_color =
-            [this](const std::vector<eufs_msgs::msg::ConeWithCovariance> &cones,
-                   int color)
-        {
-            for (const auto &cone : cones)
-            {
-                if (!std::isfinite(cone.point.x) ||
-                    !std::isfinite(cone.point.y))
-                    continue;
-
-                Eigen::Vector2d point(cone.point.x, cone.point.y);
-
-                int best_index = -1;
-                double best_distance = local_cone_match_distance_m_;
-
-                for (std::size_t i = 0; i < planning_local_map_.size(); ++i)
-                {
-                    auto &entry = planning_local_map_[i];
-                    if (entry.color != color)
-                        continue;
-
-                    const double d = (entry.point - point).norm();
-                    if (d < best_distance)
-                    {
-                        best_distance = d;
-                        best_index = static_cast<int>(i);
-                    }
-                }
-
-                Eigen::Matrix2d covariance;
-                covariance << cone.covariance[0], cone.covariance[1],
-                              cone.covariance[2], cone.covariance[3];
-
-                if (best_index >= 0)
-                {
-                    auto &entry =
-                        planning_local_map_[static_cast<std::size_t>(best_index)];
-
-                    entry.point =
-                        (1.0 - local_cone_smoothing_alpha_) * entry.point +
-                        local_cone_smoothing_alpha_ * point;
-                    if (validCovariance(covariance))
-                        entry.covariance =
-                            0.5 * (entry.covariance + covariance);
-                    entry.missed_updates = 0;
-                }
-                else
-                {
-                    PlanningLocalCone entry;
-                    entry.point = point;
-                    if (validCovariance(covariance))
-                        entry.covariance = covariance;
-                    entry.color = color;
-                    entry.missed_updates = 0;
-                    planning_local_map_.push_back(entry);
-                }
-            }
-        };
-
-        update_color(observed.blue_cones, 0);
-        update_color(observed.yellow_cones, 1);
-        update_color(observed.orange_cones, 2);
-        update_color(observed.big_orange_cones, 2);
-
-        const double c = std::cos(pose_yaw);
-        const double s = std::sin(pose_yaw);
-
-        planning_local_map_.erase(
-            std::remove_if(
-                planning_local_map_.begin(),
-                planning_local_map_.end(),
-                [&](const PlanningLocalCone &entry)
-                {
-                    const double dx = entry.point.x() - pose_x;
-                    const double dy = entry.point.y() - pose_y;
-                    const double forward = dx * c + dy * s;
-                    const double lateral = -dx * s + dy * c;
-
-                    return entry.missed_updates >
-                               planning_landmark_max_missed_updates_ ||
-                           forward < -planning_local_backward_m_ ||
-                           forward > planning_local_forward_m_ ||
-                           std::abs(lateral) > planning_local_lateral_m_;
-                }),
-            planning_local_map_.end());
-
-        eufs_msgs::msg::ConeArrayWithCovariance output;
-        output.header.stamp = stamp;
-        output.header.frame_id = "map";
-
-        auto append = [&](int color)
-        {
-            for (const auto &entry : planning_local_map_)
-            {
-                if (entry.color != color)
-                    continue;
-
-                eufs_msgs::msg::ConeWithCovariance cone;
-                cone.point.x = entry.point.x();
-                cone.point.y = entry.point.y();
-                cone.point.z = 0.0;
-                cone.covariance = {
-                    entry.covariance(0, 0),
-                    entry.covariance(0, 1),
-                    entry.covariance(1, 0),
-                    entry.covariance(1, 1)};
-
-                if (color == 0)
-                    output.blue_cones.push_back(cone);
-                else if (color == 1)
-                    output.yellow_cones.push_back(cone);
-                else
-                    output.orange_cones.push_back(cone);
-            }
-        };
-
-        append(0);
-        append(1);
-        append(2);
-
-        return output;
-    }
-
     void publishPlanningCones(
         const eufs_msgs::msg::ConeArrayWithCovariance &landmarks)
     {
@@ -2152,13 +1988,51 @@ private:
             }
         }
 
+        // IMPORTANT FOR DRIVING:
+        // Current-camera cones are a rolling local measurement set, so their
+        // markers naturally appear to move forward with the car as old cones
+        // leave the sensor window and new cones enter it. The planner must
+        // instead receive the persistent, map-frame SLAM landmarks, with fresh
+        // measurements added only when that cone has not been mapped yet.
         auto planning_landmarks =
-            updatePlanningLocalMap(
-                local_measurement_cones,
-                pose_mean(0),
-                pose_mean(1),
-                pose_mean(2),
-                stamp);
+            aggregateLandmarks(best_particle, stamp);
+
+        auto appendFreshIfNew =
+            [](std::vector<eufs_msgs::msg::ConeWithCovariance> &target,
+               const std::vector<eufs_msgs::msg::ConeWithCovariance> &fresh)
+        {
+            for (const auto &candidate : fresh)
+            {
+                bool duplicate = false;
+
+                for (const auto &existing : target)
+                {
+                    if (std::hypot(
+                            candidate.point.x - existing.point.x,
+                            candidate.point.y - existing.point.y) <= 0.75)
+                    {
+                        duplicate = true;
+                        break;
+                    }
+                }
+
+                if (!duplicate)
+                    target.push_back(candidate);
+            }
+        };
+
+        appendFreshIfNew(
+            planning_landmarks.blue_cones,
+            local_measurement_cones.blue_cones);
+        appendFreshIfNew(
+            planning_landmarks.yellow_cones,
+            local_measurement_cones.yellow_cones);
+        appendFreshIfNew(
+            planning_landmarks.orange_cones,
+            local_measurement_cones.orange_cones);
+
+        planning_landmarks.header.stamp = stamp;
+        planning_landmarks.header.frame_id = "map";
 
         publishPlanningCones(planning_landmarks);
 
@@ -2169,6 +2043,8 @@ private:
         if (slam_update_count_ == 1 ||
             (slam_update_count_ % landmark_publish_stride_) == 0)
         {
+            // Corridor and other downstream consumers now get the same stable
+            // map-frame local landmarks as the planner.
             landmark_cov_pub_->publish(planning_landmarks);
         }
 
