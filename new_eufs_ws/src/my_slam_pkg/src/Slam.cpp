@@ -1319,7 +1319,9 @@ private:
     // covariance, counts and RViz map visualization.
     eufs_msgs::msg::ConeArrayWithCovariance
     makeLocalMeasurementCones(
-        const Particle &particle,
+        double pose_x,
+        double pose_y,
+        double pose_yaw,
         const std::vector<ConeDetection> &measurements,
         const rclcpp::Time &stamp) const
     {
@@ -1343,13 +1345,33 @@ private:
             if (measurement.color < 0 || measurement.color > 3)
                 continue;
 
+            const double forward =
+                measurement.range * std::cos(measurement.bearing);
+            const double lateral =
+                measurement.range * std::sin(measurement.bearing);
+
+            // Strict local sensing window for driving.
+            if (forward < -2.5 ||
+                forward > 16.0 ||
+                std::abs(lateral) > 9.0 ||
+                std::abs(measurement.bearing) > 110.0 * PI / 180.0)
+            {
+                continue;
+            }
+
+            // EUFS convention: blue is left and yellow is right.
+            if (measurement.color == 0 && lateral < 0.15)
+                continue;
+            if (measurement.color == 1 && lateral > -0.15)
+                continue;
+
             const double theta =
-                wrapToPi(particle.yaw + measurement.bearing);
+                wrapToPi(pose_yaw + measurement.bearing);
 
             LocalCone cone;
             cone.point <<
-                particle.x + measurement.range * std::cos(theta),
-                particle.y + measurement.range * std::sin(theta);
+                pose_x + measurement.range * std::cos(theta),
+                pose_y + measurement.range * std::sin(theta);
             cone.covariance = measurement.covariance;
             cone.color = measurement.color;
             cone.range = measurement.range;
@@ -1664,7 +1686,9 @@ private:
         // The persistent map stays on the separate /slam/landmarks path.
         const auto local_measurement_cones =
             makeLocalMeasurementCones(
-                best_particle,
+                odom_x_,
+                odom_y_,
+                odom_yaw_,
                 local_measurements,
                 stamp);
         publishPlanningCones(local_measurement_cones);
