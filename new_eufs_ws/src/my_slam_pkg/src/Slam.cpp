@@ -1633,6 +1633,9 @@ private:
     void runSLAM()
     {
         std::vector<ConeDetection> local_measurements;
+        std::vector<ConeDetection> primary_measurements;
+        std::vector<ConeDetection> secondary_measurements;
+        std::vector<ConeDetection> planning_measurements;
         double local_dt = 0.0;
         double local_vx = 0.0;
         double local_yaw_rate = 0.0;
@@ -1643,9 +1646,55 @@ private:
             if (!primary_z_buffer_.empty() ||
                 !secondary_z_buffer_.empty())
             {
+                primary_measurements = primary_z_buffer_;
+                secondary_measurements = secondary_z_buffer_;
+
                 mergeConeBuffers(local_measurements);
                 primary_z_buffer_.clear();
                 secondary_z_buffer_.clear();
+
+                // Camera-side preference for the local planner:
+                // camera_0 -> left/blue, camera_1 -> right/yellow.
+                for (const auto &cone : primary_measurements)
+                {
+                    if (cone.color == 0)
+                        planning_measurements.push_back(cone);
+                }
+
+                for (const auto &cone : secondary_measurements)
+                {
+                    if (cone.color == 1)
+                        planning_measurements.push_back(cone);
+                }
+
+                // Graceful fallback: if one preferred camera is sparse,
+                // supplement only from the current union, never old landmarks.
+                std::size_t blue_count = 0;
+                std::size_t yellow_count = 0;
+                for (const auto &cone : planning_measurements)
+                {
+                    if (cone.color == 0)
+                        ++blue_count;
+                    else if (cone.color == 1)
+                        ++yellow_count;
+                }
+
+                if (blue_count < 2 || yellow_count < 2)
+                {
+                    for (const auto &cone : local_measurements)
+                    {
+                        if (cone.color == 0 && blue_count < 5)
+                        {
+                            planning_measurements.push_back(cone);
+                            ++blue_count;
+                        }
+                        else if (cone.color == 1 && yellow_count < 5)
+                        {
+                            planning_measurements.push_back(cone);
+                            ++yellow_count;
+                        }
+                    }
+                }
             }
 
             local_dt = pending_dt_;
@@ -1700,7 +1749,7 @@ private:
                 odom_x_,
                 odom_y_,
                 odom_yaw_,
-                local_measurements,
+                planning_measurements,
                 stamp);
         publishPlanningCones(local_measurement_cones);
 
