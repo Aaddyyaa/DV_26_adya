@@ -1974,11 +1974,54 @@ private:
             }
         }
 
-        publishPlanningCones(local_measurement_cones);
+        // IMPORTANT FOR DRIVING:
+        // Current-camera cones are a rolling local measurement set, so their
+        // markers naturally appear to move forward with the car as old cones
+        // leave the sensor window and new cones enter it. The planner must
+        // instead receive the persistent, map-frame SLAM landmarks, with fresh
+        // measurements added only when that cone has not been mapped yet.
+        auto planning_landmarks =
+            aggregateLandmarks(best_particle, stamp);
 
-        // Counts are deliberately maintained from the persistent map. This
-        // gives us the total number of cones discovered without exposing lost
-        // cones to the local planning/corridor pipeline.
+        auto appendFreshIfNew =
+            [](std::vector<eufs_msgs::msg::ConeWithCovariance> &target,
+               const std::vector<eufs_msgs::msg::ConeWithCovariance> &fresh)
+        {
+            for (const auto &candidate : fresh)
+            {
+                bool duplicate = false;
+
+                for (const auto &existing : target)
+                {
+                    if (std::hypot(
+                            candidate.point.x - existing.point.x,
+                            candidate.point.y - existing.point.y) <= 0.75)
+                    {
+                        duplicate = true;
+                        break;
+                    }
+                }
+
+                if (!duplicate)
+                    target.push_back(candidate);
+            }
+        };
+
+        appendFreshIfNew(
+            planning_landmarks.blue_cones,
+            local_measurement_cones.blue_cones);
+        appendFreshIfNew(
+            planning_landmarks.yellow_cones,
+            local_measurement_cones.yellow_cones);
+        appendFreshIfNew(
+            planning_landmarks.orange_cones,
+            local_measurement_cones.orange_cones);
+
+        planning_landmarks.header.stamp = stamp;
+        planning_landmarks.header.frame_id = "map";
+
+        publishPlanningCones(planning_landmarks);
+
         updateCountedCones(best_particle);
         publishConeCounts();
 
@@ -1986,8 +2029,9 @@ private:
         if (slam_update_count_ == 1 ||
             (slam_update_count_ % landmark_publish_stride_) == 0)
         {
-            // /slam/landmarks follows the same current-sensor-only rule.
-            landmark_cov_pub_->publish(local_measurement_cones);
+            // Corridor and other downstream consumers now get the same stable
+            // map-frame local landmarks as the planner.
+            landmark_cov_pub_->publish(planning_landmarks);
         }
 
         publishPose(
@@ -1997,7 +2041,10 @@ private:
             local_yaw_rate,
             stamp);
 
-        publishNativeMarkers(local_measurement_cones);
+        // Visualize the stable map-frame planning set as well. This
+        // makes the RViz cone markers stay attached to the track instead of
+        // being recreated as a rolling camera-relative window.
+        publishNativeMarkers(planning_landmarks);
 
         if (!local_measurements.empty())
         {
