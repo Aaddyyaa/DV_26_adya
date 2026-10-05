@@ -186,7 +186,25 @@ private:
             return;
         }
 
-        last_valid_path_time_ = this->now();
+        // The planner republishes a held path when a fresh route cannot be
+        // produced. Its original header stamp must remain the age of the
+        // route; otherwise every stale replay looks like a brand-new path
+        // and the controller can drive toward an obsolete trajectory forever.
+        const rclcpp::Time stamp(
+            msg->header.stamp,
+            this->get_clock()->get_clock_type());
+        const double now_sec = this->now().seconds();
+        const double stamp_sec = stamp.seconds();
+        const bool has_stamp = stamp.nanoseconds() > 0;
+        const double age =
+            has_stamp
+                ? std::max(0.0, now_sec - stamp_sec)
+                : 0.0;
+
+        if (has_stamp &&
+            age <= get_parameter("path_loss_grace_sec").as_double()) {
+            last_valid_path_time_ = stamp;
+        }
 
         if (!had_path) {
             startup_active_ = true;
@@ -194,10 +212,13 @@ private:
             last_closest_idx_ = 0;
         }
 
-        // Every fresh planner path begins at the current SLAM pose, so index
-        // zero is the only safe re-anchoring point. Never jump into the middle
-        // of a closed-loop path.
-        last_closest_idx_ = 0;
+        // A fresh planner path is anchored at the current SLAM pose, so its
+        // first point is the correct re-anchoring point. Do not reset the
+        // tracking index for a stale held path.
+        if (!has_stamp ||
+            age <= get_parameter("path_loss_grace_sec").as_double()) {
+            last_closest_idx_ = 0;
+        }
     }
 
     void speedProfileCallback(
@@ -349,9 +370,18 @@ private:
                 this->get_logger(),
                 *this->get_clock(),
                 2000,
-                "Tracking error %.2f m; rejecting path command.",
+                "Tracking error %.2f m; path is not locally reachable.",
                 min_d);
-            publishStopCommand();
+
+            // A transient planner failure should not turn into an immediate
+            // hard stop. Keep the last steering direction for the short
+            // planner recovery window; once that window expires, stop safely.
+            if (as_driving_ &&
+                path_age <= get_parameter("path_loss_grace_sec").as_double()) {
+                publishRecoveryCrawl();
+            } else {
+                publishStopCommand();
+            }
             return;
         }
 
