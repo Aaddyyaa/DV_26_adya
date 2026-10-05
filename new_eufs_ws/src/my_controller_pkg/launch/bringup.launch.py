@@ -51,7 +51,7 @@ def generate_launch_description():
                 'negative_evidence_range_m': 15.0,
                 'negative_evidence_fov_deg': 120.0,
                 'landmark_publish_stride': 2,
-                'odom_topic': '/custom_odom',
+                'odom_topic': '/slam/odom',
                 'min_landmark_hits': 3,
                 'num_particles': 15,
                 'landmark_match_distance': 0.75,
@@ -108,7 +108,7 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'use_sim_time': True,
-                'odom_topic': '/custom_odom',
+                'odom_topic': '/slam/odom',
                 'max_speed_limit': 1.5,
                 'min_speed_mps': 0.6,
                 'L_base': 1.53,
