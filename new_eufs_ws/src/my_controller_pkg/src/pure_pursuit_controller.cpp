@@ -182,21 +182,13 @@ private:
             }
         }
 
-        // Recovery is allowed only when the current path no longer contains
-        // the vehicle neighbourhood. This is not the normal tracking mode.
+        // Never fall back to a global search here. On a closed track that
+        // reintroduces the exact failure this controller is designed to avoid:
+        // a nearby point from another lap section can be closer than the
+        // physically correct point. When a regenerated local path no longer
+        // contains the old progress window, restart from its first point.
         if (min_d > 3.0) {
-            for (size_t i = 0; i < N; ++i) {
-                const double dx =
-                    path_.poses[i].pose.position.x - x_;
-                const double dy =
-                    path_.poses[i].pose.position.y - y_;
-                const double d = std::hypot(dx, dy);
-
-                if (d < min_d) {
-                    min_d = d;
-                    best_closest_idx = i;
-                }
-            }
+            best_closest_idx = 0;
         }
 
         last_closest_idx_ = best_closest_idx;
