@@ -236,12 +236,15 @@ class CentrelinePlanner(Node):
         # neighbourhood.  After that first gate, the route is allowed to
         # rotate with the track; this is what lets the planner enter a right
         # hand corner instead of repeatedly selecting a straight continuation.
+        # A tight corner can put the next valid gate temporarily lateral to
+        # or slightly behind the current vehicle heading. Keep a small
+        # backward allowance here so the correct turn is not discarded.
         forward_gates = [
             point for point in unused
             if (
                 (point[0] - self._position[0]) * c_yaw
                 + (point[1] - self._position[1]) * s_yaw
-            ) >= -1.0
+            ) >= -3.0
         ]
         if not forward_gates:
             return []
@@ -376,22 +379,10 @@ class CentrelinePlanner(Node):
         return ordered
 
     def _order_midpoints(self, midpoints: Sequence[Point2]) -> List[Point2]:
-        # Pairing already produces a locally ordered track graph. Keep only
-        # forward gates and preserve that graph order; do not run a second
-        # nearest-neighbour reorder which can jump across a hairpin.
-        if not midpoints:
-            return []
-
-        c_yaw = math.cos(self._yaw)
-        s_yaw = math.sin(self._yaw)
-
-        return [
-            point for point in midpoints
-            if (
-                (point[0] - self._position[0]) * c_yaw
-                + (point[1] - self._position[1]) * s_yaw
-            ) >= -1.0
-        ]
+        # _matched_midpoints() already builds the ordered local track graph.
+        # Do not apply a second vehicle-heading filter here: after a genuine
+        # corner, the next valid gate can be lateral to the old heading.
+        return list(midpoints) if midpoints else []
 
     def _path_heading(self, points: Sequence[Point2]) -> Optional[float]:
         if len(points) < 2:
