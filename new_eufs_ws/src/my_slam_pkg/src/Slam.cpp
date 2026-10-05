@@ -294,10 +294,6 @@ private:
     std::random_device rd_;
     std::mt19937 gen_;
 
-    double odom_x_{0.0};
-    double odom_y_{0.0};
-    double odom_yaw_{0.0};
-
     double vx_{0.0};
     double yaw_rate_{0.0};
     double pending_dt_{0.0};
@@ -518,14 +514,6 @@ private:
     void odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg)
     {
         std::lock_guard<std::mutex> lock(slam_mutex_);
-
-        odom_x_ = msg->pose.pose.position.x;
-        odom_y_ = msg->pose.pose.position.y;
-
-        const auto &q = msg->pose.pose.orientation;
-        odom_yaw_ = std::atan2(
-            2.0 * (q.w * q.z + q.x * q.y),
-            1.0 - 2.0 * (q.y * q.y + q.z * q.z));
 
         vx_ = msg->twist.twist.linear.x;
         yaw_rate_ = msg->twist.twist.angular.z;
@@ -1947,11 +1935,11 @@ private:
             return;
         }
 
-        // Anchor driving/planning geometry to the EKF odometry pose.
-        // FastSLAM still runs for landmark estimation and counting, but its
-        // particle proposal must not move the whole visible cone set.
-        pose_mean << odom_x_, odom_y_, odom_yaw_;
-
+        // IMPORTANT:
+        // The persistent FastSLAM map must NOT drive the local planner.
+        // Use the weighted pose estimate rather than the single best particle
+        // so one particle winning a noisy update cannot make all visible cones
+        // jump in RViz or in the planner input.
         auto local_measurement_cones =
             makeLocalMeasurementCones(
                 pose_mean(0),
