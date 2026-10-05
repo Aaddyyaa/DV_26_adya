@@ -18,6 +18,8 @@ using std::placeholders::_1;
 class HybridControllerNode : public rclcpp::Node {
 public:
     HybridControllerNode() : Node("pure_pursuit_node") {
+        this->declare_parameter("odom_topic", std::string("/ground_truth/odom"));
+
         // Lateral Control (Steering) Parameters
         this->declare_parameter("L_base", 1.53);      
         this->declare_parameter("L_min", 1.5);        
@@ -31,8 +33,11 @@ public:
         this->declare_parameter("min_speed_mps", 0.6);
 
         // Subscribers
+        const std::string odom_topic =
+            get_parameter("odom_topic").as_string();
+
         odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
-            "/slam/odom", 10, std::bind(&HybridControllerNode::odomCallback, this, _1));
+            odom_topic, 10, std::bind(&HybridControllerNode::odomCallback, this, _1));
         path_sub_ = this->create_subscription<nav_msgs::msg::Path>(
             "/target_path", 10, std::bind(&HybridControllerNode::pathCallback, this, _1));
 
