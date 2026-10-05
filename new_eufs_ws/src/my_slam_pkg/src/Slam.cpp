@@ -1360,6 +1360,7 @@ private:
         constexpr std::size_t MAX_BLUE = 5;
         constexpr std::size_t MAX_YELLOW = 5;
         constexpr std::size_t MAX_ORANGE = 4;
+        constexpr double LOCAL_DEDUP_DISTANCE_M = 0.75;
 
         auto appendNearest = [&](int color, std::size_t limit)
         {
@@ -1388,7 +1389,7 @@ private:
                 for (const auto &existing : selected)
                 {
                     if ((candidate.point - existing.point).norm() <=
-                        counted_cone_merge_distance_m_)
+                        LOCAL_DEDUP_DISTANCE_M)
                     {
                         duplicate = true;
                         break;
