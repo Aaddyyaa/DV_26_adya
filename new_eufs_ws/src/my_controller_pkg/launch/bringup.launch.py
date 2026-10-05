@@ -74,7 +74,7 @@ def generate_launch_description():
                 'max_segment_length_m': 12.0,
                 'allow_pair_reuse_fallback': False,
                 'cone_dedup_distance_m': 0.75,
-                'path_hold_time_sec': 2.5,
+                'path_hold_time_sec': 5.0,
                 'max_speed_mps': 2.0,
                 'min_speed_mps': 0.6,
             }],
