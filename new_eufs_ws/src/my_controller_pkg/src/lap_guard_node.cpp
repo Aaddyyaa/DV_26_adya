@@ -1,4 +1,5 @@
 #include <cmath>
+#include <functional>
 #include <memory>
 
 #include <rclcpp/rclcpp.hpp>

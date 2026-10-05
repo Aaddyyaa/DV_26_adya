@@ -40,9 +40,9 @@ def generate_launch_description():
                 'use_sim_time': True,
                 'planning_cones_topic': '/planning/cones',
                 'odom_topic': '/slam/odom',
-                'min_centerline_points': 2,
-                'max_speed_mps': 2.0,
-                'allow_pair_reuse_fallback': True,
+                'min_centerline_points': 3,
+                'max_speed_mps': 1.5,
+                'allow_pair_reuse_fallback': False,
             }],
         ),
         Node(
@@ -65,8 +65,8 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'use_sim_time': True,
-                'max_speed_limit': 2.0,
-                'min_speed_mps': 1.0,
+                'max_speed_limit': 1.5,
+                'min_speed_mps': 0.6,
             }],
         ),
     ])
