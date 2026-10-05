@@ -56,11 +56,6 @@ def generate_launch_description():
                 'num_particles': 15,
                 'landmark_match_distance': 0.75,
                 'fallback_dt': 0.05,
-                'planning_landmark_max_missed_updates': 5,
-                'planning_local_forward_m': 14.0,
-                'planning_local_backward_m': 4.0,
-                'planning_local_lateral_m': 8.0,
-                'planning_local_hold_sec': 1.0,
             }],
         ),
 
