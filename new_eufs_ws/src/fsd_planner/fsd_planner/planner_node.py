@@ -246,10 +246,13 @@ class CentrelinePlanner(Node):
         if not forward_gates:
             return []
 
-        # Stay on the same physical gate until the vehicle reaches it. This
-        # prevents the persistent loop map from jumping to a nearby section
-        # that happens to be slightly closer in Euclidean distance.
+        # Stay on the same physical gate until the vehicle has reached it.
+        # If that gate temporarily disappears from the map, HOLD instead of
+        # selecting another nearby part of the circuit. This is the critical
+        # late-lap anti-branch-jump rule.
         first = None
+        active_passed = False
+
         if self._active_gate is not None:
             active_index = min(
                 range(len(unused)),
@@ -264,11 +267,39 @@ class CentrelinePlanner(Node):
 
             if active_distance <= 1.5 and active_forward >= -0.8:
                 first = active_candidate
+            elif active_forward < -0.8 or active_distance <= 1.0:
+                active_passed = True
+
+            if first is None and not active_passed:
+                # The previous active gate is still physically ahead, but its
+                # estimate disappeared. Never replace it with a different
+                # nearby gate from another section of the lap.
+                return []
 
         if first is None:
-            first = min(
-                forward_gates,
-                key=lambda point: distance(point, self._position))
+            if self._active_gate is not None and active_passed:
+                # After passing the active gate, only accept the next gate that
+                # is close to the vehicle and lies in front of its current
+                # heading. This prevents jumping back to the start/finish
+                # section when the circuit closes on itself.
+                next_gates = [
+                    point for point in forward_gates
+                    if 0.75 <= distance(point, self._position) <= 10.0
+                    and (
+                        ((point[0] - self._position[0]) * c_yaw
+                         + (point[1] - self._position[1]) * s_yaw)
+                        >= 0.5
+                    )
+                ]
+                if not next_gates:
+                    return []
+                first = min(
+                    next_gates,
+                    key=lambda point: distance(point, self._position))
+            else:
+                first = min(
+                    forward_gates,
+                    key=lambda point: distance(point, self._position))
 
         ordered = [first]
         unused.remove(first)
@@ -333,9 +364,6 @@ class CentrelinePlanner(Node):
                 # instead; the next planning cycle can recover when the local
                 # gate graph is visible again.
                 break
-
-                ordered.append(continuation)
-                continue
 
             dx = best[0] - previous[0]
             dy = best[1] - previous[1]
