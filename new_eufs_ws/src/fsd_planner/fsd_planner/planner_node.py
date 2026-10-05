@@ -316,7 +316,7 @@ class CentrelinePlanner(Node):
             distance(a, b)
             for a, b in zip(ordered, ordered[1:])
         )
-        if route_length < 4.0:
+        if route_length < 2.5:
             return []
 
         return ordered
