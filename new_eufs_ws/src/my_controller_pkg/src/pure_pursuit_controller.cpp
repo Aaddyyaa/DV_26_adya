@@ -132,55 +132,7 @@ private:
         }
 
         double L_base = get_parameter("L_base").as_double();
-        // Keep the long lookahead on straights, but shorten it when the
-        // target path contains an imminent corner.  At 2 m/s the baseline
-        // settings give about 2.4 m lookahead, which can look past the entry
-        // of a tight right/left turn.
-        const double base_lookahead = std::max(
-            1.2,
-            get_parameter("L_min").as_double()
-                + get_parameter("k_pure").as_double() * std::abs(vx_));
-
-        double Ld = base_lookahead;
-        double max_heading_change = 0.0;
-
-        // Preview only the next ~6 m.  Straight driving therefore keeps the
-        // original controller behaviour, while an imminent corner gets a
-        // shorter lookahead so steering begins at the corner entry.
-        double preview_distance = 0.0;
-        double prev_x = path_.poses[last_closest_idx_].pose.position.x;
-        double prev_y = path_.poses[last_closest_idx_].pose.position.y;
-        double prev_heading = psi_;
-
-        for (size_t i = last_closest_idx_ + 1;
-             i < N && preview_distance < 6.0;
-             ++i) {
-            const double px = path_.poses[i].pose.position.x;
-            const double py = path_.poses[i].pose.position.y;
-            const double dx_seg = px - prev_x;
-            const double dy_seg = py - prev_y;
-            const double seg = std::hypot(dx_seg, dy_seg);
-            if (seg < 1e-4) {
-                continue;
-            }
-
-            const double heading = std::atan2(dy_seg, dx_seg);
-            const double heading_change = std::abs(std::atan2(
-                std::sin(heading - prev_heading),
-                std::cos(heading - prev_heading)));
-
-            max_heading_change = std::max(max_heading_change, heading_change);
-            preview_distance += seg;
-            prev_x = px;
-            prev_y = py;
-            prev_heading = heading;
-        }
-
-        if (max_heading_change >= 0.45) {
-            Ld = std::min(Ld, 1.25);
-        } else if (max_heading_change >= 0.25) {
-            Ld = std::min(Ld, 1.45);
-        }
+        double Ld = std::max(1.2, get_parameter("L_min").as_double() + get_parameter("k_pure").as_double() * std::abs(vx_));
         
         // 2. Find the Lookahead Point
         size_t idx_ld = last_closest_idx_;
@@ -224,16 +176,7 @@ private:
             delta,
             -get_parameter("max_steering").as_double(),
             get_parameter("max_steering").as_double());
-        // Keep the proven smoothing on straights, but reduce steering
-        // lag when an imminent corner has been detected.
-        const double steering_alpha =
-            (max_heading_change >= 0.45) ? 0.90 :
-            (max_heading_change >= 0.25) ? 0.78 : 0.60;
-
-        double smoothed_steering =
-            steering_alpha * raw_steering
-            + (1.0 - steering_alpha) * last_steering_;
-
+        double smoothed_steering = (0.60 * raw_steering) + (0.40 * last_steering_);
         last_steering_ = smoothed_steering;
         drive_msg.drive.steering_angle = smoothed_steering;
         
