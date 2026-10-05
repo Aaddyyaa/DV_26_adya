@@ -2,7 +2,7 @@
 
 import math
 from functools import lru_cache
-from typing import List, Optional, Sequence, Tuple
+from typing import List, Optional, Sequence, Set, Tuple
 
 from eufs_msgs.msg import ConeArray
 from geometry_msgs.msg import PoseStamped
@@ -346,6 +346,13 @@ class CentrelinePlanner(Node):
         return output
 
     def _path_is_safe(self, points: Sequence[Point2]) -> bool:
+        """Reject only physically discontinuous paths.
+
+        Tight Formula Student corners are expected. Continuity is enforced by
+        the ordered cone graph in _build_track_route; the final path check
+        therefore focuses on impossible jumps/cusps instead of comparing a
+        corner against the previous path.
+        """
         if len(points) < self._min_points:
             return False
 
@@ -359,59 +366,288 @@ class CentrelinePlanner(Node):
         for a, b, c in zip(points, points[1:], points[2:]):
             h1 = math.atan2(b[1] - a[1], b[0] - a[0])
             h2 = math.atan2(c[1] - b[1], c[0] - b[0])
-            if abs(wrap_to_pi(h2 - h1)) > math.radians(100.0):
-                return False
-
-        if self._last_path is None or len(self._last_path.poses) < 2:
-            return True
-
-        old_points = [
-            (pose.pose.position.x, pose.pose.position.y)
-            for pose in self._last_path.poses
-        ]
-
-        old_end = min(12, len(old_points) - 1)
-        old_index = min(
-            range(old_end + 1),
-            key=lambda index: distance(old_points[index], self._position),
-        )
-
-        # Compare the candidate at both the near-term and medium-term
-        # horizons. A false branch can look identical for the first metre and
-        # then diverge sharply; the second check prevents that late shortcut.
-        near_new = points[min(4, len(points) - 1)]
-        near_old = old_points[min(old_index + 4, len(old_points) - 1)]
-        if distance(near_new, near_old) > self._max_path_jump:
-            return False
-
-        far_new = points[min(10, len(points) - 1)]
-        far_old = old_points[min(old_index + 10, len(old_points) - 1)]
-        if distance(far_new, far_old) > 2.5:
-            return False
-
-        old_next = min(old_index + 1, len(old_points) - 1)
-        new_next = min(1, len(points) - 1)
-
-        old_direction = _unit(
-            old_points[old_next][0] - old_points[old_index][0],
-            old_points[old_next][1] - old_points[old_index][1],
-        )
-        new_direction = _unit(
-            points[new_next][0] - points[0][0],
-            points[new_next][1] - points[0][1],
-        )
-
-        if old_direction is not None and new_direction is not None:
-            heading_change = abs(math.atan2(
-                old_direction[0] * new_direction[1]
-                - old_direction[1] * new_direction[0],
-                old_direction[0] * new_direction[0]
-                + old_direction[1] * new_direction[1],
-            ))
-            if heading_change > math.radians(70.0):
+            if abs(wrap_to_pi(h2 - h1)) > math.radians(120.0):
                 return False
 
         return True
+
+
+    def _build_track_route(self, cones: ConeArray) -> List[Point2]:
+        """Generate local blue-left/yellow-right centreline gates.
+
+        Pairing is performed in the vehicle frame so the planner only uses
+        gates that actually straddle the current vehicle corridor. Global
+        track sections behind/alongside the car cannot become the next gate.
+        """
+        blue_points = self._deduplicate_points(
+            [(cone.x, cone.y) for cone in cones.blue_cones])
+        yellow_points = self._deduplicate_points(
+            [(cone.x, cone.y) for cone in cones.yellow_cones])
+
+        c_yaw = math.cos(self._yaw)
+        s_yaw = math.sin(self._yaw)
+
+        def local(point: Point2) -> Tuple[float, float]:
+            dx = point[0] - self._position[0]
+            dy = point[1] - self._position[1]
+            return (
+                dx * c_yaw + dy * s_yaw,
+                -dx * s_yaw + dy * c_yaw,
+            )
+
+        # Keep the complete local mapped cone set.  The old planner
+        # discarded every cone with local x < -1 m, which is exactly what
+        # happens to the next gate when the car enters a tight right turn.
+        # We still limit the working set spatially so distant/old map sections
+        # cannot become the next gate.
+        local_radius = max(30.0, self._local_range * 2.0)
+        local_half_width = max(12.0, self._local_half_width * 2.0)
+
+        blue = [
+            (point, *local(point))
+            for point in blue_points
+            if math.hypot(*local(point)) <= local_radius
+            and abs(local(point)[1]) <= local_half_width
+        ]
+        yellow = [
+            (point, *local(point))
+            for point in yellow_points
+            if math.hypot(*local(point)) <= local_radius
+            and abs(local(point)[1]) <= local_half_width
+        ]
+
+        candidates: List[Tuple[float, float, float, int, int]] = []
+
+        for blue_index, (_, blue_s, blue_l) in enumerate(blue):
+            for yellow_index, (_, yellow_s, yellow_l) in enumerate(yellow):
+                midpoint_s = 0.5 * (blue_s + yellow_s)
+                midpoint_l = 0.5 * (blue_l + yellow_l)
+                gap = abs(blue_s - yellow_s)
+
+                # A real corner can put the two cones at noticeably
+                # different longitudinal stations.  Do not reject that
+                # pairing merely because it is no longer "in front" of the
+                # original vehicle heading.
+                if gap > max(3.5, self._max_pair_station_gap):
+                    continue
+
+                width = distance(
+                    blue[blue_index][0],
+                    yellow[yellow_index][0],
+                )
+                if not (self._min_track_width <= width <= self._max_track_width):
+                    continue
+
+                # Pair by cross-track geometry first.  Forward distance is
+                # deliberately weak here; route ordering below decides which
+                # gate is the next gate.  This prevents a straight-ahead gate
+                # from winning simply because a genuine right-hand gate has
+                # a large heading change.
+                score = (
+                    1.0 * gap
+                    + 0.40 * abs(width - 3.5)
+                    + 0.15 * abs(midpoint_l)
+                )
+
+                candidates.append((
+                    score,
+                    midpoint_s,
+                    midpoint_l,
+                    blue_index,
+                    yellow_index,
+                ))
+
+        candidates.sort()
+
+        # Greedy one-to-one pairing using the local physical gates.
+        used_blue: Set[int] = set()
+        used_yellow: Set[int] = set()
+        gates: List[Tuple[Point2, float]] = []
+
+        for score, midpoint_s, midpoint_l, blue_index, yellow_index in candidates:
+            if blue_index in used_blue or yellow_index in used_yellow:
+                continue
+
+            blue_point = blue[blue_index][0]
+            yellow_point = yellow[yellow_index][0]
+            midpoint = (
+                0.5 * (blue_point[0] + yellow_point[0]),
+                0.5 * (blue_point[1] + yellow_point[1]),
+            )
+
+            used_blue.add(blue_index)
+            used_yellow.add(yellow_index)
+            gates.append((midpoint, midpoint_s))
+
+        # Follow the gates as a local track graph. This is the key fix for the
+        # right-hand turn: after the first gate, direction is allowed to rotate
+        # with the track instead of forcing every candidate to remain aligned
+        # with the original vehicle heading.
+        if not gates:
+            return []
+
+        unused = [point for point, _ in gates]
+
+        # Start from the nearest gate that is still in the current forward
+        # neighbourhood.  After that first gate, the route is allowed to
+        # rotate with the track; this is what lets the planner enter a right
+        # hand corner instead of repeatedly selecting a straight continuation.
+        forward_gates = [
+            point for point in unused
+            if (
+                (point[0] - self._position[0]) * c_yaw
+                + (point[1] - self._position[1]) * s_yaw
+            ) >= -1.0
+        ]
+        if not forward_gates:
+            return []
+
+        first = min(
+            forward_gates,
+            key=lambda point: distance(point, self._position))
+        ordered = [first]
+        unused.remove(first)
+
+        direction = (c_yaw, s_yaw)
+
+        while unused and len(ordered) < 30:
+            previous = ordered[-1]
+            best = None
+            best_score = float('inf')
+
+            for point in unused:
+                dx = point[0] - previous[0]
+                dy = point[1] - previous[1]
+                segment = math.hypot(dx, dy)
+
+                if segment < 0.75 or segment > 6.0:
+                    continue
+
+                unit = (dx / segment, dy / segment)
+                alignment = (
+                    unit[0] * direction[0] +
+                    unit[1] * direction[1]
+                )
+                turn_angle = abs(
+                    math.atan2(
+                        direction[0] * unit[1] - direction[1] * unit[0],
+                        alignment,
+                    )
+                )
+
+                # Permit genuine Formula Student corners.  The previous
+                # cost made heading change three times more expensive than
+                # distance, so a straight-looking branch won over the actual
+                # right-hand continuation.  Use heading only as a continuity
+                # term and allow up to 135 degrees for a tight corner.
+                if turn_angle > max(math.radians(120.0), self._max_gate_turn):
+                    continue
+
+                score = (
+                    1.0 * segment
+                    + 0.75 * turn_angle
+                    + 2.0 * max(0.0, -alignment)
+                )
+
+                if score < best_score:
+                    best_score = score
+                    best = point
+
+            if best is None:
+                # Final-bend fallback: keep the proven local planner and only
+                # look globally when the local gate graph has ended. The
+                # candidate is still constrained by the current endpoint,
+                # route direction, track width, and cone station, so this
+                # cannot create the cross-track pairing seen with a fully
+                # global planner.
+                continuation = None
+                continuation_score = float('inf')
+
+                for blue_point in blue_points:
+                    for yellow_point in yellow_points:
+                        blue_station = (
+                            (blue_point[0] - previous[0]) * direction[0]
+                            + (blue_point[1] - previous[1]) * direction[1]
+                        )
+                        yellow_station = (
+                            (yellow_point[0] - previous[0]) * direction[0]
+                            + (yellow_point[1] - previous[1]) * direction[1]
+                        )
+                        station_gap = abs(blue_station - yellow_station)
+                        if station_gap > 2.0:
+                            continue
+
+                        width = distance(blue_point, yellow_point)
+                        if not (
+                            self._min_track_width
+                            <= width
+                            <= self._max_track_width
+                        ):
+                            continue
+
+                        midpoint = (
+                            0.5 * (blue_point[0] + yellow_point[0]),
+                            0.5 * (blue_point[1] + yellow_point[1]),
+                        )
+                        dx = midpoint[0] - previous[0]
+                        dy = midpoint[1] - previous[1]
+                        segment = math.hypot(dx, dy)
+
+                        if segment < 0.9 or segment > 8.0:
+                            continue
+
+                        unit_x = dx / segment
+                        unit_y = dy / segment
+                        alignment = (
+                            unit_x * direction[0]
+                            + unit_y * direction[1]
+                        )
+                        if alignment < -0.35:
+                            continue
+
+                        turn_angle = abs(math.atan2(
+                            direction[0] * unit_y - direction[1] * unit_x,
+                            alignment,
+                        ))
+                        if turn_angle > max(math.radians(130.0), self._max_gate_turn):
+                            continue
+
+                        if any(
+                            distance(midpoint, existing) < 0.75
+                            for existing in ordered
+                        ):
+                            continue
+
+                        score = (
+                            1.0 * segment
+                            + 0.8 * turn_angle
+                            + 0.8 * abs(width - 3.5)
+                            + 0.8 * station_gap
+                        )
+                        if score < continuation_score:
+                            continuation_score = score
+                            continuation = midpoint
+
+                if continuation is None:
+                    break
+
+                dx = continuation[0] - previous[0]
+                dy = continuation[1] - previous[1]
+                segment = math.hypot(dx, dy)
+                direction = (dx / segment, dy / segment)
+                ordered.append(continuation)
+                continue
+
+            dx = best[0] - previous[0]
+            dy = best[1] - previous[1]
+            segment = math.hypot(dx, dy)
+            direction = (dx / segment, dy / segment)
+
+            ordered.append(best)
+            unused.remove(best)
+
+        return ordered
+
 
     def _speed_profile(self, points: Sequence[Point2]) -> List[float]:
         if not points:
@@ -510,28 +746,7 @@ class CentrelinePlanner(Node):
         speeds = Float64MultiArray()
 
         if self._cones is not None and self._have_odom:
-            c_yaw = math.cos(self._yaw)
-            s_yaw = math.sin(self._yaw)
-
-            blue = self._localise(
-                self._deduplicate_points([
-                    (cone.x, cone.y)
-                    for cone in self._cones.blue_cones
-                ]),
-                c_yaw,
-                s_yaw,
-            )
-            yellow = self._localise(
-                self._deduplicate_points([
-                    (cone.x, cone.y)
-                    for cone in self._cones.yellow_cones
-                ]),
-                c_yaw,
-                s_yaw,
-            )
-
-            gates = self._pair_cones(blue, yellow)
-            route = self._build_route(gates)
+            route = self._build_track_route(self._cones)
 
             if route:
                 raw_points = [self._position]
