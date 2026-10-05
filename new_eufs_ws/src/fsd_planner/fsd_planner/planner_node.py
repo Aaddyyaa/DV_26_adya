@@ -127,66 +127,43 @@ class CentrelinePlanner(Node):
             and abs(local(point)[1]) <= local_half_width
         ]
 
-        def build_candidates(require_side_geometry: bool) -> List[Tuple[float, float, float, int, int]]:
-            """Score blue/yellow pairs inside the local cone window."""
-            candidates: List[Tuple[float, float, float, int, int]] = []
+        # Pair only physically consistent blue-left / yellow-right cones.
+        # The SLAM node already supplies a strict local sensor window, so
+        # there is no reason to reintroduce an unrestricted cross-pair fallback.
+        candidates: List[Tuple[float, float, float, int, int]] = []
 
-            for blue_index, (_, blue_s, blue_l) in enumerate(blue):
-                for yellow_index, (_, yellow_s, yellow_l) in enumerate(yellow):
-                    # Prefer the known EUFS colour orientation when there are
-                    # multiple nearby track sections.  This remains a local
-                    # gate check: it does not use the persistent map or a
-                    # global route.
-                    if require_side_geometry:
-                        if blue_l < 0.10 or yellow_l > -0.10:
-                            continue
+        for blue_index, (_, blue_s, blue_l) in enumerate(blue):
+            for yellow_index, (_, yellow_s, yellow_l) in enumerate(yellow):
+                if blue_l < 0.10 or yellow_l > -0.10:
+                    continue
 
-                    midpoint_s = 0.5 * (blue_s + yellow_s)
-                    midpoint_l = 0.5 * (blue_l + yellow_l)
-                    gap = abs(blue_s - yellow_s)
+                midpoint_s = 0.5 * (blue_s + yellow_s)
+                midpoint_l = 0.5 * (blue_l + yellow_l)
+                gap = abs(blue_s - yellow_s)
 
-                    # A real corner can put the two cones at noticeably
-                    # different longitudinal stations.  Do not reject that
-                    # pairing merely because it is no longer "in front" of
-                    # the original vehicle heading.
-                    if gap > 3.5:
-                        continue
+                if gap > 3.5:
+                    continue
 
-                    width = distance(
-                        blue[blue_index][0],
-                        yellow[yellow_index][0],
-                    )
-                    if not (self._min_track_width <= width <= self._max_track_width):
-                        continue
+                width = distance(
+                    blue[blue_index][0],
+                    yellow[yellow_index][0],
+                )
+                if not (self._min_track_width <= width <= self._max_track_width):
+                    continue
 
-                    # Pair by cross-track geometry first.  Forward distance is
-                    # deliberately weak here; route ordering below decides which
-                    # gate is the next gate.  This prevents a straight-ahead gate
-                    # from winning simply because a genuine right-hand gate has
-                    # a large heading change.
-                    score = (
-                        1.0 * gap
-                        + 0.40 * abs(width - 3.5)
-                        + 0.15 * abs(midpoint_l)
-                    )
+                score = (
+                    1.0 * gap
+                    + 0.40 * abs(width - 3.5)
+                    + 0.15 * abs(midpoint_l)
+                )
 
-                    candidates.append((
-                        score,
-                        midpoint_s,
-                        midpoint_l,
-                        blue_index,
-                        yellow_index,
-                    ))
-
-            return candidates
-
-        # First use the physically correct blue-left / yellow-right geometry.
-        # At least two gates are needed to define a driveable path.  On startup
-        # or during a very noisy frame, fall back to the proven unrestricted
-        # local-window pairing rather than stopping the car.
-        candidates = build_candidates(require_side_geometry=True)
-        if len(candidates) < max(2, int(self._min_points)):
-            candidates = build_candidates(require_side_geometry=False)
+                candidates.append((
+                    score,
+                    midpoint_s,
+                    midpoint_l,
+                    blue_index,
+                    yellow_index,
+                ))
 
         candidates.sort()
 
@@ -233,9 +210,28 @@ class CentrelinePlanner(Node):
         if not forward_gates:
             return []
 
-        first = min(
-            forward_gates,
-            key=lambda point: distance(point, self._position))
+        # Prefer the continuation of the last accepted local path. This is
+        # especially important where two sections of the closed track are
+        # simultaneously inside the local cone window.
+        continuity_target: Optional[Point2] = None
+        if self._last_path is not None and self._last_path.poses:
+            old_points = [
+                (pose.pose.position.x, pose.pose.position.y)
+                for pose in self._last_path.poses
+            ]
+            old_index = min(
+                range(len(old_points)),
+                key=lambda index: distance(old_points[index], self._position))
+            continuity_target = old_points[
+                min(old_index + 2, len(old_points) - 1)]
+
+        def first_gate_score(point: Point2) -> float:
+            score = distance(point, self._position)
+            if continuity_target is not None:
+                score += 1.75 * distance(point, continuity_target)
+            return score
+
+        first = min(forward_gates, key=first_gate_score)
         ordered = [first]
         unused.remove(first)
 
@@ -279,6 +275,17 @@ class CentrelinePlanner(Node):
                     + 0.75 * turn_angle
                     + 2.0 * max(0.0, -alignment)
                 )
+
+                if continuity_target is not None:
+                    ref_index = min(len(ordered), len(old_points) - 1)
+                    continuity_distance = distance(
+                        point,
+                        old_points[ref_index])
+                    # A large jump from the previously accepted path is not a
+                    # new track branch; it is an unstable local pairing.
+                    if continuity_distance > 5.0:
+                        continue
+                    score += 1.25 * continuity_distance
 
                 if score < best_score:
                     best_score = score
