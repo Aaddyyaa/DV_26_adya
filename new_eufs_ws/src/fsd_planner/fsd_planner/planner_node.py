@@ -44,6 +44,11 @@ class CentrelinePlanner(Node):
             'allow_pair_reuse_fallback', False).value
         self._cone_dedup_distance = self.declare_parameter(
             'cone_dedup_distance_m', 0.75).value
+        self._max_gate_parallel = self.declare_parameter(
+            'max_gate_parallel_to_heading', 0.90).value
+        self._continuity_heading_limit = math.radians(
+            self.declare_parameter(
+                'continuity_heading_limit_deg', 75.0).value)
         self._cones: Optional[ConeArray] = None
         self._position: Point2 = (0.0, 0.0)
         self._yaw = 0.0
@@ -147,6 +152,30 @@ class CentrelinePlanner(Node):
                     yellow[yellow_index][0],
                 )
                 if not (self._min_track_width <= width <= self._max_track_width):
+                    continue
+
+                # Reject false gates formed by cones belonging to a neighbouring
+                # section of the persistent lap map. A real gate crosses the
+                # vehicle's travel direction rather than running along it.
+                gate_dx = blue[blue_index][0][0] - yellow[yellow_index][0][0]
+                gate_dy = blue[blue_index][0][1] - yellow[yellow_index][0][1]
+                gate_len = math.hypot(gate_dx, gate_dy)
+                if gate_len < 1e-6:
+                    continue
+
+                gate_parallel = abs(
+                    (gate_dx / gate_len) * c_yaw
+                    + (gate_dy / gate_len) * s_yaw
+                )
+                if gate_parallel > float(self._max_gate_parallel):
+                    continue
+
+                # Keep the generated gates inside the actual forward driving
+                # corridor. The complete persistent loop may contain nearby
+                # cones from the next/previous section.
+                if midpoint_s < -2.0 or midpoint_s > 18.0:
+                    continue
+                if abs(midpoint_l) > 8.0:
                     continue
 
                 # Pair by cross-track geometry first.  Forward distance is
@@ -377,6 +406,55 @@ class CentrelinePlanner(Node):
             ) >= -1.0
         ]
 
+    def _path_heading(self, points: Sequence[Point2]) -> Optional[float]:
+        if len(points) < 2:
+            return None
+
+        first = points[0]
+        accumulated = 0.0
+        previous = first
+        for current in points[1:]:
+            dx = current[0] - previous[0]
+            dy = current[1] - previous[1]
+            segment = math.hypot(dx, dy)
+            if segment < 1e-4:
+                continue
+
+            accumulated += segment
+            if accumulated >= 1.0:
+                return math.atan2(dy, dx)
+            previous = current
+
+        dx = points[-1][0] - first[0]
+        dy = points[-1][1] - first[1]
+        return math.atan2(dy, dx) if math.hypot(dx, dy) > 1e-4 else None
+
+    def _path_is_continuous(self, candidate: Sequence[Point2]) -> bool:
+        if self._last_path is None or len(self._last_path.poses) < 2:
+            return True
+
+        previous = [
+            (pose.pose.position.x, pose.pose.position.y)
+            for pose in self._last_path.poses
+        ]
+        old_heading = self._path_heading(previous)
+        new_heading = self._path_heading(candidate)
+
+        if old_heading is None or new_heading is None:
+            return True
+
+        heading_error = abs(wrap_to_pi(new_heading - old_heading))
+
+        # Allow a larger change only after the vehicle itself has rotated.
+        # Before that happens, an abrupt change is almost certainly a branch
+        # switch caused by the accumulated lap map.
+        vehicle_turn = abs(wrap_to_pi(self._yaw - old_heading))
+        allowed = float(self._continuity_heading_limit)
+        if vehicle_turn > math.radians(35.0):
+            allowed = math.radians(115.0)
+
+        return heading_error <= allowed
+
     def _speed_profile(self, centreline: Sequence[Point2]) -> List[float]:
         speeds = [self._max_speed] * len(centreline)
         for index in range(1, len(centreline) - 1):
@@ -416,7 +494,15 @@ class CentrelinePlanner(Node):
                 self._matched_midpoints(self._cones))
 
             if len(centreline) >= self._min_points:
-                profile = self._speed_profile(centreline)
+                if not self._path_is_continuous(centreline):
+                    self.get_logger().warn(
+                        'Rejected branch-switching centreline; holding last valid path.',
+                        throttle_duration_sec=2.0,
+                    )
+                    centreline = []
+
+                if centreline:
+                    profile = self._speed_profile(centreline)
 
                 for index, point in enumerate(centreline):
                     pose = PoseStamped()
