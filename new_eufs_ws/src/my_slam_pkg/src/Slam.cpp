@@ -96,6 +96,8 @@ public:
         declare_parameter<double>("visible_landmark_fov_deg", 120.0);
         declare_parameter<double>("visible_landmark_lateral_limit_m", 8.0);
         declare_parameter<double>("counted_cone_merge_distance_m", 1.0);
+        declare_parameter<double>("local_cone_smoothing_alpha", 0.55);
+        declare_parameter<double>("local_cone_match_distance_m", 1.0);
 
         num_particles_ = static_cast<int>(std::max<int64_t>(5, get_parameter("num_particles").as_int()));
         process_noise_xy_ =
@@ -136,10 +138,14 @@ public:
             std::clamp(get_parameter("visible_landmark_lateral_limit_m").as_double(), 2.0, 15.0);
         counted_cone_merge_distance_m_ =
             std::clamp(get_parameter("counted_cone_merge_distance_m").as_double(), 0.25, 2.0);
+        local_cone_smoothing_alpha_ =
+            std::clamp(get_parameter("local_cone_smoothing_alpha").as_double(), 0.15, 0.95);
+        local_cone_match_distance_m_ =
+            std::clamp(get_parameter("local_cone_match_distance_m").as_double(), 0.25, 2.0);
         odom_topic_ = get_parameter("odom_topic").as_string();
 
-        Q_control_ << 0.05 * 0.05, 0.0,
-                      0.0, 0.03 * 0.03;
+        Q_control_ << 0.2 * 0.2, 0.0,
+                      0.0, 0.15 * 0.15;
 
         particles_.reserve(static_cast<std::size_t>(num_particles_));
         for (int i = 0; i < num_particles_; ++i)
@@ -246,6 +252,16 @@ private:
     double visible_landmark_fov_rad_{2.09439510239};
     double visible_landmark_lateral_limit_m_{8.0};
     double counted_cone_merge_distance_m_{1.0};
+    double local_cone_smoothing_alpha_{0.55};
+    double local_cone_match_distance_m_{1.0};
+
+    struct LocalConeTrack
+    {
+        Eigen::Vector2d point{Eigen::Vector2d::Zero()};
+        int color{3};
+    };
+
+    std::vector<LocalConeTrack> previous_local_cones_;
 
     struct CountedCone
     {
@@ -1456,16 +1472,71 @@ private:
         return output;
     }
 
+    void smoothLocalConeSet(
+        std::vector<eufs_msgs::msg::ConeWithCovariance> &cones,
+        int color,
+        std::vector<LocalConeTrack> &next_tracks)
+    {
+        std::vector<bool> previous_used(previous_local_cones_.size(), false);
+
+        for (auto &cone : cones)
+        {
+            const Eigen::Vector2d current(
+                cone.point.x,
+                cone.point.y);
+
+            double best_distance = local_cone_match_distance_m_;
+            int best_index = -1;
+
+            for (std::size_t index = 0; index < previous_local_cones_.size(); ++index)
+            {
+                const auto &previous = previous_local_cones_[index];
+                if (previous_used[index] || previous.color != color)
+                    continue;
+
+                const double d = (current - previous.point).norm();
+                if (d < best_distance)
+                {
+                    best_distance = d;
+                    best_index = static_cast<int>(index);
+                }
+            }
+
+            if (best_index >= 0)
+            {
+                const Eigen::Vector2d filtered =
+                    (1.0 - local_cone_smoothing_alpha_) *
+                        previous_local_cones_[static_cast<std::size_t>(best_index)].point +
+                    local_cone_smoothing_alpha_ * current;
+
+                cone.point.x = filtered.x();
+                cone.point.y = filtered.y();
+                previous_used[static_cast<std::size_t>(best_index)] = true;
+            }
+
+            next_tracks.push_back(
+                LocalConeTrack{
+                    Eigen::Vector2d(cone.point.x, cone.point.y),
+                    color});
+        }
+    }
+
     eufs_msgs::msg::ConeArrayWithCovariance
     makeLocalMeasurementCones(
-        const Eigen::Vector3d &pose,
+        double pose_x,
+        double pose_y,
+        double pose_yaw,
         const std::vector<ConeDetection> &measurements,
-        const rclcpp::Time &stamp) const
+        const rclcpp::Time &stamp)
     {
         eufs_msgs::msg::ConeArrayWithCovariance output;
         output.header.stamp = stamp;
         output.header.frame_id = "map";
 
+        // IMPORTANT: planning/visualization must never consume the persistent
+        // FastSLAM map. The persistent map is for SLAM/counting only.
+        // These points are the cones seen by the sensor in THIS update,
+        // transformed through the current best particle pose.
         struct LocalCone
         {
             Eigen::Vector2d point;
@@ -1477,33 +1548,50 @@ private:
         std::vector<LocalCone> candidates;
         candidates.reserve(measurements.size());
 
-        constexpr double MAX_PLANNING_RANGE = 18.0;
-        constexpr double MAX_PLANNING_BEARING =
-            130.0 * PI / 180.0;
-
         for (const auto &measurement : measurements)
         {
             if (measurement.color < 0 || measurement.color > 3)
                 continue;
-            if (measurement.range <= 0.1 ||
-                measurement.range > MAX_PLANNING_RANGE)
+
+            // Sensor-consistent local window. The planner must not
+            // see cones far behind or far to the side when the vehicle is
+            // near a turn. Those observations are useful to the persistent
+            // SLAM/counting map, but not to local track following.
+            const double forward =
+                measurement.range * std::cos(measurement.bearing);
+            const double lateral =
+                measurement.range * std::sin(measurement.bearing);
+
+            if (forward < -3.0 ||
+                forward > 18.0 ||
+                std::abs(lateral) > 10.0 ||
+                std::abs(measurement.bearing) > 110.0 * PI / 180.0)
+            {
                 continue;
-            if (std::abs(measurement.bearing) > MAX_PLANNING_BEARING)
-                continue;
+            }
 
             const double theta =
-                wrapToPi(pose(2) + measurement.bearing);
+                wrapToPi(pose_yaw + measurement.bearing);
+
+            const double c = std::cos(theta);
+            const double s = std::sin(theta);
 
             LocalCone cone;
-            cone.point <<
-                pose(0) + measurement.range * std::cos(theta),
-                pose(1) + measurement.range * std::sin(theta);
-            cone.covariance = measurement.covariance;
+            cone.point << 
+                pose_x + measurement.range * c,
+                pose_y + measurement.range * s;
+            cone.covariance =
+                measurement.covariance;
             cone.color = measurement.color;
             cone.range = measurement.range;
+
             candidates.push_back(cone);
         }
 
+        // Keep the planner's local working set deliberately small. On the
+        // normal small/track runs this produces roughly the same ~5 blue +
+        // ~5 yellow cones that were stable before the persistent map began
+        // growing. Never let a large historical map become the planner input.
         constexpr std::size_t MAX_BLUE = 5;
         constexpr std::size_t MAX_YELLOW = 5;
         constexpr std::size_t MAX_ORANGE = 3;
@@ -1525,6 +1613,7 @@ private:
                     return a.range < b.range;
                 });
 
+            // Same-update duplicate suppression in the MAP frame.
             std::vector<LocalCone> selected;
             selected.reserve(limit);
 
@@ -1534,7 +1623,7 @@ private:
                 for (const auto &existing : selected)
                 {
                     if ((candidate.point - existing.point).norm() <=
-                        0.75)
+                        counted_cone_merge_distance_m_)
                     {
                         duplicate = true;
                         break;
@@ -1545,6 +1634,7 @@ private:
                     continue;
 
                 selected.push_back(candidate);
+
                 if (selected.size() >= limit)
                     break;
             }
@@ -1567,6 +1657,8 @@ private:
                     output.yellow_cones.push_back(msg);
                 else if (color == 2)
                     output.orange_cones.push_back(msg);
+                else
+                    output.unknown_color_cones.push_back(msg);
             }
         };
 
@@ -1574,8 +1666,23 @@ private:
         appendNearest(1, MAX_YELLOW);
         appendNearest(2, MAX_ORANGE);
 
+        // Cone detections from the simulator can jitter a few decimeters from
+        // frame to frame. Smooth only the short-lived local planning set; the
+        // persistent FastSLAM map and cone counts remain untouched.
+        std::vector<LocalConeTrack> next_tracks;
+        next_tracks.reserve(
+            output.blue_cones.size() +
+            output.yellow_cones.size() +
+            output.orange_cones.size());
+
+        smoothLocalConeSet(output.blue_cones, 0, next_tracks);
+        smoothLocalConeSet(output.yellow_cones, 1, next_tracks);
+        smoothLocalConeSet(output.orange_cones, 2, next_tracks);
+
+        previous_local_cones_ = std::move(next_tracks);
         return output;
     }
+
     void publishPlanningCones(
         const eufs_msgs::msg::ConeArrayWithCovariance &landmarks)
     {
@@ -1803,76 +1910,36 @@ private:
 
         const rclcpp::Time stamp = now();
 
-        // Use exactly one pose estimate for both planner-facing cone
-        // coordinates and /slam/odom. This keeps the entire planning/control
-        // loop in one consistent map frame.
         Eigen::Vector3d pose_mean;
         Eigen::Matrix3d pose_covariance;
-
-        aggregatePose(
-            pose_mean,
-            pose_covariance);
+        aggregatePose(pose_mean, pose_covariance);
 
         if (!validPoseCovariance(pose_covariance))
         {
             RCLCPP_WARN(
                 get_logger(),
-                "Aggregate pose covariance invalid; skipping planning update");
+                "Aggregate pose covariance invalid; skipping pose publication");
             return;
         }
 
+        // IMPORTANT:
+        // The persistent FastSLAM map must NOT drive the local planner.
+        // Use the weighted pose estimate rather than the single best particle
+        // so one particle winning a noisy update cannot make all visible cones
+        // jump in RViz or in the planner input.
         const auto local_measurement_cones =
             makeLocalMeasurementCones(
-                pose_mean,
+                pose_mean(0),
+                pose_mean(1),
+                pose_mean(2),
                 local_measurements,
                 stamp);
 
-        // Planning should not depend on a single camera frame. Start with
-        // persistent, covariance-aware SLAM landmarks, then add any fresh
-        // cone measurements that have not been mapped yet.
-        auto planning_landmarks =
-            aggregateLandmarks(best_particle, stamp);
+        publishPlanningCones(local_measurement_cones);
 
-        auto appendFreshIfNew =
-            [](std::vector<eufs_msgs::msg::ConeWithCovariance> &target,
-               const std::vector<eufs_msgs::msg::ConeWithCovariance> &fresh)
-        {
-            for (const auto &candidate : fresh)
-            {
-                bool duplicate = false;
-                for (const auto &existing : target)
-                {
-                    if (std::hypot(
-                            candidate.point.x - existing.point.x,
-                            candidate.point.y - existing.point.y) <= 0.75)
-                    {
-                        duplicate = true;
-                        break;
-                    }
-                }
-
-                if (!duplicate)
-                    target.push_back(candidate);
-            }
-        };
-
-        appendFreshIfNew(
-            planning_landmarks.blue_cones,
-            local_measurement_cones.blue_cones);
-        appendFreshIfNew(
-            planning_landmarks.yellow_cones,
-            local_measurement_cones.yellow_cones);
-        appendFreshIfNew(
-            planning_landmarks.orange_cones,
-            local_measurement_cones.orange_cones);
-        appendFreshIfNew(
-            planning_landmarks.big_orange_cones,
-            local_measurement_cones.big_orange_cones);
-
-        planning_landmarks.header.stamp = stamp;
-        planning_landmarks.header.frame_id = "map";
-        publishPlanningCones(planning_landmarks);
-
+        // Counts are deliberately maintained from the persistent map. This
+        // gives us the total number of cones discovered without exposing lost
+        // cones to the local planning/corridor pipeline.
         updateCountedCones(best_particle);
         publishConeCounts();
 
@@ -1880,7 +1947,8 @@ private:
         if (slam_update_count_ == 1 ||
             (slam_update_count_ % landmark_publish_stride_) == 0)
         {
-            landmark_cov_pub_->publish(planning_landmarks);
+            // /slam/landmarks follows the same current-sensor-only rule.
+            landmark_cov_pub_->publish(local_measurement_cones);
         }
 
         publishPose(
@@ -1890,8 +1958,7 @@ private:
             local_yaw_rate,
             stamp);
 
-        publishNativeMarkers(
-            particleLandmarks(best_particle, stamp));
+        publishNativeMarkers(local_measurement_cones);
 
         if (!local_measurements.empty())
         {
