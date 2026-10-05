@@ -25,7 +25,7 @@ def generate_launch_description():
             parameters=[{
                 'use_sim_time': True,
                 'cones_topic': '/camera_0/cones',
-                'odom_topic': '/custom_odom',
+                'odom_topic': '/slam/odom',
                 'min_landmark_hits': 1,
                 'num_particles': 30,
                 'landmark_match_distance': 1.0,
@@ -76,7 +76,7 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'use_sim_time': True,
-                'odom_topic': '/custom_odom',
+                'odom_topic': '/slam/odom',
                 'max_speed_limit': 1.5,
                 'min_speed_mps': 0.6,
                 'L_base': 1.53,
