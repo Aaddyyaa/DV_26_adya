@@ -56,6 +56,8 @@ def generate_launch_description():
                 'num_particles': 15,
                 'landmark_match_distance': 0.75,
                 'fallback_dt': 0.05,
+                # Official EUFS simulated camera offset (sensor behind base).
+                'sensor_offset_x_m': -0.37,
             }],
         ),
 
