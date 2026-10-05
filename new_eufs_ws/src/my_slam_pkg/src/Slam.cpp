@@ -14,6 +14,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/qos.hpp>
 #include <nav_msgs/msg/odometry.hpp>
+#include <std_msgs/msg/u_int32_multi_array.hpp>
+#include <std_msgs/msg/bool.hpp>
 
 #include "eufs_msgs/msg/cone_array.hpp"
 #include "eufs_msgs/msg/cone_array_with_covariance.hpp"
@@ -90,6 +92,10 @@ public:
         declare_parameter<double>("negative_evidence_range_m", 15.0);
         declare_parameter<double>("negative_evidence_fov_deg", 120.0);
         declare_parameter<int>("landmark_publish_stride", 2);
+        declare_parameter<double>("visible_landmark_range_m", 18.0);
+        declare_parameter<double>("visible_landmark_fov_deg", 120.0);
+        declare_parameter<double>("visible_landmark_lateral_limit_m", 8.0);
+        declare_parameter<double>("counted_cone_merge_distance_m", 1.0);
 
         num_particles_ = static_cast<int>(std::max<int64_t>(5, get_parameter("num_particles").as_int()));
         process_noise_xy_ =
@@ -121,6 +127,15 @@ public:
             PI / 180.0;
         landmark_publish_stride_ =
             static_cast<int>(std::clamp<int64_t>(get_parameter("landmark_publish_stride").as_int(), 1, 10));
+        visible_landmark_range_m_ =
+            std::clamp(get_parameter("visible_landmark_range_m").as_double(), 3.0, 30.0);
+        visible_landmark_fov_rad_ =
+            std::clamp(get_parameter("visible_landmark_fov_deg").as_double(), 60.0, 180.0) *
+            PI / 180.0;
+        visible_landmark_lateral_limit_m_ =
+            std::clamp(get_parameter("visible_landmark_lateral_limit_m").as_double(), 2.0, 15.0);
+        counted_cone_merge_distance_m_ =
+            std::clamp(get_parameter("counted_cone_merge_distance_m").as_double(), 0.25, 2.0);
         odom_topic_ = get_parameter("odom_topic").as_string();
 
         Q_control_ << 0.2 * 0.2, 0.0,
@@ -145,6 +160,24 @@ public:
         native_marker_pub_ =
             create_publisher<visualization_msgs::msg::MarkerArray>(
                 "/slam/native_cones", 10);
+        cone_count_pub_ =
+            create_publisher<std_msgs::msg::UInt32MultiArray>(
+                "/slam/cone_counts", 10);
+
+        mission_completed_sub_ =
+            create_subscription<std_msgs::msg::Bool>(
+                "/ros_can/mission_completed",
+                rclcpp::QoS(1).reliable(),
+                [this](const std_msgs::msg::Bool::SharedPtr msg)
+                {
+                    if (msg->data)
+                    {
+                        mission_completed_ = true;
+                        RCLCPP_WARN(
+                            get_logger(),
+                            "Mission completed: freezing SLAM updates and downstream cone publication.");
+                    }
+                });
 
         tf_broadcaster_ =
             std::make_unique<tf2_ros::TransformBroadcaster>(*this);
@@ -209,6 +242,19 @@ private:
     int landmark_publish_stride_{2};
     int slam_update_count_{0};
 
+    double visible_landmark_range_m_{18.0};
+    double visible_landmark_fov_rad_{2.09439510239};
+    double visible_landmark_lateral_limit_m_{8.0};
+    double counted_cone_merge_distance_m_{1.0};
+
+    struct CountedCone
+    {
+        Eigen::Vector2d mu{Eigen::Vector2d::Zero()};
+        int color{3};
+    };
+
+    std::vector<CountedCone> counted_cones_;
+
     std::vector<Particle> particles_;
     Eigen::Matrix2d Q_control_{Eigen::Matrix2d::Zero()};
 
@@ -221,9 +267,6 @@ private:
 
     double vx_{0.0};
     double yaw_rate_{0.0};
-    double odom_x_{0.0};
-    double odom_y_{0.0};
-    double odom_yaw_{0.0};
     double pending_dt_{0.0};
     double last_cone_time_sec_{0.0};
     double last_odom_time_sec_{0.0};
@@ -240,6 +283,11 @@ private:
     rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr slam_odom_pub_;
     rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
         native_marker_pub_;
+    rclcpp::Publisher<std_msgs::msg::UInt32MultiArray>::SharedPtr
+        cone_count_pub_;
+    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr
+        mission_completed_sub_;
+    bool mission_completed_{false};
 
     std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
     rclcpp::TimerBase::SharedPtr timer_;
@@ -440,14 +488,6 @@ private:
 
         vx_ = msg->twist.twist.linear.x;
         yaw_rate_ = msg->twist.twist.angular.z;
-
-        odom_x_ = msg->pose.pose.position.x;
-        odom_y_ = msg->pose.pose.position.y;
-
-        const auto &q = msg->pose.pose.orientation;
-        odom_yaw_ = std::atan2(
-            2.0 * (q.w * q.z + q.x * q.y),
-            1.0 - 2.0 * (q.y * q.y + q.z * q.z));
 
         const double current_time = stampToSec(msg->header.stamp);
 
@@ -1056,6 +1096,93 @@ private:
             std::max(covariance(2, 2), 1e-8);
     }
 
+    bool isLandmarkVisibleFromPose(
+        const Particle &particle,
+        const Landmark &landmark) const
+    {
+        const double dx = landmark.mu(0) - particle.x;
+        const double dy = landmark.mu(1) - particle.y;
+
+        const double forward =
+            dx * std::cos(particle.yaw) +
+            dy * std::sin(particle.yaw);
+
+        const double lateral =
+            -dx * std::sin(particle.yaw) +
+            dy * std::cos(particle.yaw);
+
+        // Allow a cone slightly behind the current body x-axis when the
+        // track turns sharply; the observation itself still has to be near
+        // the vehicle and inside the lateral/FOV limits.
+        if (forward < -2.0 || forward > visible_landmark_range_m_)
+            return false;
+
+        if (std::abs(lateral) > visible_landmark_lateral_limit_m_)
+            return false;
+
+        const double bearing = std::atan2(lateral, forward);
+        return std::abs(bearing) <= std::min(
+            0.5 * visible_landmark_fov_rad_,
+            110.0 * PI / 180.0);
+    }
+
+    void updateCountedCones(const Particle &reference)
+    {
+        for (const auto &landmark : reference.map)
+        {
+            if (landmark.hits < landmark_confirmation_hits_ ||
+                !validCovariance(landmark.sigma))
+            {
+                continue;
+            }
+
+            bool already_counted = false;
+            for (const auto &counted : counted_cones_)
+            {
+                if (counted.color == landmark.color &&
+                    (counted.mu - landmark.mu).norm() <=
+                        counted_cone_merge_distance_m_)
+                {
+                    already_counted = true;
+                    break;
+                }
+            }
+
+            if (!already_counted)
+            {
+                counted_cones_.push_back(
+                    CountedCone{landmark.mu, landmark.color});
+            }
+        }
+    }
+
+    void publishConeCounts()
+    {
+        std_msgs::msg::UInt32MultiArray message;
+
+        std::uint32_t blue = 0;
+        std::uint32_t yellow = 0;
+        std::uint32_t orange = 0;
+
+        for (const auto &counted : counted_cones_)
+        {
+            if (counted.color == 0)
+                ++blue;
+            else if (counted.color == 1)
+                ++yellow;
+            else if (counted.color == 2)
+                ++orange;
+        }
+
+        message.data = {
+            blue + yellow + orange,
+            blue,
+            yellow,
+            orange};
+
+        cone_count_pub_->publish(message);
+    }
+
     eufs_msgs::msg::ConeArrayWithCovariance
     aggregateLandmarks(
         const Particle &reference,
@@ -1104,10 +1231,12 @@ private:
                  ++reference_index)
             {
                 const auto &reference_landmark =
-                    reference.map[reference_index];
+                reference.map[reference_index];
 
-                if (reference_landmark.hits < min_landmark_hits_)
-                    continue;
+            if (reference_landmark.hits < min_landmark_hits_ ||
+                reference_landmark.missed_updates != 0 ||
+                !isLandmarkVisibleFromPose(reference, reference_landmark))
+                continue;
 
                 for (std::size_t candidate_index = 0;
                      candidate_index < particle.map.size();
@@ -1297,7 +1426,9 @@ private:
         for (const auto &landmark : particle.map)
         {
             if (landmark.hits < min_landmark_hits_ ||
-                !validCovariance(landmark.sigma))
+                landmark.missed_updates != 0 ||
+                !validCovariance(landmark.sigma) ||
+                !isLandmarkVisibleFromPose(particle, landmark))
             {
                 continue;
             }
@@ -1325,14 +1456,9 @@ private:
         return output;
     }
 
-    // Planner-facing cones are a LOCAL SENSOR WINDOW.
-    // The persistent FastSLAM map remains separate for /slam/landmarks,
-    // covariance, counts and RViz map visualization.
     eufs_msgs::msg::ConeArrayWithCovariance
     makeLocalMeasurementCones(
-        double pose_x,
-        double pose_y,
-        double pose_yaw,
+        const Particle &particle,
         const std::vector<ConeDetection> &measurements,
         const rclcpp::Time &stamp) const
     {
@@ -1340,6 +1466,10 @@ private:
         output.header.stamp = stamp;
         output.header.frame_id = "map";
 
+        // IMPORTANT: planning/visualization must never consume the persistent
+        // FastSLAM map. The persistent map is for SLAM/counting only.
+        // These points are the cones seen by the sensor in THIS update,
+        // transformed through the current best particle pose.
         struct LocalCone
         {
             Eigen::Vector2d point;
@@ -1356,44 +1486,31 @@ private:
             if (measurement.color < 0 || measurement.color > 3)
                 continue;
 
-            const double forward =
-                measurement.range * std::cos(measurement.bearing);
-            const double lateral =
-                measurement.range * std::sin(measurement.bearing);
-
-            // Strict local sensing window for driving.
-            if (forward < -2.5 ||
-                forward > 16.0 ||
-                std::abs(lateral) > 9.0 ||
-                std::abs(measurement.bearing) > 110.0 * PI / 180.0)
-            {
-                continue;
-            }
-
-            // EUFS convention: blue is left and yellow is right.
-            if (measurement.color == 0 && lateral < 0.15)
-                continue;
-            if (measurement.color == 1 && lateral > -0.15)
-                continue;
-
             const double theta =
-                wrapToPi(pose_yaw + measurement.bearing);
+                wrapToPi(particle.yaw + measurement.bearing);
+
+            const double c = std::cos(theta);
+            const double s = std::sin(theta);
 
             LocalCone cone;
-            cone.point <<
-                pose_x + measurement.range * std::cos(theta),
-                pose_y + measurement.range * std::sin(theta);
-            cone.covariance = measurement.covariance;
+            cone.point << 
+                particle.x + measurement.range * c,
+                particle.y + measurement.range * s;
+            cone.covariance =
+                measurement.covariance;
             cone.color = measurement.color;
             cone.range = measurement.range;
 
             candidates.push_back(cone);
         }
 
+        // Keep the planner's local working set deliberately small. On the
+        // normal small/track runs this produces roughly the same ~5 blue +
+        // ~5 yellow cones that were stable before the persistent map began
+        // growing. Never let a large historical map become the planner input.
         constexpr std::size_t MAX_BLUE = 5;
         constexpr std::size_t MAX_YELLOW = 5;
-        constexpr std::size_t MAX_ORANGE = 4;
-        constexpr double LOCAL_DEDUP_DISTANCE_M = 0.75;
+        constexpr std::size_t MAX_ORANGE = 3;
 
         auto appendNearest = [&](int color, std::size_t limit)
         {
@@ -1412,17 +1529,17 @@ private:
                     return a.range < b.range;
                 });
 
+            // Same-update duplicate suppression in the MAP frame.
             std::vector<LocalCone> selected;
             selected.reserve(limit);
 
             for (const auto &candidate : same_color)
             {
                 bool duplicate = false;
-
                 for (const auto &existing : selected)
                 {
                     if ((candidate.point - existing.point).norm() <=
-                        LOCAL_DEDUP_DISTANCE_M)
+                        counted_cone_merge_distance_m_)
                     {
                         duplicate = true;
                         break;
@@ -1440,22 +1557,24 @@ private:
 
             for (const auto &candidate : selected)
             {
-                eufs_msgs::msg::ConeWithCovariance cone;
-                cone.point.x = candidate.point.x();
-                cone.point.y = candidate.point.y();
-                cone.point.z = 0.0;
-                cone.covariance = {
+                eufs_msgs::msg::ConeWithCovariance msg;
+                msg.point.x = candidate.point.x();
+                msg.point.y = candidate.point.y();
+                msg.point.z = 0.0;
+                msg.covariance = {
                     candidate.covariance(0, 0),
                     candidate.covariance(0, 1),
                     candidate.covariance(1, 0),
                     candidate.covariance(1, 1)};
 
                 if (color == 0)
-                    output.blue_cones.push_back(cone);
+                    output.blue_cones.push_back(msg);
                 else if (color == 1)
-                    output.yellow_cones.push_back(cone);
+                    output.yellow_cones.push_back(msg);
                 else if (color == 2)
-                    output.orange_cones.push_back(cone);
+                    output.orange_cones.push_back(msg);
+                else
+                    output.unknown_color_cones.push_back(msg);
             }
         };
 
@@ -1633,9 +1752,6 @@ private:
     void runSLAM()
     {
         std::vector<ConeDetection> local_measurements;
-        std::vector<ConeDetection> primary_measurements;
-        std::vector<ConeDetection> secondary_measurements;
-        std::vector<ConeDetection> planning_measurements;
         double local_dt = 0.0;
         double local_vx = 0.0;
         double local_yaw_rate = 0.0;
@@ -1646,55 +1762,9 @@ private:
             if (!primary_z_buffer_.empty() ||
                 !secondary_z_buffer_.empty())
             {
-                primary_measurements = primary_z_buffer_;
-                secondary_measurements = secondary_z_buffer_;
-
                 mergeConeBuffers(local_measurements);
                 primary_z_buffer_.clear();
                 secondary_z_buffer_.clear();
-
-                // Camera-side preference for the local planner:
-                // camera_0 -> left/blue, camera_1 -> right/yellow.
-                for (const auto &cone : primary_measurements)
-                {
-                    if (cone.color == 0)
-                        planning_measurements.push_back(cone);
-                }
-
-                for (const auto &cone : secondary_measurements)
-                {
-                    if (cone.color == 1)
-                        planning_measurements.push_back(cone);
-                }
-
-                // Graceful fallback: if one preferred camera is sparse,
-                // supplement only from the current union, never old landmarks.
-                std::size_t blue_count = 0;
-                std::size_t yellow_count = 0;
-                for (const auto &cone : planning_measurements)
-                {
-                    if (cone.color == 0)
-                        ++blue_count;
-                    else if (cone.color == 1)
-                        ++yellow_count;
-                }
-
-                if (blue_count < 2 || yellow_count < 2)
-                {
-                    for (const auto &cone : local_measurements)
-                    {
-                        if (cone.color == 0 && blue_count < 5)
-                        {
-                            planning_measurements.push_back(cone);
-                            ++blue_count;
-                        }
-                        else if (cone.color == 1 && yellow_count < 5)
-                        {
-                            planning_measurements.push_back(cone);
-                            ++yellow_count;
-                        }
-                    }
-                }
             }
 
             local_dt = pending_dt_;
@@ -1742,24 +1812,33 @@ private:
 
         const rclcpp::Time stamp = now();
 
-        // IMPORTANT: planning uses only cones observed in this update.
-        // The persistent map stays on the separate /slam/landmarks path.
+        // IMPORTANT:
+        // The persistent FastSLAM map must NOT drive the local planner.
+        // When the car leaves the track, old map landmarks (and newly mapped
+        // grid cones) can otherwise become candidate gates. Feed the planner
+        // only the sensor observations from this SLAM update.
         const auto local_measurement_cones =
             makeLocalMeasurementCones(
-                odom_x_,
-                odom_y_,
-                odom_yaw_,
-                planning_measurements,
+                best_particle,
+                local_measurements,
                 stamp);
+
         publishPlanningCones(local_measurement_cones);
+
+        // Counts are deliberately maintained from the persistent map. This
+        // gives us the total number of cones discovered without exposing lost
+        // cones to the local planning/corridor pipeline.
+        updateCountedCones(best_particle);
+        publishConeCounts();
 
         ++slam_update_count_;
         if (slam_update_count_ == 1 ||
             (slam_update_count_ % landmark_publish_stride_) == 0)
         {
-            const auto aggregated_landmarks =
-                aggregateLandmarks(best_particle, stamp);
-            landmark_cov_pub_->publish(aggregated_landmarks);
+            // /slam/landmarks remains the persistent map; only /planning/cones
+            // receives the current local sensor window.
+            landmark_cov_pub_->publish(
+                aggregateLandmarks(best_particle, stamp));
         }
 
         Eigen::Vector3d pose_mean;
@@ -1784,8 +1863,8 @@ private:
             local_yaw_rate,
             stamp);
 
-        // RViz keeps the persistent FastSLAM map, including orange cones.
-        publishNativeMarkers(particleLandmarks(best_particle, stamp));
+        publishNativeMarkers(
+            particleLandmarks(best_particle, stamp));
 
         if (!local_measurements.empty())
         {
@@ -1810,14 +1889,12 @@ private:
                 get_logger(),
                 *get_clock(),
                 2000,
-                "FastSLAM update: raw=%zu local_blue=%zu local_yellow=%zu persistent=%zu blue=%zu yellow=%zu orange=%zu",
+                "FastSLAM update: measurements=%zu local_blue=%zu local_yellow=%zu local_orange=%zu persistent_landmarks=%zu",
                 local_measurements.size(),
                 local_measurement_cones.blue_cones.size(),
                 local_measurement_cones.yellow_cones.size(),
-                best_particle.map.size(),
-                blue,
-                yellow,
-                orange);
+                local_measurement_cones.orange_cones.size(),
+                best_particle.map.size());
         }
     }
 };
