@@ -169,8 +169,12 @@ public:
             particles_.push_back(particle);
         }
 
+        // In simulation-lap mode the planner receives the official
+        // map-frame ground-truth track through sim_track_bridge. Keep SLAM's
+        // local cone stream on a separate topic so two publishers never mix
+        // different coordinate estimates on /planning/cones.
         cones_pub_ =
-            create_publisher<eufs_msgs::msg::ConeArray>("/planning/cones", 10);
+            create_publisher<eufs_msgs::msg::ConeArray>("/slam/planning_cones", 10);
         landmark_cov_pub_ =
             create_publisher<eufs_msgs::msg::ConeArrayWithCovariance>(
                 "/slam/landmarks", 10);
