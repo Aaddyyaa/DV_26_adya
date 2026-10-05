@@ -47,6 +47,13 @@ private:
             previous_x_ = x;
             previous_y_ = y;
             have_start_ = true;
+
+            RCLCPP_INFO(
+                get_logger(),
+                "LAP STARTED: start=(%.2f, %.2f), heading=%.2f rad.",
+                start_x_,
+                start_y_,
+                start_yaw_);
             return;
         }
 
@@ -75,9 +82,9 @@ private:
             finish_pub_->publish(msg_out);
             completed_ = true;
 
-            RCLCPP_WARN(
+            RCLCPP_INFO(
                 get_logger(),
-                "FULL LAP COMPLETE: traveled %.2f m, finish distance %.2f m.",
+                "LAP COMPLETED: traveled %.2f m, finish distance %.2f m.",
                 total_distance_,
                 distance_to_start);
         }
