@@ -177,7 +177,10 @@ class RunMetricsLogger(Node):
         )
 
         self._actual_speed = message.twist.twist.linear.x
-        self._slam0 = (self._x, self._y, self._yaw)
+        # Capture the SLAM/map frame origin exactly once. Updating this every
+        # callback makes the GT-to-SLAM transform move with the vehicle.
+        if self._slam0 is None:
+            self._slam0 = (self._x, self._y, self._yaw)
 
     def _ground_truth_callback(self, message: CarState) -> None:
         x = message.pose.pose.position.x
@@ -244,14 +247,9 @@ class RunMetricsLogger(Node):
         # /target_speeds is indexed to /target_path. Keep the full profile so
         # the logger can report the speed target at the vehicle's current
         # path index instead of always reporting element zero.
-        # Keep a global union of generated reference points for a complete
-        # planned-vs-travelled plot after the local path moves with the car.
-        for point in self._target_path:
-            if not self._reference_history or math.hypot(
-                point[0] - self._reference_history[-1][0],
-                point[1] - self._reference_history[-1][1],
-            ) > 0.25:
-                self._reference_history.append(point)  
+        # A rolling union of local paths is not a physical reference
+        # trajectory and can inflate its apparent length dramatically.
+        self._reference_history = list(self._target_path)  
 
 
     def _cmd_callback(self, message: AckermannDriveStamped) -> None:
@@ -261,9 +259,8 @@ class RunMetricsLogger(Node):
 
     def _speed_callback(self, message: Float64MultiArray) -> None:
         self._target_speeds = [float(value) for value in message.data]
-        self._target_speed = (
-            self._target_speeds[0] if self._target_speeds else None
-        )
+        if not self._target_speeds:
+            self._target_speed = None
 
     def _landmark_callback(self, message: ConeArrayWithCovariance) -> None:
         self._blue = len(message.blue_cones)
