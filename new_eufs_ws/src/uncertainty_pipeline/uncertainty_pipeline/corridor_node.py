@@ -34,6 +34,12 @@ class CorridorNode(Node):
         self._safety_k = float(self.declare_parameter('safety_k', 2.0).value)
         self._grid_step_m = float(self.declare_parameter('grid_step_m', 0.5).value)
         self._dedup_distance_m = float(self.declare_parameter('dedup_distance_m', 0.75).value)
+        self._local_forward_m = float(
+            self.declare_parameter('local_forward_m', 18.0).value)
+        self._local_lateral_m = float(
+            self.declare_parameter('local_lateral_m', 10.0).value)
+        self._local_fov_deg = float(
+            self.declare_parameter('local_fov_deg', 110.0).value)
         self._landmarks_topic = self.declare_parameter(
             'landmarks_topic', '/slam/landmarks').value
         self._odom_topic = self.declare_parameter('odom_topic', '/slam/odom').value
@@ -104,9 +110,13 @@ class CorridorNode(Node):
         if self._pose is None or self._pose_covariance is None or not self._landmarks:
             return
         blue = local_boundary_samples(
-            self._landmarks, self._pose, self._pose_covariance, BLUE, self._dedup_distance_m)
+            self._landmarks, self._pose, self._pose_covariance,
+            BLUE, self._dedup_distance_m,
+            self._local_forward_m, self._local_lateral_m, self._local_fov_deg)
         yellow = local_boundary_samples(
-            self._landmarks, self._pose, self._pose_covariance, YELLOW, self._dedup_distance_m)
+            self._landmarks, self._pose, self._pose_covariance,
+            YELLOW, self._dedup_distance_m,
+            self._local_forward_m, self._local_lateral_m, self._local_fov_deg)
         corridor = build_corridor(blue, yellow, self._safety_k, self._grid_step_m)
         if not corridor:
             # Keep raw boundary means visible even when there is no positive
