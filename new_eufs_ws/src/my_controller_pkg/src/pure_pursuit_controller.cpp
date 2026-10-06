@@ -142,15 +142,32 @@ private:
         double L_base = get_parameter("L_base").as_double();
         double Ld = std::max(1.2, get_parameter("L_min").as_double() + get_parameter("k_pure").as_double() * std::abs(vx_));
         
-        // 2. Find the Lookahead Point
+        // 2. Find the Lookahead Point by distance ALONG THE PLANNED PATH.
+        // The previous implementation required the lookahead point to have a
+        // positive dot product with the vehicle's current heading. At a sharp
+        // corner the correct next point can briefly be lateral or even have a
+        // slightly negative projection onto the current heading, so that test
+        // could skip the actual route and fall back to the path endpoint.
+        // Following path arc-length keeps pure pursuit on the planned route.
         size_t idx_ld = last_closest_idx_;
-        for (size_t i = last_closest_idx_; i < N; ++i) {
-            double dx = path_.poses[i].pose.position.x - x_;
-            double dy = path_.poses[i].pose.position.y - y_;
-            if (std::hypot(dx, dy) >= Ld && (dx * std::cos(psi_) + dy * std::sin(psi_)) > 0.0) { 
-                idx_ld = i; break; 
+        double accumulated_distance = 0.0;
+
+        for (size_t i = last_closest_idx_; i + 1 < N; ++i) {
+            const double sx =
+                path_.poses[i + 1].pose.position.x -
+                path_.poses[i].pose.position.x;
+            const double sy =
+                path_.poses[i + 1].pose.position.y -
+                path_.poses[i].pose.position.y;
+
+            accumulated_distance += std::hypot(sx, sy);
+
+            if (accumulated_distance >= Ld) {
+                idx_ld = i + 1;
+                break;
             }
-            if (i == N - 1) idx_ld = N - 1;
+
+            idx_ld = i + 1;
         }
         
         double tx = path_.poses[idx_ld].pose.position.x;
