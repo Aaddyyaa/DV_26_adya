@@ -40,6 +40,20 @@ class CentrelinePlanner(Node):
         self._max_segment = self.declare_parameter('max_segment_length_m', 12.0).value
         self._path_hold_sec = self.declare_parameter(
             'path_hold_time_sec', 1.5).value
+
+        # Protect a healthy route from a transient sparse cone update. The
+        # previous path is only retained briefly and only when it still extends
+        # meaningfully ahead of the car.
+        self._degraded_path_hold_sec = float(
+            self.declare_parameter(
+                'degraded_path_hold_sec', 1.0).value)
+        self._degraded_path_ratio = float(
+            self.declare_parameter(
+                'degraded_path_ratio', 0.55).value)
+        self._degraded_path_min_m = float(
+            self.declare_parameter(
+                'degraded_path_min_m', 4.0).value)
+
         self._allow_pair_reuse_fallback = self.declare_parameter(
             'allow_pair_reuse_fallback', False).value
         self._cone_dedup_distance = self.declare_parameter(
@@ -394,6 +408,20 @@ class CentrelinePlanner(Node):
             speeds[-1] = min(speeds[-1], speeds[-2] if len(speeds) > 1 else self._max_speed)
         return speeds
 
+    @staticmethod
+    def _polyline_length(points: Sequence[Point2]) -> float:
+        total = 0.0
+        for first, second in zip(points, points[1:]):
+            total += distance(first, second)
+        return total
+
+    @staticmethod
+    def _path_endpoint(path: Path) -> Optional[Point2]:
+        if not path.poses:
+            return None
+        pose = path.poses[-1].pose.position
+        return pose.x, pose.y
+
     def _restamp_path(self, source: Path) -> Path:
         path = Path()
         path.header.stamp = self.get_clock().now().to_msg()
@@ -439,12 +467,56 @@ class CentrelinePlanner(Node):
                     pose.pose.orientation.w = math.cos(yaw * 0.5)
                     path.poses.append(pose)
 
-                speeds.data = profile
-                self._last_path = path
-                self._last_speeds = list(profile)
-                self._last_valid_plan_time = (
-                    self.get_clock().now().nanoseconds * 1e-9
-                )
+                now_sec = self.get_clock().now().nanoseconds * 1e-9
+
+                candidate_length = self._polyline_length(centreline)
+                accept_candidate = True
+
+                if (
+                    self._last_path is not None
+                    and self._last_valid_plan_time is not None
+                    and now_sec - self._last_valid_plan_time
+                    <= self._degraded_path_hold_sec
+                    and len(self._last_path.poses) >= 2
+                ):
+                    previous_points = [
+                        (
+                            pose.pose.position.x,
+                            pose.pose.position.y,
+                        )
+                        for pose in self._last_path.poses
+                    ]
+                    previous_length = self._polyline_length(previous_points)
+                    endpoint = self._path_endpoint(self._last_path)
+
+                    if endpoint is not None:
+                        endpoint_distance = distance(
+                            endpoint, self._position)
+
+                        # Keep a longer established route when the new route
+                        # collapses by roughly half while the old endpoint is
+                        # still safely ahead. This is the transient-dropout
+                        # case we saw near the end of the lap.
+                        if (
+                            endpoint_distance > 2.5
+                            and candidate_length < max(
+                                self._degraded_path_min_m,
+                                previous_length *
+                                self._degraded_path_ratio,
+                            )
+                        ):
+                            accept_candidate = False
+
+                if accept_candidate:
+                    speeds.data = profile
+                    self._last_path = path
+                    self._last_speeds = list(profile)
+                    self._last_valid_plan_time = now_sec
+                else:
+                    self.get_logger().warn(
+                        'Holding previous healthy path after sparse cone update.',
+                        throttle_duration_sec=2.0,
+                    )
 
         if not path.poses:
             now_sec = self.get_clock().now().nanoseconds * 1e-9
