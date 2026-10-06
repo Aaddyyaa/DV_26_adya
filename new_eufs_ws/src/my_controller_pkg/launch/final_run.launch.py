@@ -75,7 +75,7 @@ def generate_launch_description():
             launch_arguments={
                 "gazebo_gui": "false",
                 "rviz": "true",
-                "show_rqt_gui": "false",
+                "show_rqt_gui": "true",
                 "vehicleModel": "DynamicBicycle",
                 "commandMode": "acceleration",
                 "robot_name": "eufs",
