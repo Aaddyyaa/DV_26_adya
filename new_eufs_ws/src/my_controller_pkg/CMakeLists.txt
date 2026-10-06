@@ -31,13 +31,6 @@ ament_target_dependencies(joint_state_relay
   sensor_msgs
 )
 
-# Simulation-only ground-truth track bridge for robust EUFS lap validation.
-add_executable(sim_track_bridge src/sim_track_bridge.cpp)
-ament_target_dependencies(sim_track_bridge
-  rclcpp
-  eufs_msgs
-)
-
 # 1. Build the Pure Pursuit Controller
 add_executable(pure_pursuit_node src/pure_pursuit_controller.cpp)
 ament_target_dependencies(pure_pursuit_node
@@ -72,7 +65,6 @@ install(TARGETS
   pure_pursuit_node
   mission_manager
   lap_guard_node
-  sim_track_bridge
   DESTINATION lib/${PROJECT_NAME}
 )
 
