@@ -227,9 +227,27 @@ class CentrelinePlanner(Node):
         if not forward_gates:
             return []
 
-        first = min(
-            forward_gates,
-            key=lambda point: distance(point, self._position))
+        continuity_target: Optional[Point2] = None
+        previous_points: List[Point2] = []
+        if self._last_path is not None and self._last_path.poses:
+            previous_points = [
+                (pose.pose.position.x, pose.pose.position.y)
+                for pose in self._last_path.poses
+            ]
+            nearest_old = min(
+                range(len(previous_points)),
+                key=lambda i: distance(previous_points[i], self._position))
+            continuity_target = previous_points[
+                min(nearest_old + 2, len(previous_points) - 1)
+            ]
+
+        def first_score(point: Point2) -> float:
+            score = distance(point, self._position)
+            if continuity_target is not None:
+                score += 1.5 * distance(point, continuity_target)
+            return score
+
+        first = min(forward_gates, key=first_score)
         ordered = [first]
         unused.remove(first)
 
@@ -268,10 +286,18 @@ class CentrelinePlanner(Node):
                 if turn_angle > math.radians(135.0):
                     continue
 
+                continuity_distance = 0.0
+                if continuity_target is not None and previous_points:
+                    ref_index = min(len(ordered), len(previous_points) - 1)
+                    continuity_distance = distance(point, previous_points[ref_index])
+                    if continuity_distance > 5.0:
+                        continue
+
                 score = (
                     1.0 * segment
                     + 0.75 * turn_angle
                     + 2.0 * max(0.0, -alignment)
+                    + 1.25 * continuity_distance
                 )
 
                 if score < best_score:
@@ -279,89 +305,10 @@ class CentrelinePlanner(Node):
                     best = point
 
             if best is None:
-                # Final-bend fallback: keep the proven local planner and only
-                # look globally when the local gate graph has ended. The
-                # candidate is still constrained by the current endpoint,
-                # route direction, track width, and cone station, so this
-                # cannot create the cross-track pairing seen with a fully
-                # global planner.
-                continuation = None
-                continuation_score = float('inf')
-
-                for blue_point in blue_points:
-                    for yellow_point in yellow_points:
-                        blue_station = (
-                            (blue_point[0] - previous[0]) * direction[0]
-                            + (blue_point[1] - previous[1]) * direction[1]
-                        )
-                        yellow_station = (
-                            (yellow_point[0] - previous[0]) * direction[0]
-                            + (yellow_point[1] - previous[1]) * direction[1]
-                        )
-                        station_gap = abs(blue_station - yellow_station)
-                        if station_gap > 2.0:
-                            continue
-
-                        width = distance(blue_point, yellow_point)
-                        if not (
-                            self._min_track_width
-                            <= width
-                            <= self._max_track_width
-                        ):
-                            continue
-
-                        midpoint = (
-                            0.5 * (blue_point[0] + yellow_point[0]),
-                            0.5 * (blue_point[1] + yellow_point[1]),
-                        )
-                        dx = midpoint[0] - previous[0]
-                        dy = midpoint[1] - previous[1]
-                        segment = math.hypot(dx, dy)
-
-                        if segment < 0.9 or segment > 8.0:
-                            continue
-
-                        unit_x = dx / segment
-                        unit_y = dy / segment
-                        alignment = (
-                            unit_x * direction[0]
-                            + unit_y * direction[1]
-                        )
-                        if alignment < -0.35:
-                            continue
-
-                        turn_angle = abs(math.atan2(
-                            direction[0] * unit_y - direction[1] * unit_x,
-                            alignment,
-                        ))
-                        if turn_angle > math.radians(145.0):
-                            continue
-
-                        if any(
-                            distance(midpoint, existing) < 0.75
-                            for existing in ordered
-                        ):
-                            continue
-
-                        score = (
-                            1.0 * segment
-                            + 0.8 * turn_angle
-                            + 0.8 * abs(width - 3.5)
-                            + 0.8 * station_gap
-                        )
-                        if score < continuation_score:
-                            continuation_score = score
-                            continuation = midpoint
-
-                if continuation is None:
-                    break
-
-                dx = continuation[0] - previous[0]
-                dy = continuation[1] - previous[1]
-                segment = math.hypot(dx, dy)
-                direction = (dx / segment, dy / segment)
-                ordered.append(continuation)
-                continue
+                # Never jump to a distant mapped section when the local
+                # route graph ends. A sparse observation is handled by the
+                # path-hold logic below instead.
+                break
 
             dx = best[0] - previous[0]
             dy = best[1] - previous[1]
