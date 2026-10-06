@@ -1,5 +1,4 @@
 #include <memory>
-#include <chrono>
 #include <cmath>
 #include <algorithm>
 #include <vector>
@@ -18,8 +17,6 @@ using std::placeholders::_1;
 class HybridControllerNode : public rclcpp::Node {
 public:
     HybridControllerNode() : Node("pure_pursuit_node") {
-        this->declare_parameter("odom_topic", std::string("/ground_truth/odom"));
-
         // Lateral Control (Steering) Parameters
         this->declare_parameter("L_base", 1.53);      
         this->declare_parameter("L_min", 1.5);        
@@ -33,11 +30,8 @@ public:
         this->declare_parameter("min_speed_mps", 0.6);
 
         // Subscribers
-        const std::string odom_topic =
-            get_parameter("odom_topic").as_string();
-
         odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
-            odom_topic, 10, std::bind(&HybridControllerNode::odomCallback, this, _1));
+            "/slam/odom", 10, std::bind(&HybridControllerNode::odomCallback, this, _1));
         path_sub_ = this->create_subscription<nav_msgs::msg::Path>(
             "/target_path", 10, std::bind(&HybridControllerNode::pathCallback, this, _1));
 
@@ -56,9 +50,6 @@ public:
             
         // Publishers
         drive_pub_ = this->create_publisher<ackermann_msgs::msg::AckermannDriveStamped>("/cmd", 10);
-        eufs_drive_pub_ =
-            this->create_publisher<ackermann_msgs::msg::AckermannDriveStamped>(
-                "/control/driving_command", 10);
         vis_pub_ = this->create_publisher<visualization_msgs::msg::Marker>("lookahead_marker", 10);
 
         timer_ = this->create_wall_timer(std::chrono::milliseconds(50), std::bind(&HybridControllerNode::controlLoop, this));
@@ -72,7 +63,6 @@ private:
     std::vector<double> speed_profile_; // Stores data from /target_speeds
     bool has_odom_ = false, has_path_ = false;
     bool mission_completed_ = false;
-    std::chrono::steady_clock::time_point startup_time_ = std::chrono::steady_clock::now();
     double last_steering_ = 0.0;
     size_t last_closest_idx_ = 0;
 
@@ -82,7 +72,6 @@ private:
     rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr mission_completed_sub_;
 
     rclcpp::Publisher<ackermann_msgs::msg::AckermannDriveStamped>::SharedPtr drive_pub_;
-    rclcpp::Publisher<ackermann_msgs::msg::AckermannDriveStamped>::SharedPtr eufs_drive_pub_;
     rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr vis_pub_;
     rclcpp::TimerBase::SharedPtr timer_;
 
@@ -123,7 +112,6 @@ private:
         msg.drive.acceleration = -get_parameter("max_decel").as_double();
         msg.drive.steering_angle = last_steering_;
         drive_pub_->publish(msg);
-        eufs_drive_pub_->publish(msg);
     }
 
     void controlLoop() {
@@ -132,28 +120,7 @@ private:
             return;
         }
 
-        if (!has_odom_) return;
-
-        if (!has_path_) {
-            // Simulator startup can briefly precede planner path publication.
-            // Give the vehicle a very small straight crawl for at most 1.5 s
-            // so the state estimator/SLAM can initialize, then fail closed.
-            const double startup_age =
-                std::chrono::duration<double>(
-                    std::chrono::steady_clock::now() - startup_time_).count();
-
-            if (startup_age <= 1.5) {
-                ackermann_msgs::msg::AckermannDriveStamped startup_msg;
-                startup_msg.header.stamp = this->now();
-                startup_msg.drive.speed = 0.8;
-                startup_msg.drive.acceleration = get_parameter("max_accel").as_double();
-                startup_msg.drive.steering_angle = 0.0;
-                drive_pub_->publish(startup_msg);
-                eufs_drive_pub_->publish(startup_msg);
-            }
-            return;
-        }
-
+        if (!has_odom_ || !has_path_) return;
         size_t N = path_.poses.size(); 
         if (N < 2) return;
 
@@ -258,7 +225,6 @@ private:
             drive_msg.drive.steering_angle,
             N);
         drive_pub_->publish(drive_msg);
-        eufs_drive_pub_->publish(drive_msg);
     }
 };
 
