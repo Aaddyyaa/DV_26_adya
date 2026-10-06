@@ -23,17 +23,6 @@ def generate_launch_description():
             parameters=[sim_time],
         ),
 
-        # Simulation validation path: use the official EUFS complete track
-        # as a map-frame source. SLAM remains running in parallel for research
-        # metrics, but cannot destabilize the driving path.
-        Node(
-            package='my_controller_pkg',
-            executable='sim_track_bridge',
-            name='sim_track_bridge',
-            output='screen',
-            parameters=[sim_time],
-        ),
-
         Node(
             package='my_state_estimator',
             executable='state_estimator_node',
@@ -78,23 +67,17 @@ def generate_launch_description():
             parameters=[{
                 'use_sim_time': True,
                 'planning_cones_topic': '/planning/cones',
-                'odom_topic': '/ground_truth/odom',
-                'min_centerline_points': 3,
-                'min_track_width_m': 2.0,
-                'max_track_width_m': 5.5,
-                'max_segment_length_m': 6.0,
+                'odom_topic': '/slam/odom',
+                'min_centerline_points': 2,
+                'min_track_width_m': 1.5,
+                'max_track_width_m': 6.0,
+                'max_segment_length_m': 12.0,
                 'allow_pair_reuse_fallback': False,
                 'cone_dedup_distance_m': 0.75,
-                'nominal_track_width_m': 4.5,
-                'max_pair_station_gap_m': 2.5,
-                'max_gate_turn_deg': 95.0,
-                'local_range_m': 18.0,
-                'local_half_width_m': 9.0,
-                'path_sample_step_m': 0.5,
-                'max_path_jump_m': 3.5,
                 'path_hold_time_sec': 2.5,
                 'max_speed_mps': 2.0,
-                'min_speed_mps': 0.6,            }],
+                'min_speed_mps': 0.6,
+            }],
         ),
 
         Node(
@@ -119,7 +102,6 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'use_sim_time': True,
-                'odom_topic': '/ground_truth/odom',
                 'max_speed_limit': 2.0,
                 'min_speed_mps': 0.6,
                 'L_base': 1.53,
