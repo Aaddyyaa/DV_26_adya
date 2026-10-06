@@ -169,12 +169,8 @@ public:
             particles_.push_back(particle);
         }
 
-        // In simulation-lap mode the planner receives the official
-        // map-frame ground-truth track through sim_track_bridge. Keep SLAM's
-        // local cone stream on a separate topic so two publishers never mix
-        // different coordinate estimates on /planning/cones.
         cones_pub_ =
-            create_publisher<eufs_msgs::msg::ConeArray>("/slam/planning_cones", 10);
+            create_publisher<eufs_msgs::msg::ConeArray>("/planning/cones", 10);
         landmark_cov_pub_ =
             create_publisher<eufs_msgs::msg::ConeArrayWithCovariance>(
                 "/slam/landmarks", 10);
@@ -371,15 +367,8 @@ private:
         std::vector<ConeDetection> &buffer)
     {
         ConeDetection detection;
-
-        // /camera_0/cones and the recorded simulator messages are already
-        // expressed in base_footprint. Do not apply the EUFS camera offset a
-        // second time; doing so shifts every observation and corrupts SLAM.
-        const double base_x = cone.point.x;
-        const double base_y = cone.point.y;
-
-        detection.range = std::hypot(base_x, base_y);
-        detection.bearing = std::atan2(base_y, base_x);
+        detection.range = std::hypot(cone.point.x, cone.point.y);
+        detection.bearing = std::atan2(cone.point.y, cone.point.x);
         detection.color = color;
 
         Eigen::Matrix2d point_covariance;
