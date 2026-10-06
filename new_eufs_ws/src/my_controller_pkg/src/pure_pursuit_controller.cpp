@@ -1,6 +1,7 @@
 #include <memory>
 #include <cmath>
 #include <algorithm>
+#include <limits>
 #include <vector>
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/odometry.hpp>
@@ -73,6 +74,9 @@ private:
     bool mission_completed_ = false;
     double last_steering_ = 0.0;
     size_t last_closest_idx_ = 0;
+    bool has_target_anchor_ = false;
+    double last_target_x_ = 0.0;
+    double last_target_y_ = 0.0;
 
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
     rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr path_sub_;
@@ -102,11 +106,29 @@ private:
     void pathCallback(const nav_msgs::msg::Path::SharedPtr msg) {
         path_ = *msg;
         has_path_ = !path_.poses.empty();
-        last_closest_idx_ = 0;
         if (!has_path_) {
+            has_target_anchor_ = false;
+            last_closest_idx_ = 0;
             last_steering_ = 0.0;
-            vx_ = 0.0;
+            return;
         }
+
+        // Planner paths are local and republished frequently. Preserve route
+        // progress using the previous lookahead target.
+        const double anchor_x = has_target_anchor_ ? last_target_x_ : x_;
+        const double anchor_y = has_target_anchor_ ? last_target_y_ : y_;
+        double best_d = std::numeric_limits<double>::infinity();
+        size_t best_idx = 0;
+        for (size_t i = 0; i < path_.poses.size(); ++i) {
+            const double dx = path_.poses[i].pose.position.x - anchor_x;
+            const double dy = path_.poses[i].pose.position.y - anchor_y;
+            const double d = std::hypot(dx, dy);
+            if (d < best_d) {
+                best_d = d;
+                best_idx = i;
+            }
+        }
+        last_closest_idx_ = best_idx;
     }
 
     void speedProfileCallback(const std_msgs::msg::Float64MultiArray::SharedPtr msg) {
@@ -132,12 +154,35 @@ private:
         size_t N = path_.poses.size(); 
         if (N < 2) return;
 
-        // 1. Find the closest point to the car
-        double min_d = 1e9;
-        for (size_t i = 0; i < N; ++i) {
-            double d = std::hypot(path_.poses[i].pose.position.x - x_, path_.poses[i].pose.position.y - y_);
-            if (d < min_d) { min_d = d; last_closest_idx_ = i; }
+        // 1. Search only near previous route progress. A global nearest
+        // point can jump to another spatially-close section of a closed track.
+        const size_t backtrack = 3;
+        const size_t forward_window = 24;
+        const size_t search_begin =
+            last_closest_idx_ > backtrack ? last_closest_idx_ - backtrack : 0;
+        const size_t search_end =
+            std::min(N - 1, last_closest_idx_ + forward_window);
+
+        double min_d = std::numeric_limits<double>::infinity();
+        size_t best_closest_idx = last_closest_idx_;
+        for (size_t i = search_begin; i <= search_end; ++i) {
+            const double d = std::hypot(
+                path_.poses[i].pose.position.x - x_,
+                path_.poses[i].pose.position.y - y_);
+            if (d < min_d) {
+                min_d = d;
+                best_closest_idx = i;
+            }
         }
+
+        if (min_d > 5.0) {
+            RCLCPP_WARN_THROTTLE(
+                this->get_logger(), *this->get_clock(), 2000,
+                "Target path disconnected by %.2f m; stopping safely.", min_d);
+            publishStopCommand();
+            return;
+        }
+        last_closest_idx_ = best_closest_idx;
 
         double L_base = get_parameter("L_base").as_double();
         double Ld = std::max(1.2, get_parameter("L_min").as_double() + get_parameter("k_pure").as_double() * std::abs(vx_));
@@ -172,6 +217,9 @@ private:
         
         double tx = path_.poses[idx_ld].pose.position.x;
         double ty = path_.poses[idx_ld].pose.position.y;
+        last_target_x_ = tx;
+        last_target_y_ = ty;
+        has_target_anchor_ = true;
         
         // --- LATERAL CONTROL (PURE PURSUIT) ---
         double dx = tx - x_; 
