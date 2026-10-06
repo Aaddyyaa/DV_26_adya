@@ -332,12 +332,6 @@ class RunMetricsLogger(Node):
         return best_projection[0], best_projection[1], best_error
 
     def _write_row(self) -> None:
-        target = (
-            ""
-            if self._target_speed is None
-            else self._target_speed
-        )
-
         target_x, target_y, cte = self._reference_error()
 
         # Report the target speed associated with the closest current path
@@ -347,6 +341,12 @@ class RunMetricsLogger(Node):
             self._target_speed = self._target_speeds[target_index]
         elif not self._target_speeds:
             self._target_speed = None
+
+        target = (
+            ""
+            if self._target_speed is None
+            else self._target_speed
+        )
 
         valid_fraction = (
             self._corridor_valid / self._corridor_samples
