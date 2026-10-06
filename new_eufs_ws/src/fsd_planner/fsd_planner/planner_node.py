@@ -513,6 +513,10 @@ class CentrelinePlanner(Node):
                     self._last_speeds = list(profile)
                     self._last_valid_plan_time = now_sec
                 else:
+                    # Clear the candidate path so the normal path-hold block
+                    # below actually republishes the previous healthy route.
+                    path.poses.clear()
+                    speeds.data.clear()
                     self.get_logger().warn(
                         'Holding previous healthy path after sparse cone update.',
                         throttle_duration_sec=2.0,
