@@ -16,6 +16,8 @@ public:
         finish_radius_ = declare_parameter("finish_radius_m", 3.0);
         finish_line_half_width_ =
             declare_parameter("finish_line_half_width_m", 3.0);
+        finish_heading_tolerance_rad_ =
+            declare_parameter("finish_heading_tolerance_rad", 1.6);
 
         gt_sub_ = create_subscription<eufs_msgs::msg::CarState>(
             "/ground_truth/state",
@@ -27,8 +29,8 @@ public:
 
         RCLCPP_INFO(
             get_logger(),
-            "Lap guard armed: finish after %.1f m traveled, finish radius %.1f m, line half-width %.1f m.",
-            min_distance_, finish_radius_, finish_line_half_width_);
+            "Lap guard armed: finish after %.1f m traveled, radius %.1f m, line half-width %.1f m, heading tolerance %.2f rad.",
+            min_distance_, finish_radius_, finish_line_half_width_, finish_heading_tolerance_rad_);
     }
 
 private:
@@ -109,7 +111,7 @@ private:
 
         const bool inside_finish_circle =
             distance_to_start <= finish_radius_ &&
-            std::abs(heading_error) <= 1.2;
+            std::abs(heading_error) <= finish_heading_tolerance_rad_;
 
         if (crossed_start_gate || inside_finish_circle)
         {
@@ -122,10 +124,11 @@ private:
 
             RCLCPP_INFO(
                 get_logger(),
-                "LAP COMPLETED: traveled %.2f m, finish distance %.2f m%s.",
+                "LAP COMPLETED: traveled %.2f m, finish distance %.2f m, heading error %.2f rad%s.",
                 total_distance_,
                 distance_to_start,
-                crossed_start_gate ? " (finish-line crossing)" : "");
+                std::abs(heading_error),
+                crossed_start_gate ? " (finish-line crossing)" : " (finish circle)");
         }
     }
 
@@ -135,6 +138,7 @@ private:
     double min_distance_{60.0};
     double finish_radius_{3.0};
     double finish_line_half_width_{3.0};
+    double finish_heading_tolerance_rad_{1.6};
     double start_x_{0.0};
     double start_y_{0.0};
     double start_yaw_{0.0};
