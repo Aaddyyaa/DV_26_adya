@@ -146,6 +146,7 @@ def generate_launch_description():
                 'min_distance_before_finish_m': 60.0,
                 'finish_radius_m': 3.0,
                 'finish_line_half_width_m': 3.0,
+                'finish_heading_tolerance_rad': 1.6,
             }],
         ),
 
