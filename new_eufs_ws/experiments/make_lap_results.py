@@ -110,10 +110,11 @@ def main() -> int:
     duration = max(times[-1], 0.0)
     completed = bool(int(value(rows[-1], "lap_completed") or 0))
 
-    speed_pairs = [
-        a - b for a, b in zip(actual_speed, target_speed)
-        if math.isfinite(a) and math.isfinite(b)
+    speed_error = [
+        (a - b) if math.isfinite(a) and math.isfinite(b) else float("nan")
+        for a, b in zip(actual_speed, target_speed)
     ]
+    speed_pairs = finite(speed_error)
 
     reference_history = csv_path.parent / "generated_reference_history.csv"
     ref_x, ref_y = [], []
@@ -204,7 +205,7 @@ def main() -> int:
 
     # 3. Speed error.
     plt.figure(figsize=(10, 5))
-    plt.plot(times, [v if math.isfinite(v) else float("nan") for v in speed_pairs] + [float("nan")] * max(0, len(times) - len(speed_pairs)))
+    plt.plot(times, speed_error, label="Actual - target")
     plt.axhline(0.0, linewidth=0.8)
     plt.xlabel("Time (s)")
     plt.ylabel("Actual - target speed (m/s)")
