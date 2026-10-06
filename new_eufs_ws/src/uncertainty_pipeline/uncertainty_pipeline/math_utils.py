@@ -188,6 +188,9 @@ def weighted_pose_distribution(
 def local_boundary_samples(
     landmarks: Sequence[Landmark], pose: Pose2, pose_covariance: Matrix3,
     color: int, dedup_distance_m: float = 0.75,
+    max_forward_m: float = 18.0,
+    max_lateral_m: float = 10.0,
+    max_fov_deg: float = 110.0,
 ) -> List[BoundarySample]:
     """Transform landmarks to vehicle coordinates and remove local duplicates."""
     raw: List[BoundarySample] = []
@@ -202,6 +205,23 @@ def local_boundary_samples(
         lateral_variance = covariance[1][1]
         if lateral_variance < 0.0 or not math.isfinite(lateral_variance):
             continue
+
+        # Corridor visualisation/metrics must use the same observable local
+        # region as the driving stack.  The persistent SLAM map can contain
+        # cones many tens of metres away; allowing those here creates a green
+        # corridor line detached from the vehicle and contaminates the
+        # uncertainty metrics.
+        if (
+            local[0] < -0.5
+            or local[0] > max(1.0, float(max_forward_m))
+            or abs(local[1]) > max(1.0, float(max_lateral_m))
+        ):
+            continue
+
+        bearing = math.degrees(math.atan2(local[1], local[0]))
+        if abs(bearing) > max(10.0, min(180.0, float(max_fov_deg))):
+            continue
+
         raw.append(BoundarySample(local[0], local[1], math.sqrt(lateral_variance)))
     raw.sort(key=lambda sample: sample.s)
     if len(raw) <= 1:
