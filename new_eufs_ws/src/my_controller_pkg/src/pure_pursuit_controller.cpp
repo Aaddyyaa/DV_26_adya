@@ -26,6 +26,14 @@ public:
         this->declare_parameter("max_speed_limit", 2.0); // Absolute max speed (m/s)
         this->declare_parameter("max_accel", 1.5);        // Max positive acceleration (m/s^2)
         this->declare_parameter("max_decel", 4.0);
+
+        // The successful run used steering RMS ~= 0.185 rad and a 0.5 rad
+        // steering ceiling. Keep the straight-line speed unchanged, but slow
+        // progressively when the controller is actually asking for a large
+        // steering angle.
+        this->declare_parameter("corner_steering_start", 0.22);
+        this->declare_parameter("corner_steering_full", 0.45);
+        this->declare_parameter("corner_speed_cap", 0.85);
         this->declare_parameter("max_steering", 0.5);        // Max braking capability (m/s^2)
         this->declare_parameter("min_speed_mps", 0.6);
 
@@ -205,9 +213,44 @@ private:
             }
         }
 
-        // Final safety bounds (lower bound reduced to 1.5 for sharper hairpins)
-        const double min_speed = std::max(0.0, get_parameter("min_speed_mps").as_double());
-        target_velocity = std::clamp(target_velocity, std::min(min_speed, max_speed_limit), max_speed_limit);
+        // Corner-speed protection: the completed run's steering statistics
+        // show that only sustained high steering should affect speed. This
+        // leaves normal straights at 2.0 m/s while reducing speed before a
+        // tight corner rather than relying on the minimum-speed floor.
+        const double steer_abs = std::abs(smoothed_steering);
+        const double steer_start =
+            get_parameter("corner_steering_start").as_double();
+        const double steer_full =
+            std::max(
+                steer_start + 0.05,
+                get_parameter("corner_steering_full").as_double());
+        const double corner_cap =
+            get_parameter("corner_speed_cap").as_double();
+
+        if (steer_abs > steer_start)
+        {
+            const double ratio =
+                std::clamp(
+                    (steer_abs - steer_start) /
+                        (steer_full - steer_start),
+                    0.0,
+                    1.0);
+
+            target_velocity =
+                std::min(
+                    target_velocity,
+                    max_speed_limit -
+                        ratio * (max_speed_limit - corner_cap));
+        }
+
+        const double min_speed = std::max(
+            0.0,
+            get_parameter("min_speed_mps").as_double());
+
+        target_velocity = std::clamp(
+            target_velocity,
+            std::min(min_speed, max_speed_limit),
+            max_speed_limit);
 
         drive_msg.drive.speed = target_velocity;
         drive_msg.drive.jerk = 0.0;
