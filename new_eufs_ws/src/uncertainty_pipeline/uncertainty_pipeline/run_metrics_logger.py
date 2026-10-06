@@ -64,6 +64,7 @@ class RunMetricsLogger(Node):
         self._actual_speed = 0.0
         self._ground_truth_speed = 0.0
         self._target_speed: Optional[float] = None
+        self._target_speeds: List[float] = []
         self._steering = 0.0
         self._command_speed = 0.0
         self._command_acceleration = 0.0
@@ -80,6 +81,19 @@ class RunMetricsLogger(Node):
 
         self._distance_travelled = 0.0
         self._previous_gt: Optional[Point2] = None
+
+        # /slam/odom is expressed in the SLAM map frame, while
+        # /ground_truth/state is expressed in the simulator world frame.
+        # Anchor the two frames once at startup before calculating SLAM-vs-GT
+        # error or CTE. Comparing the raw coordinates directly was the source
+        # of the very large, physically meaningless graph errors.
+        self._frame_aligned = False
+        self._slam0: Optional[Tuple[float, float, float]] = None
+        self._gt0: Optional[Tuple[float, float, float]] = None
+        self._gt_in_map_x = 0.0
+        self._gt_in_map_y = 0.0
+        self._frame_cos = 1.0
+        self._frame_sin = 0.0
 
         self.create_subscription(
             Odometry, "/slam/odom", self._odom_callback, 20
@@ -163,14 +177,45 @@ class RunMetricsLogger(Node):
         )
 
         self._actual_speed = message.twist.twist.linear.x
+        self._slam0 = (self._x, self._y, self._yaw)
 
     def _ground_truth_callback(self, message: CarState) -> None:
         x = message.pose.pose.position.x
         y = message.pose.pose.position.y
 
+        q = message.pose.pose.orientation
+        gt_yaw = math.atan2(
+            2.0 * (q.w * q.z + q.x * q.y),
+            1.0 - 2.0 * (q.y * q.y + q.z * q.z),
+        )
+
         self._ground_truth_x = x
         self._ground_truth_y = y
         self._ground_truth_speed = message.twist.twist.linear.x
+
+        if self._gt0 is None:
+            self._gt0 = (x, y, gt_yaw)
+
+        if not self._frame_aligned and self._slam0 is not None and self._gt0 is not None:
+            # R maps simulator-world displacements into the SLAM-map frame.
+            delta_yaw = self._slam0[2] - self._gt0[2]
+            self._frame_cos = math.cos(delta_yaw)
+            self._frame_sin = math.sin(delta_yaw)
+            self._frame_aligned = True
+
+        if self._frame_aligned and self._gt0 is not None and self._slam0 is not None:
+            dx = x - self._gt0[0]
+            dy = y - self._gt0[1]
+            self._gt_in_map_x = (
+                self._slam0[0] +
+                self._frame_cos * dx -
+                self._frame_sin * dy
+            )
+            self._gt_in_map_y = (
+                self._slam0[1] +
+                self._frame_sin * dx +
+                self._frame_cos * dy
+            )
 
         current = (x, y)
         if self._previous_gt is not None:
@@ -196,6 +241,9 @@ class RunMetricsLogger(Node):
                 self._target_path[index][1] - self._target_path[index - 1][1],
             )
 
+        # /target_speeds is indexed to /target_path. Keep the full profile so
+        # the logger can report the speed target at the vehicle's current
+        # path index instead of always reporting element zero.
         # Keep a global union of generated reference points for a complete
         # planned-vs-travelled plot after the local path moves with the car.
         for point in self._target_path:
@@ -212,8 +260,9 @@ class RunMetricsLogger(Node):
         self._command_acceleration = message.drive.acceleration
 
     def _speed_callback(self, message: Float64MultiArray) -> None:
+        self._target_speeds = [float(value) for value in message.data]
         self._target_speed = (
-            float(message.data[0]) if message.data else None
+            self._target_speeds[0] if self._target_speeds else None
         )
 
     def _landmark_callback(self, message: ConeArrayWithCovariance) -> None:
@@ -247,11 +296,29 @@ class RunMetricsLogger(Node):
         if message.data:
             self._lap_completed = True
 
+    def _nearest_target_index(self) -> int:
+        if not self._target_path:
+            return 0
+
+        best_index = 0
+        best_distance = float("inf")
+        for index, point in enumerate(self._target_path):
+            distance = math.hypot(
+                point[0] - self._x,
+                point[1] - self._y,
+            )
+            if distance < best_distance:
+                best_distance = distance
+                best_index = index
+        return best_index
+
     def _reference_error(self) -> Tuple[float, float, float]:
-        if len(self._target_path) < 2:
+        if len(self._target_path) < 2 or not self._frame_aligned:
             return 0.0, 0.0, 0.0
 
-        point = (self._ground_truth_x, self._ground_truth_y)
+        # Compare the reference in SLAM/map coordinates. Ground truth itself
+        # remains in simulator coordinates for distance-travelled logging.
+        point = (self._gt_in_map_x, self._gt_in_map_y)
         best_error = float("inf")
         best_projection = self._target_path[0]
 
@@ -276,15 +343,26 @@ class RunMetricsLogger(Node):
 
         target_x, target_y, cte = self._reference_error()
 
+        # Report the target speed associated with the closest current path
+        # point, matching the controller's path indexing.
+        target_index = self._nearest_target_index()
+        if self._target_speeds and target_index < len(self._target_speeds):
+            self._target_speed = self._target_speeds[target_index]
+        elif not self._target_speeds:
+            self._target_speed = None
+
         valid_fraction = (
             self._corridor_valid / self._corridor_samples
             if self._corridor_samples
             else 0.0
         )
 
-        slam_gt_error = math.hypot(
-            self._x - self._ground_truth_x,
-            self._y - self._ground_truth_y,
+        slam_gt_error = (
+            math.hypot(
+                self._x - self._gt_in_map_x,
+                self._y - self._gt_in_map_y,
+            )
+            if self._frame_aligned else 0.0
         )
 
         with self._path.open(
