@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Generate presentation-ready trajectory and performance results."""
+"""Generate trustworthy EUFS lap metrics and research-ready figures.
+
+The logger records a rolling local target path, so this script does not treat
+the concatenation of local paths as a physical closed-track reference length.
+Trajectory, speed, steering, localization and uncertainty metrics are computed
+only from finite logged samples.
+"""
 
 from __future__ import annotations
 
@@ -12,20 +18,28 @@ import sys
 import matplotlib.pyplot as plt
 
 
-def load_rows(csv_path: Path):
-    with csv_path.open("r", encoding="utf-8", newline="") as f:
-        return list(csv.DictReader(f))
+def load_rows(path: Path):
+    with path.open("r", encoding="utf-8", newline="") as handle:
+        return list(csv.DictReader(handle))
 
 
-def f(row, key):
-    value = row.get(key, "")
-    if value in ("", None):
+def value(row, key):
+    raw = row.get(key, "")
+    if raw in ("", None):
         return float("nan")
-    return float(value)
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        return float("nan")
 
 
 def finite(values):
     return [v for v in values if math.isfinite(v)]
+
+
+def mean(values):
+    values = finite(values)
+    return sum(values) / len(values) if values else None
 
 
 def rms(values):
@@ -37,22 +51,27 @@ def percentile(values, fraction):
     values = sorted(finite(values))
     if not values:
         return None
-    index = min(len(values) - 1, int(round((len(values) - 1) * fraction)))
+    index = int(round((len(values) - 1) * fraction))
     return values[index]
 
 
-def path_length(xs, ys):
+def polyline_length(xs, ys):
     total = 0.0
-    for i in range(1, len(xs)):
-        total += math.hypot(xs[i] - xs[i - 1], ys[i] - ys[i - 1])
+    for i in range(1, min(len(xs), len(ys))):
+        if all(math.isfinite(v) for v in (xs[i - 1], ys[i - 1], xs[i], ys[i])):
+            total += math.hypot(xs[i] - xs[i - 1], ys[i] - ys[i - 1])
     return total
+
+
+def savefig(out_dir, name):
+    plt.tight_layout()
+    plt.savefig(out_dir / name, dpi=220, bbox_inches="tight")
+    plt.close()
 
 
 def main() -> int:
     csv_path = Path(
-        sys.argv[1]
-        if len(sys.argv) > 1
-        else "experiments/raw/run_metrics.csv"
+        sys.argv[1] if len(sys.argv) > 1 else "experiments/raw/run_metrics.csv"
     )
 
     if not csv_path.exists():
@@ -68,284 +87,209 @@ def main() -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     t0 = int(float(rows[0]["timestamp_ns"]))
-    times = [
-        (int(float(r["timestamp_ns"])) - t0) / 1e9
-        for r in rows
-    ]
+    times = [(int(float(r["timestamp_ns"])) - t0) / 1e9 for r in rows]
 
-    gt_x = [f(r, "ground_truth_x") for r in rows]
-    gt_y = [f(r, "ground_truth_y") for r in rows]
-    slam_x = [f(r, "x") for r in rows]
-    slam_y = [f(r, "y") for r in rows]
+    gt_x = [value(r, "ground_truth_x") for r in rows]
+    gt_y = [value(r, "ground_truth_y") for r in rows]
+    slam_x = [value(r, "x") for r in rows]
+    slam_y = [value(r, "y") for r in rows]
+    actual_speed = [value(r, "ground_truth_speed_mps") for r in rows]
+    target_speed = [value(r, "target_speed_mps") for r in rows]
+    command_speed = [value(r, "command_speed_mps") for r in rows]
+    command_accel = [value(r, "command_acceleration_mps2") for r in rows]
+    steering = [value(r, "steering_angle_rad") for r in rows]
+    cte = [value(r, "cross_track_error_m") for r in rows]
+    slam_error = [value(r, "slam_gt_error_m") for r in rows]
+    corridor_width = [value(r, "mean_corridor_width_m") for r in rows]
+    corridor_fraction = [value(r, "corridor_valid_fraction") for r in rows]
+    path_points = [value(r, "target_path_points") for r in rows]
+    blue = [value(r, "blue_landmarks") for r in rows]
+    yellow = [value(r, "yellow_landmarks") for r in rows]
 
-    actual_speed = [
-        f(r, "ground_truth_speed_mps")
-        for r in rows
-    ]
-    target_speed = [
-        f(r, "target_speed_mps")
-        for r in rows
-    ]
-    command_speed = [
-        f(r, "command_speed_mps")
-        for r in rows
-    ]
-    command_accel = [
-        f(r, "command_acceleration_mps2")
-        for r in rows
-    ]
-    steering = [
-        f(r, "steering_angle_rad")
-        for r in rows
-    ]
-    cte = [
-        f(r, "cross_track_error_m")
-        for r in rows
-    ]
-    slam_gt = [
-        f(r, "slam_gt_error_m")
-        for r in rows
-    ]
-    corridor_width = [
-        f(r, "mean_corridor_width_m")
-        for r in rows
-    ]
-    corridor_fraction = [
-        f(r, "corridor_valid_fraction")
-        for r in rows
-    ]
+    distance_travelled = max(value(rows[-1], "distance_travelled_m"), 0.0)
+    duration = max(times[-1], 0.0)
+    completed = bool(int(value(rows[-1], "lap_completed") or 0))
 
-    distance_travelled = max(
-        f(rows[-1], "distance_travelled_m"),
-        0.0,
-    )
-    duration = times[-1]
-
-    actual_valid = finite(actual_speed)
-    target_valid = finite(target_speed)
-    paired_speed = [
-        a - b
-        for a, b in zip(actual_speed, target_speed)
+    speed_pairs = [
+        a - b for a, b in zip(actual_speed, target_speed)
         if math.isfinite(a) and math.isfinite(b)
     ]
 
-    cte_valid = finite(cte)
-    slam_valid = finite(slam_gt)
-    steering_valid = finite(steering)
-    accel_valid = finite(command_accel)
-
-    lap_completed = int(float(rows[-1]["lap_completed"]))
-
     reference_history = csv_path.parent / "generated_reference_history.csv"
-    ref_x = []
-    ref_y = []
+    ref_x, ref_y = [], []
     if reference_history.exists():
-        with reference_history.open(
-            "r", encoding="utf-8", newline=""
-        ) as fref:
-            for row in csv.DictReader(fref):
-                ref_x.append(float(row["x"]))
-                ref_y.append(float(row["y"]))
+        with reference_history.open("r", encoding="utf-8", newline="") as handle:
+            for row in csv.DictReader(handle):
+                x = value(row, "x")
+                y = value(row, "y")
+                if math.isfinite(x) and math.isfinite(y):
+                    ref_x.append(x)
+                    ref_y.append(y)
 
-    # If no complete reference history was saved, plot the instantaneous
-    # target projections as a fallback.
-    target_x = [f(r, "target_x") for r in rows]
-    target_y = [f(r, "target_y") for r in rows]
-
-    reference_distance = (
-        path_length(ref_x, ref_y)
-        if len(ref_x) >= 2
-        else path_length(
-            finite(target_x),
-            finite(target_y),
-        )
-    )
+    # The latest local path is a planning horizon, not a full circuit.
+    local_reference_length = polyline_length(ref_x, ref_y)
 
     summary = {
-        "lap_completed": bool(lap_completed),
+        "lap_completed": completed,
         "duration_s": duration,
         "distance_travelled_m": distance_travelled,
-        "reference_path_length_m": reference_distance,
-        "max_speed_mps": max(actual_valid) if actual_valid else None,
-        "mean_speed_mps": (
-            sum(actual_valid) / len(actual_valid)
-            if actual_valid else None
-        ),
-        "mean_target_speed_mps": (
-            sum(target_valid) / len(target_valid)
-            if target_valid else None
-        ),
-        "mean_abs_speed_error_mps": (
-            sum(abs(v) for v in paired_speed) / len(paired_speed)
-            if paired_speed else None
-        ),
-        "speed_rmse_mps": rms(paired_speed),
-        "max_command_speed_mps": (
-            max(finite(command_speed))
-            if finite(command_speed)
-            else None
-        ),
-        "max_command_acceleration_mps2": (
-            max(accel_valid) if accel_valid else None
-        ),
-        "max_abs_steering_rad": (
-            max(abs(v) for v in steering_valid)
-            if steering_valid else None
-        ),
-        "steering_rms_rad": rms(steering_valid),
-        "mean_cross_track_error_m": (
-            sum(cte_valid) / len(cte_valid)
-            if cte_valid else None
-        ),
-        "cross_track_rmse_m": rms(cte_valid),
-        "max_cross_track_error_m": (
-            max(cte_valid) if cte_valid else None
-        ),
-        "cross_track_95th_percentile_m": percentile(cte_valid, 0.95),
-        "mean_slam_ground_truth_error_m": (
-            sum(slam_valid) / len(slam_valid)
-            if slam_valid else None
-        ),
-        "slam_rmse_m": rms(slam_valid),
-        "max_slam_ground_truth_error_m": (
-            max(slam_valid) if slam_valid else None
-        ),
-        "mean_corridor_width_m": (
-            sum(finite(corridor_width)) / len(finite(corridor_width))
-            if finite(corridor_width) else None
-        ),
-        "mean_corridor_validity_fraction": (
-            sum(finite(corridor_fraction)) / len(finite(corridor_fraction))
-            if finite(corridor_fraction) else None
-        ),
-        "min_corridor_validity_fraction": (
-            min(finite(corridor_fraction))
-            if finite(corridor_fraction) else None
-        ),
-        "mean_target_path_points": (
-            sum(f(r, "target_path_points") for r in rows)
-            / len(rows)
-        ),
-        "max_target_path_points": max(
-            f(r, "target_path_points") for r in rows
-        ),
-        "blue_landmarks_mean": sum(
-            f(r, "blue_landmarks") for r in rows
-        ) / len(rows),
-        "yellow_landmarks_mean": sum(
-            f(r, "yellow_landmarks") for r in rows
-        ) / len(rows),
+        "local_reference_path_length_m": local_reference_length,
+        "max_speed_mps": max(finite(actual_speed), default=float("nan")),
+        "mean_speed_mps": mean(actual_speed),
+        "mean_target_speed_mps": mean(target_speed),
+        "mean_abs_speed_error_mps": mean([abs(v) for v in speed_pairs]),
+        "speed_rmse_mps": rms(speed_pairs),
+        "max_command_speed_mps": max(finite(command_speed), default=float("nan")),
+        "max_command_acceleration_mps2": max(finite(command_accel), default=float("nan")),
+        "min_command_acceleration_mps2": min(finite(command_accel), default=float("nan")),
+        "max_abs_steering_rad": max([abs(v) for v in finite(steering)], default=float("nan")),
+        "steering_rms_rad": rms(steering),
+        "mean_cross_track_error_m": mean(cte),
+        "cross_track_rmse_m": rms(cte),
+        "max_cross_track_error_m": max(finite(cte), default=float("nan")),
+        "cross_track_95th_percentile_m": percentile(cte, 0.95),
+        "mean_slam_ground_truth_error_m": mean(slam_error),
+        "slam_rmse_m": rms(slam_error),
+        "max_slam_ground_truth_error_m": max(finite(slam_error), default=float("nan")),
+        "mean_corridor_width_m": mean(corridor_width),
+        "mean_corridor_validity_fraction": mean(corridor_fraction),
+        "min_corridor_validity_fraction": min(finite(corridor_fraction), default=float("nan")),
+        "mean_target_path_points": mean(path_points),
+        "max_target_path_points": max(finite(path_points), default=float("nan")),
+        "blue_landmarks_mean": mean(blue),
+        "yellow_landmarks_mean": mean(yellow),
         "logged_samples": len(rows),
     }
 
+    # JSON cannot represent NaN reliably for research pipelines; convert
+    # non-finite values to null.
+    clean_summary = {
+        key: (None if isinstance(val, float) and not math.isfinite(val) else val)
+        for key, val in summary.items()
+    }
+
     (out_dir / "summary.json").write_text(
-        json.dumps(summary, indent=2),
-        encoding="utf-8",
+        json.dumps(clean_summary, indent=2), encoding="utf-8"
     )
-
-    with (out_dir / "summary.csv").open(
-        "w", encoding="utf-8", newline=""
-    ) as fsummary:
-        writer = csv.writer(fsummary)
+    with (out_dir / "summary.csv").open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle)
         writer.writerow(["metric", "value"])
-        for key, value in summary.items():
-            writer.writerow([key, value])
+        writer.writerows(clean_summary.items())
 
-    # 1. Full generated reference vs vehicle trajectory.
+    # 1. Ground-truth and SLAM trajectories.
     plt.figure(figsize=(10, 7))
     if ref_x:
-        plt.plot(ref_x, ref_y, label="Generated reference trajectory")
-    else:
-        valid_ref = [
-            i for i, (x, y) in enumerate(zip(target_x, target_y))
-            if math.isfinite(x) and math.isfinite(y)
-        ]
-        if valid_ref:
-            plt.plot(
-                [target_x[i] for i in valid_ref],
-                [target_y[i] for i in valid_ref],
-                label="Generated target trajectory",
-            )
-
-    plt.plot(gt_x, gt_y, label="Vehicle trajectory (ground truth)")
+        plt.plot(ref_x, ref_y, label="Latest local planner horizon")
+    plt.plot(gt_x, gt_y, label="Ground-truth trajectory")
     plt.plot(slam_x, slam_y, label="SLAM trajectory")
     plt.xlabel("X position (m)")
     plt.ylabel("Y position (m)")
-    plt.title("Generated Trajectory vs Vehicle Trajectory")
+    plt.title("EUFS Trajectory and Local Planning Horizon")
     plt.axis("equal")
     plt.grid(True, alpha=0.3)
     plt.legend()
-    plt.tight_layout()
-    plt.savefig(
-        out_dir / "trajectory_comparison.png",
-        dpi=200,
-    )
-    plt.close()
+    savefig(out_dir, "trajectory_comparison.png")
 
     # 2. Speed tracking.
     plt.figure(figsize=(10, 5))
     plt.plot(times, actual_speed, label="Actual speed")
-    plt.plot(times, target_speed, label="Target speed")
-    plt.plot(times, command_speed, label="Commanded speed", alpha=0.7)
+    plt.plot(times, target_speed, label="Planner target speed")
+    plt.plot(times, command_speed, label="Command speed")
     plt.xlabel("Time (s)")
     plt.ylabel("Speed (m/s)")
     plt.title("Speed Tracking")
     plt.grid(True, alpha=0.3)
     plt.legend()
-    plt.tight_layout()
-    plt.savefig(out_dir / "speed_tracking.png", dpi=200)
-    plt.close()
+    savefig(out_dir, "speed_tracking.png")
 
-    # 3. Tracking/localization error.
+    # 3. Speed error.
+    plt.figure(figsize=(10, 5))
+    plt.plot(times, [v if math.isfinite(v) else float("nan") for v in speed_pairs] + [float("nan")] * max(0, len(times) - len(speed_pairs)))
+    plt.axhline(0.0, linewidth=0.8)
+    plt.xlabel("Time (s)")
+    plt.ylabel("Actual - target speed (m/s)")
+    plt.title("Speed Tracking Error")
+    plt.grid(True, alpha=0.3)
+    savefig(out_dir, "speed_error.png")
+
+    # 4. Cross-track and SLAM error.
     plt.figure(figsize=(10, 5))
     plt.plot(times, cte, label="Cross-track error")
-    plt.plot(times, slam_gt, label="SLAM vs ground-truth error")
+    plt.plot(times, slam_error, label="SLAM vs ground truth")
     plt.xlabel("Time (s)")
     plt.ylabel("Error (m)")
     plt.title("Tracking and Localization Error")
     plt.grid(True, alpha=0.3)
     plt.legend()
-    plt.tight_layout()
-    plt.savefig(out_dir / "tracking_errors.png", dpi=200)
-    plt.close()
+    savefig(out_dir, "tracking_errors.png")
 
-    # 4. Steering behaviour.
+    # 5. Steering.
     plt.figure(figsize=(10, 5))
-    plt.plot(times, steering)
+    plt.plot(times, steering, label="Steering")
+    plt.axhline(0.5, linewidth=0.8)
+    plt.axhline(-0.5, linewidth=0.8)
     plt.xlabel("Time (s)")
     plt.ylabel("Steering angle (rad)")
-    plt.title("Steering Command")
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    plt.savefig(out_dir / "steering_behavior.png", dpi=200)
-    plt.close()
-
-    # 5. Uncertainty/corridor behaviour.
-    plt.figure(figsize=(10, 5))
-    plt.plot(
-        times,
-        corridor_width,
-        label="Mean corridor width",
-    )
-    plt.plot(
-        times,
-        corridor_fraction,
-        label="Corridor validity fraction",
-    )
-    plt.xlabel("Time (s)")
-    plt.ylabel("Value")
-    plt.title("Uncertainty Corridor Quality")
+    plt.title("Steering Command and Saturation")
     plt.grid(True, alpha=0.3)
     plt.legend()
-    plt.tight_layout()
-    plt.savefig(out_dir / "corridor_quality.png", dpi=200)
-    plt.close()
+    savefig(out_dir, "steering_behavior.png")
+
+    # 6. Longitudinal commands.
+    plt.figure(figsize=(10, 5))
+    plt.plot(times, command_accel, label="Command acceleration")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Acceleration (m/s²)")
+    plt.title("Longitudinal Control Command")
+    plt.grid(True, alpha=0.3)
+    plt.legend()
+    savefig(out_dir, "acceleration_command.png")
+
+    # 7. Uncertainty corridor.
+    plt.figure(figsize=(10, 5))
+    plt.plot(times, corridor_width, label="Mean corridor width (m)")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Width (m)")
+    plt.title("Uncertainty Corridor Width")
+    plt.grid(True, alpha=0.3)
+    plt.legend()
+    savefig(out_dir, "corridor_width.png")
+
+    plt.figure(figsize=(10, 5))
+    plt.plot(times, corridor_fraction, label="Valid corridor fraction")
+    plt.axhline(1.0, linewidth=0.8)
+    plt.xlabel("Time (s)")
+    plt.ylabel("Valid fraction")
+    plt.title("Uncertainty Corridor Validity")
+    plt.ylim(-0.05, 1.05)
+    plt.grid(True, alpha=0.3)
+    plt.legend()
+    savefig(out_dir, "corridor_validity.png")
+
+    # 8. Perception/planning observability.
+    plt.figure(figsize=(10, 5))
+    plt.plot(times, blue, label="Blue landmarks")
+    plt.plot(times, yellow, label="Yellow landmarks")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Detected landmarks")
+    plt.title("Boundary Landmark Availability")
+    plt.grid(True, alpha=0.3)
+    plt.legend()
+    savefig(out_dir, "landmark_counts.png")
+
+    plt.figure(figsize=(10, 5))
+    plt.plot(times, path_points, label="Target path points")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Points")
+    plt.title("Local Planner Horizon Size")
+    plt.grid(True, alpha=0.3)
+    plt.legend()
+    savefig(out_dir, "planner_horizon.png")
 
     print("\n=== FINAL EXPERIMENT RESULTS ===")
-    for key, value in summary.items():
-        print(f"{key:38s}: {value}")
+    for key, val in clean_summary.items():
+        print(f"{key:38s}: {val}")
     print(f"\nResults written to: {out_dir}")
-
     return 0
 
 
