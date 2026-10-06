@@ -13,7 +13,9 @@ public:
         : Node("lap_guard")
     {
         min_distance_ = declare_parameter("min_distance_before_finish_m", 60.0);
-        finish_radius_ = declare_parameter("finish_radius_m", 2.0);
+        finish_radius_ = declare_parameter("finish_radius_m", 3.0);
+        finish_line_half_width_ =
+            declare_parameter("finish_line_half_width_m", 3.0);
 
         gt_sub_ = create_subscription<eufs_msgs::msg::CarState>(
             "/ground_truth/state",
@@ -25,8 +27,8 @@ public:
 
         RCLCPP_INFO(
             get_logger(),
-            "Lap guard armed: finish after %.1f m traveled and return within %.1f m of start.",
-            min_distance_, finish_radius_);
+            "Lap guard armed: finish after %.1f m traveled, finish radius %.1f m, line half-width %.1f m.",
+            min_distance_, finish_radius_, finish_line_half_width_);
     }
 
 private:
@@ -103,7 +105,7 @@ private:
             signed_start < 0.0 &&
             signed_now >= 0.0 &&
             std::abs(0.5 * (lateral_start + lateral_now)) <=
-                std::max(2.0, finish_radius_);
+                std::max(1.0, finish_line_half_width_);
 
         const bool inside_finish_circle =
             distance_to_start <= finish_radius_ &&
@@ -131,7 +133,8 @@ private:
     rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr finish_pub_;
 
     double min_distance_{60.0};
-    double finish_radius_{2.0};
+    double finish_radius_{3.0};
+    double finish_line_half_width_{3.0};
     double start_x_{0.0};
     double start_y_{0.0};
     double start_yaw_{0.0};
